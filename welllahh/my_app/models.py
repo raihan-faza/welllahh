@@ -11,7 +11,7 @@ class CustomUser(models.Model):
     status_choices = [("any", "anonymous"), ("knw", "known")]
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     dob = models.DateField()
-    parent = models.ForeignKey("self", on_delete=models.CASCADE)
+    parent = models.ForeignKey("self", on_delete=models.CASCADE, blank=True, null=True)
     secret_phrase = models.CharField(max_length=100)
     status = models.CharField(max_length=len("anonymous"), choices=status_choices)
 
@@ -22,9 +22,9 @@ class CustomUser(models.Model):
 class UserBodyInfo(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4(), editable=False)
     weight = models.IntegerField()
-    muscle_mass = models.IntegerField()
+    muscle_mass = models.IntegerField(blank=True, null=True)
     height = models.IntegerField()
-    fat_mass = models.IntegerField()
+    fat_mass = models.IntegerField(blank=True, null=True)
     custom_user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
 
 
