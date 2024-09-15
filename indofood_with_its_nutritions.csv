@@ -1,0 +1,64 @@
+,food_name,calories,fat,carbohydrate,proteins
+0,air,387kcal,4.54g,77.78g,12.94g
+1,anggur,30,0.2,6.8,0.5
+2,apel,58,0.4,14.9,0.3
+3,ayam,302,25,0,18.2
+4,bakso,144.7,4.5,14.3,12.1
+5,bakwan,280,10.2,39,8.2
+6,batagor,150kcal,12.00g,2.00g,5.00g
+7,bubur,2646kcal,88.06g,256.58g,195.79g
+8,burger,258,9.5,32.5,10.6
+9,cakwe,4552kcal,152.45g,796.84g,32.00g
+10,capcay,97,6.3,4.2,5.8
+11,cheesecake,321kcal,22.50g,25.50g,5.50g
+12,coto makasar,84,6,1.4,6
+13,crepes,779kcal,38.55g,75.37g,30.48g
+14,cumi,265,10.1,0,40.6
+15,donat,220kcal,13.00g,23.00g,4.00g
+16,durian,134,3,28,2.5
+17,es krim,210,12.5,20.6,4
+18,fu yung hai,251,19.4,1.4,16.3
+19,gudeg,53,1.6,8.8,1.6
+20,hamburger,258,9.5,32.5,10.6
+21,ikan,188,12.2,0,19.3
+22,jeruk,45,0.2,11.2,0.9
+23,kacang,336,1.4,62,20.7
+24,kebab,755kcal,20.26g,93.90g,46.12g
+25,kentang,83,0.1,19.1,2
+26,kerak telor,140,9.5,1,6.3
+27,kerupuk,340,30,52,30
+28,kopi,129,0.5,35,12.3
+29,mie aceh,113,3.2,18.1,3
+30,nasi goreng,276,3.2,30.2,3.2
+31,nasi kuning,6527kcal,232.26g,948.16g,182.52g
+32,nasi pecel,6527kcal,232.26g,948.16g,182.52g
+33,oysters,68kcal,2.46g,3.91g,7.05g
+34,pancakes,227kcal,9.70g,28.30g,6.40g
+35,pempek,152,2.3,28.2,4.5
+36,pepes ikan,209,11.3,11.8,15.2
+37,pizza,276kcal,11.74g,30.33g,12.33g
+38,ramen,190kcal,7.00g,27.00g,4.00g
+39,rawon,60,2.5,4,5.4
+40,sate ayam,110,0.5,11.5,15.5
+41,serabi,20kcal,0.00g,6.00g,0.00g
+42,soto banjar,110,9.5,3.2,2.9
+43,soto lamongan,110,9.5,3.2,2.9
+44,steak,201kcal,12.71g,0.00g,20.30g
+45,sushi,1924kcal,5.65g,402.26g,57.85g
+46,tahu sumedang,143,10.53,19.44,2.65
+47,tempe bacem,328,23.2,12.8,18.4
+48,ayam goreng,302,25,0,18.2
+49,ayam pop,302,25,0,18.2
+50,beet salad,170kcal,11.00g,14.00g,6.00g
+51,chicken wings,297,15.2,1.6,35.9
+52,daging rendang,193,7.9,7.8,22.6
+53,dendeng batokok,301,9,0,55
+54,french fries,274kcal,14.08g,35.71g,3.49g
+55,gulai ikan,106,3.3,2.5,16.5
+56,gulai tambusu,106,3.3,2.5,16.5
+57,gulai tunjang,126,9.4,6.2,4.2
+58,hot dog,294kcal,17.62g,22.24g,10.66g
+59,macaroni and cheese,2922kcal,135.33g,308.95g,114.31g
+60,spaghetti,139,2.1,22.6,7.4
+61,telur balado,162,11.5,0.7,12.8
+62,telur dadar,251,19.4,1.4,16.3

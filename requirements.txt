@@ -14,3 +14,9 @@ sqlparse==0.5.1
     # via django
 types-psycopg2==2.9.21.20240819
     # via django-types
+
+numpy==1.26.4
+pandas==2.2.2
+tensorflow==2.16.1
+tensorflow-hub==0.16.1
+pillow==10.4.0
