@@ -10,7 +10,7 @@ class CustomUser(models.Model):
     customer_id = models.UUIDField(primary_key=True, default=uuid4(), editable=False)
     status_choices = [("any", "anonymous"), ("knw", "known")]
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    dob = models.DateField()
+    age = models.IntegerField(blank=True, null=True)
     parent = models.ForeignKey("self", on_delete=models.CASCADE, blank=True, null=True)
     secret_phrase = models.CharField(max_length=100)
     status = models.CharField(max_length=len("anonymous"), choices=status_choices)

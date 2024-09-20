@@ -10,20 +10,17 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+import os
+import time
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 import tensorflow as tf
-
-import time
 import tensorflow_hub as hub
 from PIL import Image
-import os 
 
-
-
-INDOFOOD_IMAGE_MODEL =  tf.keras.models.load_model('indofood_nutrition_2.keras')
+INDOFOOD_IMAGE_MODEL = tf.keras.models.load_model("indofood_nutrition_2.keras")
 
 
 INDOFOOD_NUTRITIONS_DF = pd.read_csv("indofood_with_its_nutritions.csv")
@@ -145,6 +142,5 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = "/media/"
-
