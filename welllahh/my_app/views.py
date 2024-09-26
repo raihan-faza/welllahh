@@ -94,7 +94,7 @@ def generate_login_token(request):
     pass
 
 
-"""
+
 def GetFoodNutrition(foodName: str):
     foodName = foodName.lower()
     myFoodNutrition = {}
@@ -113,36 +113,21 @@ def inference_indofood_image(request):
         file_name = default_storage.save(file.name, file)
         file_url = default_storage.path(file_name)
 
-        image = load_img(file_url, target_size=(224, 224))
+        image = load_img(file_url, target_size=(320, 320))
         numpy_array = img_to_array(image)
 
         image_batch = np.expand_dims(numpy_array, axis=0)
         prediction = settings.INDOFOOD_IMAGE_MODEL.predict(image_batch)
 
-        sorted_categories = np.argsort(prediction[0])[:-65:-1]
         labels = settings.INDOFOOD_IMAGE_LABELS
-        prob = np.sort(prediction)
-        cats = []
-        i = 0
-        prob = prob[0][:-65:-1]
-
-        res = []
-        for predCat in sorted_categories:
-            if prob[i] > 0.15:
-                cats.append(labels[predCat])
-            i += 1
-        if len(cats) == 0:
-            res = [labels[tf.argmax(prediction[0])]]
-        else:
-            res = cats
-        # label = decode_predictions(predictions, top=1)
-        nutritions = GetFoodNutrition(res[0][1])
+        res = labels[tf.argmax(prediction[0])]
+       
+        nutritions = GetFoodNutrition(res[1])
         return render(
             request, "index.html", {"predictions": res, "nutritions": nutritions}
         )
     else:
         return render(request, "index.html")
-"""
 
 
 def generate_random_string(length=12):

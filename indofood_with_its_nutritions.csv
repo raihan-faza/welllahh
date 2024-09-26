@@ -1,8 +1,8 @@
 ,food_name,calories,fat,carbohydrate,proteins
-0,air,387kcal,4.54g,77.78g,12.94g
+0,air putih,387kcal,4.54g,77.78g,12.94g
 1,anggur,30,0.2,6.8,0.5
 2,apel,58,0.4,14.9,0.3
-3,ayam,302,25,0,18.2
+3,ayam goreng,302,25,0,18.2
 4,bakso,144.7,4.5,14.3,12.1
 5,bakwan,280,10.2,39,8.2
 6,batagor,150kcal,12.00g,2.00g,5.00g
@@ -62,3 +62,16 @@
 60,spaghetti,139,2.1,22.6,7.4
 61,telur balado,162,11.5,0.7,12.8
 62,telur dadar,251,19.4,1.4,16.3
+63,ayam geprek,302,25,0,18.2
+64,bebek goreng,302,25,0,18.2
+65,gado gado,318,17.86g,26.28g,17.22g
+66,mangga,65,0.27g,17g,0.51g
+67,opor ayam,302,25,0,18.2
+68,pisang,105,0.39g,26.95g,1.29g
+69,soto,110,9.5,3.2,2.9
+70,strawberry,4,0.04g,0.92g,0.08g
+71,tahu goreng,143,10.53,19.44,2.65
+72,tempe goreng,196,11.38g,9.35g,18.19g
+73,tomato,18,0.2g,3.92g,0.88g
+74,watermelon,46,0.23g,11.48g,0.93g
+75,wortel,25,0.15g,5.84g,0.57g

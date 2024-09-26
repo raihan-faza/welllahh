@@ -2,10 +2,15 @@ venv
 .env
 db.sqlite3
 
-indofood_nutrition_2.keras
+best_model.keras
 
-welllahh/media
+welllahh/media/
 
-welllahh/my_app/__pycache__
+welllahh/my_app/__pycache__/
 
-welllahh/welllahh/__pycache__
+welllahh/my_app/migrations/
+
+welllahh/welllahh/__pycache__/
+
+welllahh/db.sqlite3
+

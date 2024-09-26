@@ -17,16 +17,16 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import tensorflow as tf
-import tensorflow_hub as hub
 from PIL import Image
+import joblib
 
-INDOFOOD_IMAGE_MODEL = tf.keras.models.load_model("indofood_nutrition_2.keras")
-
+INDOFOOD_IMAGE_MODEL = tf.keras.models.load_model("best_model.keras")
+# INDOFOOD_IMAGE_MODEL =  joblib.load("model.pkl")
 
 INDOFOOD_NUTRITIONS_DF = pd.read_csv("indofood_with_its_nutritions.csv")
 
 
-df2 = pd.read_csv("allfoodName.csv")
+df2 = pd.read_csv("all_food_names.csv")
 
 INDOFOOD_IMAGE_LABELS = df2.values.tolist()
 

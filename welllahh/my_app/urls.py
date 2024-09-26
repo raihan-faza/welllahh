@@ -24,7 +24,7 @@ app_name = "my_app"
 
 urlpatterns = [
     path("inference/indofood_image", views.inference_indofood_image, name="home"),
-    path("admin/", admin.site.urls),
+    # path("admin/", admin.site.urls),
     path("register", views.register_user, name="register_known_user"),
     path(
         "register_anonymous",
