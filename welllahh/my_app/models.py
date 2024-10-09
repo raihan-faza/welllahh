@@ -25,6 +25,7 @@ class UserBodyInfo(models.Model):
     muscle_mass = models.IntegerField(blank=True, null=True)
     height = models.IntegerField()
     fat_mass = models.IntegerField(blank=True, null=True)
+    check_time = models.DateField()
     custom_user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
 
 
@@ -38,6 +39,9 @@ class NutritionType(models.TextChoices):
     CALORY = "Calory", "Calory"
     BLOOD_SUGAR = "Blood Sugar", "Blood Sugar"
     PROTEIN = "Protein", "Protein"
+    CHOLESTEROL = "CHOLESTEROL", "CHOLESTEROL"
+    URIC_ACID = "URIC_ACID", "URIC_ACID"
+    BLOOD_PRESSURE = "BLOOD_PRESSURE", "BLOOD_PRESSURE"
 
 
 class NutritionProgress(models.Model):

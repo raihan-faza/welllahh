@@ -31,6 +31,10 @@ urlpatterns = [
         views.register_anonymous_user,
         name="register_anonymous_user",
     ),
+    path("health_check/bmi", views.get_bmi_condition, name="get_bmi_condition"),
+    path("health_check/nutrition", views.get_health_condition_based_on_nutrition_val, name="get_health_condition_based_on_nutrition_val"),
+    path("health_progress/nutrition", views.catat_nutrisi, name="catat_nutrisi"),
+    path("health_progress/bmi", views.catat_tinggi_berat, name="catat_tinggi_berat")
 ]
 
 

@@ -20,7 +20,7 @@ import tensorflow as tf
 from PIL import Image
 import joblib
 
-INDOFOOD_IMAGE_MODEL = tf.keras.models.load_model("best_model.keras")
+INDOFOOD_IMAGE_MODEL = tf.keras.models.load_model("best_model_86.keras")
 # INDOFOOD_IMAGE_MODEL =  joblib.load("model.pkl")
 
 INDOFOOD_NUTRITIONS_DF = pd.read_csv("indofood_with_its_nutritions.csv")
