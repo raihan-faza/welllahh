@@ -15,3 +15,6 @@ welllahh/welllahh/__pycache__/
 welllahh/db.sqlite3
 
 best_model_86.keras
+
+AI-notebooks/.ipynb_checkpoints/
+AI-notebooks/*.csv
