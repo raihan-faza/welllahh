@@ -5,7 +5,7 @@
 ### AI model
 ```
 - indonesian food image to its name:
-https://drive.google.com/file/d/1B5Jzh2FF76myu_XgnONdmHtmjOpPcGR3/view?usp=sharing
+https://drive.google.com/file/d/1N3rkjM9C_hbyiLzKmwdTzxYYHwYS-RDW/view?usp=sharing
 
 ```
 
