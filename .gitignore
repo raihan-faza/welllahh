@@ -18,3 +18,10 @@ best_model_86.keras
 
 AI-notebooks/.ipynb_checkpoints/
 AI-notebooks/*.csv
+
+recommendation_cosine_sim.pkl
+search_count_vec.pkl
+count_matrix_name.pkl
+recipes_sedikit.csv
+
+

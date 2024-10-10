@@ -17,6 +17,9 @@ from PIL import Image
 from tensorflow.python.keras.backend import set_session
 from .models import *
 from django.http.response import JsonResponse
+from sklearn.metrics.pairwise import cosine_similarity
+from constraint import *
+import random 
 
 import datetime
 
@@ -256,3 +259,210 @@ def catat_tinggi_berat(request):
         body_info.save()
 
     
+
+
+
+# food recommendations
+
+def show_best_results(df, scores_array, top_n=1):
+  sorted_indices = scores_array.argsort()[::-1]
+  for position, idx in enumerate(sorted_indices[:top_n]):
+    row = df.iloc[idx]
+    food_name = row["Name"]
+    score = scores_array[idx]
+    return food_name
+
+def query_food_name(query):
+    query_vectorized = settings.SEARCH_COUNT_VEC.transform([query])
+    scores = query_vectorized.dot(settings.SEARCH_MATRIX_VEC.transpose())
+    scores_array = scores.toarray()[0]
+    return show_best_results(settings.FOOD_DF, scores_array)
+
+
+
+
+def get_recommendations(food_name, cosine_sim=settings.FOOD_COSINE_SIM):
+    
+    matched_food_name = query_food_name(food_name)
+    idx = settings.INDICES[matched_food_name]
+    sim_scores = list(enumerate(cosine_sim[idx]))
+    sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
+    if len(sim_scores) > 49:
+        sim_scores = sim_scores[1:50]
+    else:
+        sim_scores =  sim_scores[1:len(sim_scores)]
+        
+    food_indices = [i[0] for i in sim_scores]
+
+    return settings.FOOD_DF.iloc[food_indices]
+
+
+def calorie_intake(w, h, a):
+    cal =  10*w + 6.25*h - 5*a +5
+    return cal
+
+
+
+def get_all_food_recommendations(my_favorite_food):
+    foods_recommendation = []
+    for myfood in my_favorite_food:
+        food_recommendations_from_cbf = get_recommendations(myfood)
+        food_recommendations_from_cbf = food_recommendations_from_cbf.to_dict('records')
+        for new_food in food_recommendations_from_cbf:
+            foods_recommendation.append(new_food)
+    return foods_recommendation
+    
+
+def filter_based_on_disease(breakfast, lunch, dinner, calorie_intake, disease, category):
+    """
+    https://journal.ipb.ac.id/index.php/jtep/article/view/52452/27802
+    """
+    
+    saturated_fat =   breakfast["SaturatedFatContent"] + lunch["SaturatedFatContent"] + dinner["SaturatedFatContent"]
+    fat =   breakfast["FatContent"] + lunch["FatContent"] + dinner["FatContent"]
+    mufa_pufa = fat - saturated_fat
+    
+    makanan_bervariasi = breakfast != lunch and lunch != dinner and breakfast  != dinner
+    match_category = breakfast["RecipeCategory"] == category["breakfast"] and lunch["RecipeCategory"] == category["lunch"] and dinner["RecipeCategory"] == category["dinner"]
+    
+    if disease == "diabetes":
+        max_fat = breakfast["FatContent"] + lunch["FatContent"] + dinner["FatContent"] < 0.25 * calorie_intake
+        max_protein = breakfast["ProteinContent"] + lunch["ProteinContent"] + dinner["ProteinContent"] < 0.15 * calorie_intake
+        max_carbo = breakfast["CarbohydrateContent"] + lunch["CarbohydrateContent"] + dinner["CarbohydrateContent"] < 0.60 * calorie_intake
+        max_sodium = breakfast["SodiumContent"] + lunch["SodiumContent"] + dinner["SodiumContent"] < 2000
+        max_cholesterol = breakfast["CholesterolContent"] + lunch["CholesterolContent"] + dinner["CholesterolContent"] < 200
+        max_saturated_fat = saturated_fat < 0.07 * calorie_intake
+        if len(category) != 0:
+            return max_fat and max_protein and max_carbo and max_sodium and max_cholesterol and max_saturated_fat  and makanan_bervariasi and match_category
+        else:
+            return max_fat and max_protein and max_carbo and max_sodium and max_cholesterol and max_saturated_fat  and makanan_bervariasi
+        
+    elif disease == "cardiovascular":
+        max_fat = breakfast["FatContent"] + lunch["FatContent"] + dinner["FatContent"] < 0.25 * calorie_intake
+        max_protein =  breakfast["ProteinContent"] + lunch["ProteinContent"] + dinner["ProteinContent"] < 0.15 * calorie_intake
+        max_carbo = breakfast["CarbohydrateContent"] + lunch["CarbohydrateContent"] + dinner["CarbohydrateContent"] < 0.60 * calorie_intake
+        max_sodium = breakfast["SodiumContent"] + lunch["SodiumContent"] + dinner["SodiumContent"] < 2000
+        max_cholesterol = breakfast["CholesterolContent"] + lunch["CholesterolContent"] + dinner["CholesterolContent"] < 200
+        max_saturated_fat = saturated_fat < 0.07 * calorie_intake
+        if len(category) != 0:
+            return max_fat and max_protein and max_carbo and max_sodium and max_cholesterol and max_saturated_fat and makanan_bervariasi and match_category
+        else:
+            return max_fat and max_protein and max_carbo and max_sodium and max_cholesterol and max_saturated_fat and makanan_bervariasi
+
+    elif disease == "hypertension":
+        max_fat =  breakfast["FatContent"] + lunch["FatContent"] + dinner["FatContent"] < 0.25 * calorie_intake
+        max_protein = breakfast["ProteinContent"] + lunch["ProteinContent"] + dinner["ProteinContent"] < 0.15 * calorie_intake
+        max_carbo = breakfast["CarbohydrateContent"] + lunch["CarbohydrateContent"] + dinner["CarbohydrateContent"]  < 0.60 * calorie_intake
+        max_sodium =  breakfast["SodiumContent"] + lunch["SodiumContent"] + dinner["SodiumContent"]< 1000
+        max_saturated_fat = saturated_fat < 0.07 * calorie_intake
+        if len(category) != 0:
+            return max_fat and max_protein and max_carbo and max_sodium and max_saturated_fat and makanan_bervariasi and match_category
+        else:
+            return max_fat and max_protein and max_carbo and max_sodium and max_saturated_fat and makanan_bervariasi
+ 
+    elif disease == "normal":
+        max_fat = breakfast["FatContent"] + lunch["FatContent"] + dinner["FatContent"] < 0.25 * calorie_intake
+        max_protein =  breakfast["ProteinContent"] + lunch["ProteinContent"] + dinner["ProteinContent"] < 0.15 * calorie_intake
+        max_carbo = breakfast["CarbohydrateContent"] + lunch["CarbohydrateContent"] + dinner["CarbohydrateContent"]  < 0.60 * calorie_intake
+        max_sodium = breakfast["SodiumContent"] + lunch["SodiumContent"] + dinner["SodiumContent"] < 2000
+        if category != "": 
+            return max_fat and max_protein and max_carbo and max_sodium and makanan_bervariasi  and match_category
+        else:
+            return max_fat and max_protein and max_carbo and max_sodium and makanan_bervariasi
+        
+
+
+def meal_plan(request):
+    """
+    
+    example request:
+    {
+        "my_favorite_food": ["salad", "steak", "fried chicken", "pizza"],
+        "meal_plan_category": {
+                "breakfast": "Vegetable",
+                "lunch": "Chicken",
+                "dinner": "Steak"
+            }
+    }
+    
+    list food category ada di notebook food_recommendation_system.ipynb
+    """
+    if request.method == "POST":
+        # user = request.user
+        # user_body_info = UserBodyInfo.objects.filter(custom_user=user).order_by('-check_time').values()
+        # print(user_body_info)
+        # my_calorie_daily_intake = calorie_intake(user_body_info[0].weight, user_body_info[0].height, user.age)
+
+        my_calorie_daily_intake = calorie_intake(80, 170, 22)
+        my_favorite_food = [request.POST.get("my_favorite_food_1"), request.POST.get("my_favorite_food_2"),
+                             request.POST.get("my_favorite_food_3"), request.POST.get("my_favorite_food_4"),
+                             request.POST.get("my_favorite_food_5")]
+        breakfast_category = request.POST.get("meal_plan_category_breakfast")
+        lunch_category = request.POST.get("meal_plan_category_lunch")
+        dinner_category = request.POST.get("meal_plan_category_dinner")
+
+        foods_recommendation =  get_all_food_recommendations(my_favorite_food=my_favorite_food)
+        random.shuffle(foods_recommendation)
+        problem = Problem()
+        problem.addVariable("breakfast", foods_recommendation
+            
+                        )
+
+        problem.addVariable( "lunch",  foods_recommendation
+                        )
+
+        problem.addVariable( "dinner",  foods_recommendation
+                        )
+        
+        
+
+        problem.addConstraint(lambda breakfast, lunch, dinner: filter_based_on_disease(breakfast, lunch, dinner, my_calorie_daily_intake, "normal", 
+                                                                              {"breakfast": breakfast_category, "lunch":  lunch_category, "dinner": dinner_category }
+                                                                              ),
+                       ("breakfast", "lunch", "dinner"))
+
+        meal_plan_recommendation = problem.getSolution()
+        res = {
+            "breakfast": {
+                "Name": meal_plan_recommendation["breakfast"]['Name'],
+                "RecipeCategory": meal_plan_recommendation["breakfast"]["RecipeCategory"],
+                "Calories": meal_plan_recommendation["breakfast"]["Calories"],
+                "FatContent": meal_plan_recommendation["breakfast"]["FatContent"],
+                "SaturatedFatContent": meal_plan_recommendation["breakfast"]["SaturatedFatContent"],
+                "CholesterolContent": meal_plan_recommendation["breakfast"]["CholesterolContent"],
+                "SodiumContent": meal_plan_recommendation["breakfast"]["SodiumContent"],
+                "CarbohydrateContent": meal_plan_recommendation["breakfast"]["CarbohydrateContent"],
+                "FiberContent": meal_plan_recommendation["breakfast"]["FiberContent"],
+                "ProteinContent": meal_plan_recommendation["breakfast"]["ProteinContent"],
+                "Ingredients": meal_plan_recommendation["breakfast"]["RecipeIngredientParts"]
+            },
+            "lunch": {
+                "Name": meal_plan_recommendation["lunch"]['Name'],
+                "RecipeCategory": meal_plan_recommendation["lunch"]["RecipeCategory"],
+                "Calories": meal_plan_recommendation["lunch"]["Calories"],
+                "FatContent": meal_plan_recommendation["lunch"]["FatContent"],
+                "SaturatedFatContent": meal_plan_recommendation["lunch"]["SaturatedFatContent"],
+                "CholesterolContent": meal_plan_recommendation["lunch"]["CholesterolContent"],
+                "SodiumContent": meal_plan_recommendation["lunch"]["SodiumContent"],
+                "CarbohydrateContent": meal_plan_recommendation["lunch"]["CarbohydrateContent"],
+                "FiberContent": meal_plan_recommendation["lunch"]["FiberContent"],
+                "ProteinContent": meal_plan_recommendation["lunch"]["ProteinContent"],
+                "Ingredients": meal_plan_recommendation["lunch"]["RecipeIngredientParts"]
+            },
+            "dinner": {
+                "Name": meal_plan_recommendation["dinner"]['Name'],
+                "RecipeCategory": meal_plan_recommendation["dinner"]["RecipeCategory"],
+                "Calories": meal_plan_recommendation["dinner"]["Calories"],
+                "FatContent": meal_plan_recommendation["dinner"]["FatContent"],
+                "SaturatedFatContent": meal_plan_recommendation["dinner"]["SaturatedFatContent"],
+                "CholesterolContent": meal_plan_recommendation["dinner"]["CholesterolContent"],
+                "SodiumContent": meal_plan_recommendation["dinner"]["SodiumContent"],
+                "CarbohydrateContent": meal_plan_recommendation["dinner"]["CarbohydrateContent"],
+                "FiberContent": meal_plan_recommendation["dinner"]["FiberContent"],
+                "ProteinContent": meal_plan_recommendation["dinner"]["ProteinContent"],
+                "Ingredients": meal_plan_recommendation["dinner"]["RecipeIngredientParts"]
+            },
+        }
+        return JsonResponse(data=res)
+    else:
+        return render(request, 'meal_plan.html', {'food_categories': settings.FOOD_CATEGORIES})

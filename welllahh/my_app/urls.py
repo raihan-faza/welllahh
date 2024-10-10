@@ -23,7 +23,8 @@ from . import views
 app_name = "my_app"
 
 urlpatterns = [
-    path("inference/indofood_image", views.inference_indofood_image, name="home"),
+    path("ai/food_nutrition/", views.inference_indofood_image, name="food_nutrition"),
+    path("meal_plan/", views.meal_plan, name="meal_plan"),
     # path("admin/", admin.site.urls),
     path("register", views.register_user, name="register_known_user"),
     path(
