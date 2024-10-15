@@ -23,6 +23,9 @@ import random
 
 import datetime
 
+def landing_page(request):
+    return render(request, "welllahh_landing_page.html")
+
 def register_user(request):
     if request.method == "POST":
         username = request.POST.get("username")
@@ -416,7 +419,7 @@ def meal_plan(request):
         
         
 
-        problem.addConstraint(lambda breakfast, lunch, dinner: filter_based_on_disease(breakfast, lunch, dinner, my_calorie_daily_intake, "normal", 
+        problem.addConstraint(lambda breakfast, lunch, dinner: filter_based_on_disease(breakfast, lunch, dinner, my_calorie_daily_intake, "diabetes", 
                                                                               {"breakfast": breakfast_category, "lunch":  lunch_category, "dinner": dinner_category }
                                                                               ),
                        ("breakfast", "lunch", "dinner"))
