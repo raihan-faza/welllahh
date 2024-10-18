@@ -23,7 +23,7 @@ from . import views
 app_name = "my_app"
 
 urlpatterns = [
-    path('', views.landing_page, name="home"),
+    path("", views.landing_page, name="home"),
     path("ai/food_nutrition/", views.inference_indofood_image, name="food_nutrition"),
     path("meal_plan/", views.meal_plan, name="meal_plan"),
     # path("admin/", admin.site.urls),
@@ -34,9 +34,15 @@ urlpatterns = [
         name="register_anonymous_user",
     ),
     path("health_check/bmi", views.get_bmi_condition, name="get_bmi_condition"),
-    path("health_check/nutrition", views.get_health_condition_based_on_nutrition_val, name="get_health_condition_based_on_nutrition_val"),
+    path(
+        "health_check/nutrition",
+        views.get_health_condition_based_on_nutrition_val,
+        name="get_health_condition_based_on_nutrition_val",
+    ),
     path("health_progress/nutrition", views.catat_nutrisi, name="catat_nutrisi"),
-    path("health_progress/bmi", views.catat_tinggi_berat, name="catat_tinggi_berat")
+    path("health_progress/bmi", views.catat_tinggi_berat, name="catat_tinggi_berat"),
+    path("login", views.normal_login, name="normal_login"),
+    path("anonymous_login", views.login_using_passphrase, name="anonymous_login"),
 ]
 
 
