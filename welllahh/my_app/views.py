@@ -18,9 +18,9 @@ from keras.preprocessing.image import img_to_array, load_img
 from PIL import Image
 from sklearn.metrics.pairwise import cosine_similarity
 from tensorflow.python.keras.backend import set_session
-
+import json
 from .models import *
-
+from .medical_ai_chatbot import SimplifiedBaleen
 
 def landing_page(request):
     return render(request, "welllahh_landing_page.html")
@@ -663,3 +663,22 @@ def meal_plan(request):
         return render(
             request, "meal_plan.html", {"food_categories": settings.FOOD_CATEGORIES}
         )
+
+
+## AI Chatbot
+chatbot = SimplifiedBaleen()
+def get_chatbot_response(request):
+    if request.method == "POST":
+        body_unicode = request.body.decode('utf-8')
+        body= json.loads(body_unicode)
+        question = body['question']
+        chatbot_resp = chatbot(question)
+        return   JsonResponse(
+            {
+                "chatbot_message": chatbot_resp['answer']
+            }
+        )
+     
+def chatbot_page(request):
+    return render(request, "chatbot.html")
+    

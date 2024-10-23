@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welllahh llama 3.2</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            height: 100vh;
+        }
+
+        h1 {
+            margin-bottom: 50px;
+        }
+
+        pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            display: inline;
+            max-width: 50%;
+        }
+    </style>
+</head>
+<body>
+    <form>
+        <textarea id="input" placeholder="Enter your message" cols="50"></textarea>
+        <button type="submit">Send</button>
+    </form>
+    <pre id="body"></pre>
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        const csrftoken = getCookie('csrftoken'); // Ambil token CSRF dari cookie
+
+
+
+        const body = document.getElementById('body');
+        const submit_btn = document.querySelector('button');
+        const input = document.getElementById('input');
+
+        submit_btn.addEventListener("click", async (e) => {
+            e.preventDefault();
+
+            const response = await fetch("/my_app/ai/chatbot", {
+                method: "POST",
+                headers: {"Content-Type": "application/json",
+                "X-CSRFToken": csrftoken
+                },
+                body: JSON.stringify({question: input.value})
+            });
+
+            const reader = response.body.getReader();
+            let output = "";
+
+            while (true) {
+                const { done, value } = await reader.read();
+                output += new TextDecoder().decode(value);
+                body.innerHTML = marked.parse(output);
+
+                if (done) {
+                    return;
+                }
+            }
+
+        })
+    </script>
+</body>
+</html>

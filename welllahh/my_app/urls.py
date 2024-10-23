@@ -43,6 +43,8 @@ urlpatterns = [
     path("health_progress/bmi", views.catat_tinggi_berat, name="catat_tinggi_berat"),
     path("login", views.normal_login, name="normal_login"),
     path("anonymous_login", views.login_using_passphrase, name="anonymous_login"),
+    path("ai/chatbot", views.get_chatbot_response, name="chatbot"),
+    path("ai/chatbotpage", views.chatbot_page, name="chatbot"),
 ]
 
 
