@@ -130,10 +130,19 @@ def inference_indofood_image(request):
 
         nutritions = GetFoodNutrition(res[1])
         return render(
-            request, "index.html", {"predictions": res, "nutritions": nutritions}
+            request,"food_nutrition.html", {"predictions": res, "nutritions": nutritions}
         )
+    
     else:
-        return render(request, "index.html")
+        return render(request, "food_nutrition.html", {   
+                        "name": "Unknown",
+                        "nutritions": {
+                                "calories":0,
+                                "fat":0,
+                                "carbohydrate":0,
+                                "proteins":0
+                        }
+                       })
 
 
 def generate_random_string(length=12):
@@ -681,4 +690,5 @@ def get_chatbot_response(request):
      
 def chatbot_page(request):
     return render(request, "chatbot.html")
-    
+
+

@@ -41,3 +41,5 @@ sentence-transformers==2.2.2
 huggingface_hub==0.24.7
 xmltodict
 metapub
+
+django-mathfilters
