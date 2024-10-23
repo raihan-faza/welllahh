@@ -1,0 +1,124 @@
+{% extends "base.html" %} {%load static%} {% block content %} {%load mathfilters%}
+<div class="container">
+    <div class="row justify-content-center">
+
+        <!-- upload image  START-->
+
+        <div class="col-md-auto mb-5">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="container-img-upload ">
+                    <div class="wrapper-img-upload">
+                        <div class="image">
+                            <img src="" alt="">
+                        </div>
+                        <div class="content">
+                            <div class="icon">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                            </div>
+                            <div class="text">
+                                No file chosen, yet!
+                            </div>
+                        </div>
+
+                        <div id="cancel-btn">
+                            <i class="fas fa-times"></i>
+                        </div>
+                        <div class="file-name">
+                            File name here
+                        </div>
+
+
+                    </div>
+                    <input id="default-btn" type="file" name="imageFile" hidden>
+
+                    <button type="button" onclick="defaultBtnActive()" id="custom-btn">Choose a file</button>
+
+                    <input type="submit" id="image-submit" name="submit" value="Upload" />
+                </div>
+            </form>
+        </div>
+        <!-- upload image  END -->
+
+
+
+
+        <div class="col-md-8 text-center mt-5">
+            <h1 class="mt-10"> {{predictions.1 | capfirst}} mengandung <strong> {{nutritions.calories}} Calories</strong>
+            </h1>
+
+            {%if nutritions.calories > 2000 %}
+            <div class="alert alert-danger d-flex align-items-center mt-3" role="alert">
+                <div>
+                    Makanan ini mengandung calories terlalu tinggi. Konsumsi kalori berlebihan bisa menyebabkan obesitas dan diabetes!
+                </div>
+            </div>
+            {%endif%}
+        </div>
+
+
+        <div class="row justify-content-center mt-5 mb-5">
+            <div class="col-md-10 caloriescont shadow rounded">
+                <div class="row">
+
+                    <div class="col-md-6">
+                        <h2 class="mt-3 mb-4">Kandungan Nutrisi </h2><span></span>
+                        <ul>
+                            <li class="servingsize">Serving Size per 100/Grams <span class="float-end"></span></li>
+                            <li>Carbohydrates: <span class="float-end">{{nutritions.carbohydrate}}</span></li>
+                            <li>Total Fat: <span class="float-end">{{nutritions.fat}}</span></li>
+                            <li>Protein: <span class="float-end">{{nutritions.proteins}}<span></li>
+                        </ul>
+                    </div>
+
+                    <div class="col-md-6 mb-5">
+                        <h4 class="mt-3 mb-4">Untuk membakar {{nutritions.calories}} calories anda harus</h4>
+                        <div class="d-flex align-items-center mb-5">
+                            <div class="flex-shrink-0">
+                                <!-- "{% static 'img/doctor-bg.png' %}" -->
+                                <img src="{% static  'img/running.png' %}" alt="...">
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h5> Jogging </h5>
+                                <p>anda harus jogging selama <strong> {{nutritions.calories | div:378|mul:60|floatformat:0}} </strong> Menit</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-5">
+                            <div class="flex-shrink-0">
+                                <img src="{% static  'img/yoga.png' %}" alt="...">
+                            </div>
+                            <div class="flex-grow-1 ms-4">
+                                <h5> Power Yoga </h5>
+                                <p>anda harus melakukan Yoga selama <strong> {{nutritions.calories | div:223|mul:60|floatformat:0}} </strong> Menit</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-5">
+                            <div class="flex-shrink-0">
+                                <img src="{% static  'img/weightlifter.png' %}" alt="...">
+                            </div>
+                            <div class="flex-grow-1 ms-4">
+                                <h5> Gym Workout </h5>
+                                <p>anda harus mengangkat beban selama <strong> {{nutritions.calories | div:483|mul:60|floatformat:0}} </strong> Menit </p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0">
+                                <img src="{% static  'img/walking.png' %}" alt="...">
+                            </div>
+                            <div class="flex-grow-1 ms-1">
+                                <h5> Jalan Cepat</h5>
+                                <p>anda harus Jalan Cepat selama <strong> {{nutritions.calories | div:294|mul:60|floatformat:0}}  </strong> Menit</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block script%}
+<script src="{% static 'js/img-upload.js' %}"></script>
+{% endblock script%}

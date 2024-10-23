@@ -42,9 +42,11 @@ if os.path.exists("./recipes_sedikit.csv") == False:
     urllib.request.urlretrieve(url, path)
     print("download complete!")
 
-# INDOFOOD_IMAGE_MODEL = tf.keras.models.load_model("best_model_86.keras")
+print("loading food image classification model....")
+INDOFOOD_IMAGE_MODEL = tf.keras.models.load_model("best_model_86.keras")
+print("selesai food image classification model....")
 
-# INDOFOOD_IMAGE_MODEL =  joblib.load("model.pkl")
+
 with open("recommendation_cosine_sim.pkl", "rb") as file:
     FOOD_COSINE_SIM = pickle.load(file)
 with open("search_count_vec.pkl", "rb") as file:
@@ -276,6 +278,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "my_app",
+    'mathfilters'
 ]
 
 MIDDLEWARE = [
