@@ -31,6 +31,10 @@ AI-notebooks/rag/corpus/
 AI-notebooks/rag/corpus.zip
 welllahh_chroma.zip
 
+med-dataset/
 
 
+
+AI-notebooks/rag/*.csv
+AI-notebooks/rag/*.json
 

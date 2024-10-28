@@ -16,7 +16,6 @@ from metapub import PubMedFetcher
 import google.generativeai as genai
 
 
-
 # jelek context yang dihasilin pubmed langchain
 
 load_dotenv()
@@ -47,14 +46,14 @@ class GeminiLM(dspy.LM):
 
     def __call__(self, prompt=None, messages=None, **kwargs):
         # Custom chat model working for text completion model
-        prompt = '\n\n'.join([x['content'] for x in messages] + ['BEGIN RESPONSE:'])
+        prompt = "\n\n".join([x["content"] for x in messages] + ["BEGIN RESPONSE:"])
 
         completions = self.model.generate_content(prompt)
         self.history.append({"prompt": prompt, "completions": completions})
 
         # Must return a list of strings
         return [completions.candidates[0].content.parts[0].text]
-    
+
    
 
 vector_store = Chroma(
@@ -98,10 +97,19 @@ retriever_model = ChromadbRM(
 )
 
 # yang udah ku finetune pake dataset https://huggingface.co/datasets/lintangbs/medical-qa-id-good
-# t
 # llm = GeminiLM(model='tunedModels/geminimedicalqaindobatch4lrm05-qwlfewbdx', temperature=0)
 
-llm = dspy.LM(model='gemini/gemini-1.5-flash', temperature=0)
+llm = GeminiLM(model="tunedModels/gemini-welllahh-zerotemp-lrfv-3536", temperature=0) # buat jawab pertanyaan medis
+
+
+translate_model = genai.GenerativeModel('gemini-1.0-pro') # buat translate
+
+def translate_text(text, language):
+    text = text + f"; translate to {language}"
+    return translate_model.generate_content(text).candidates[0].content.parts[0].text
+
+# llm = dspy.LM(model='gemini/gemini-1.5-flash', temperature=0)
+
 
 dspy.settings.configure(lm=llm, rm=retriever_model)
 
@@ -113,7 +121,7 @@ class GenerateAnswer(dspy.Signature):
     context = dspy.InputField(desc="may contain relevant facts")
     question = dspy.InputField()
    
-    answer = dspy.OutputField(desc="If it is not in context, answer according to your knowledge. Also if the answer is not in the context, add text from the context that is relevant to the query. Explain your answer in detail. don't say 'The given text doesn't mention ")
+    answer = dspy.OutputField(desc="If it is not in context, answer according to your knowledge. Also if the answer is not in the context, add text from the context that is relevant to the query. Explain your answer in detail. don't say 'the text doesn't mention...' in your answer ")
     # answer = dspy.OutputField()
 
 class GenerateSearchQuery(dspy.Signature):
@@ -137,7 +145,8 @@ class SimplifiedBaleen(dspy.Module):
         self.max_hops = max_hops
     
     def forward(self, question):
-        question = qa(question=question+ "; translate to English (make sure to only translate the text and do not answer questions)").response
+        question = translate_text(question, "English")
+        # question = qa(question=question+ "; translate to English (make sure to only translate the text and do not answer questions)").response
         context = []
         
         for hop in range(self.max_hops):
@@ -152,9 +161,4 @@ class SimplifiedBaleen(dspy.Module):
         return dspy.Prediction(context=context, answer=translate_answer)
 
 
-# my_question = "Apa gejala-gejala Diabetes mellitus? dan bagaimana cara mengobatinya?"
 
-# uncompiled_baleen = SimplifiedBaleen()  # uncompiled (i.e., zero-shot) program
-# pred = uncompiled_baleen(my_question)
-
-# print(pred['answer'])

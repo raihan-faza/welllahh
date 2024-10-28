@@ -1,30 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meal Plan Form</title>
-<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 
-   <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-   <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 </head>
+
 <body>
     <div class="form-container">
         <h2>Rekomendasi Meal Plan</h2>
-        <form method="POST" >
+        <form method="POST">
             {% csrf_token %}
-            
+
             <div class="form-group">
                 <label for="favorite_food">My 5 Favorite Food (in english):</label>
-                <input type="text" name="my_favorite_food_1" id="favorite_food" placeholder="e.g. Salad, Steak, Fried Chicken" required>
-                <input type="text" name="my_favorite_food_2" id="favorite_food" placeholder="e.g. Salad, Steak, Fried Chicken" required>
-                <input type="text" name="my_favorite_food_3" id="favorite_food" placeholder="e.g. Salad, Steak, Fried Chicken" required>
-                <input type="text" name="my_favorite_food_4" id="favorite_food" placeholder="e.g. Salad, Steak, Fried Chicken" required>
-                <input type="text" name="my_favorite_food_5" id="favorite_food" placeholder="e.g. Salad, Steak, Fried Chicken" required>
+                <!-- food_names -->
+
+                <select name="my_favorite_food_1" id="my_favorite_food_1" class="searchable-select-food">
+                    
+                    {% for food_name in food_names %}
+                        <option value="{{ food_name }}">{{ food_name }}</option>
+                    {% endfor %}
+                </select>
+
+                <select name="my_favorite_food_2" id="my_favorite_food_2" class="searchable-select-food">
+                    
+                    {% for food_name in food_names %}
+                        <option value="{{ food_name }}">{{ food_name }}</option>
+                    {% endfor %}
+                </select>
+
+                <select name="my_favorite_food_3" id="my_favorite_food_3" class="searchable-select-food">
+                    
+                    {% for food_name in food_names %}
+                        <option value="{{ food_name }}">{{ food_name }}</option>
+                    {% endfor %}
+                </select>
+
+                <select name="my_favorite_food_4" id="my_favorite_food_4" class="searchable-select-food">
+                    
+                    {% for food_name in food_names %}
+                        <option value="{{ food_name }}">{{ food_name }}</option>
+                    {% endfor %}
+                </select>
+
+
+                <select name="my_favorite_food_5" id="my_favorite_food_5" class="searchable-select-food">
+                    
+                    {% for food_name in food_names %}
+                        <option value="{{ food_name }}">{{ food_name }}</option>
+                    {% endfor %}
+                </select>
+
+
             </div>
-            
+
             <div class="form-group">
                 <label for="meal_plan_category_breakfast">Breakfast Category:</label>
                 <select name="meal_plan_category_breakfast" id="meal_plan_category_breakfast" class="searchable-select">
@@ -33,7 +69,7 @@
                     {% endfor %}
                 </select>
             </div>
-            
+
             <div class="form-group">
                 <label for="meal_plan_category_lunch">Lunch Category:</label>
                 <select name="meal_plan_category_lunch" id="meal_plan_category_lunch" class="searchable-select">
@@ -57,14 +93,20 @@
     </div>
 
 
-    
+
     <script>
-      
         $('.searchable-select').select2({
             placeholder: 'Select food category',
             allowClear: true
         });
-      
+
+        
+
+        $('.searchable-select-food').select2({
+            placeholder: 'Select food name',
+            allowClear: true
+        });
     </script>
 </body>
+
 </html>

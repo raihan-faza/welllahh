@@ -23,6 +23,7 @@ joblib
 pillow==10.4.0
 scikit-learn
 python-constraint
+
 dspy
 google-generativeai
 dspy-ai
@@ -43,3 +44,6 @@ xmltodict
 metapub
 
 django-mathfilters
+gdown
+
+

@@ -22,6 +22,7 @@ import json
 from .models import *
 from .medical_ai_chatbot import SimplifiedBaleen
 
+
 def landing_page(request):
     return render(request, "welllahh_landing_page.html")
 
@@ -130,19 +131,25 @@ def inference_indofood_image(request):
 
         nutritions = GetFoodNutrition(res[1])
         return render(
-            request,"food_nutrition.html", {"predictions": res, "nutritions": nutritions}
+            request,
+            "food_nutrition.html",
+            {"predictions": res, "nutritions": nutritions},
         )
-    
+
     else:
-        return render(request, "food_nutrition.html", {   
-                        "name": "Unknown",
-                        "nutritions": {
-                                "calories":0,
-                                "fat":0,
-                                "carbohydrate":0,
-                                "proteins":0
-                        }
-                       })
+        return render(
+            request,
+            "food_nutrition.html",
+            {
+                "name": "Unknown",
+                "nutritions": {
+                    "calories": 0,
+                    "fat": 0,
+                    "carbohydrate": 0,
+                    "proteins": 0,
+                },
+            },
+        )
 
 
 def generate_random_string(length=12):
@@ -296,8 +303,8 @@ def query_food_name(query):
 
 
 def get_recommendations(food_name, cosine_sim=settings.FOOD_COSINE_SIM):
-    matched_food_name = query_food_name(food_name)
-    idx = settings.INDICES[matched_food_name]
+    # matched_food_name = query_food_name(food_name)
+    idx = settings.INDICES[food_name]
     sim_scores = list(enumerate(cosine_sim[idx]))
     sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
     if len(sim_scores) > 49:
@@ -670,25 +677,27 @@ def meal_plan(request):
         return JsonResponse(data=res)
     else:
         return render(
-            request, "meal_plan.html", {"food_categories": settings.FOOD_CATEGORIES}
+            request,
+            "meal_plan.html",
+            {
+                "food_categories": settings.FOOD_CATEGORIES,
+                "food_names": settings.FOOD_NAME,
+            },
         )
 
 
 ## AI Chatbot
 chatbot = SimplifiedBaleen()
+
+
 def get_chatbot_response(request):
     if request.method == "POST":
-        body_unicode = request.body.decode('utf-8')
-        body= json.loads(body_unicode)
-        question = body['question']
+        body_unicode = request.body.decode("utf-8")
+        body = json.loads(body_unicode)
+        question = body["question"]
         chatbot_resp = chatbot(question)
-        return   JsonResponse(
-            {
-                "chatbot_message": chatbot_resp['answer']
-            }
-        )
-     
+        return JsonResponse({"chatbot_message": chatbot_resp["answer"]})
+
+
 def chatbot_page(request):
     return render(request, "chatbot.html")
-
-
