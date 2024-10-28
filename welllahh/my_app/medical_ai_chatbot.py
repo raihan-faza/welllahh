@@ -121,7 +121,7 @@ class GenerateAnswer(dspy.Signature):
     context = dspy.InputField(desc="may contain relevant facts")
     question = dspy.InputField()
    
-    answer = dspy.OutputField(desc="If it is not in context, answer according to your knowledge. Also if the answer is not in the context, add text from the context that is relevant to the query. Explain your answer in detail. don't say 'the text doesn't mention...' in your answer ")
+    answer = dspy.OutputField(desc="If it is not in context, answer according to your knowledge. Also if the answer is not in the context, add text from the context and from your knowledge that is relevant to the query. Explain your answer in detail. don't say 'the text doesn't mention...' in your answer ")
     # answer = dspy.OutputField()
 
 class GenerateSearchQuery(dspy.Signature):
@@ -155,7 +155,11 @@ class SimplifiedBaleen(dspy.Module):
             context = deduplicate(context + passages)
 
         pred = self.generate_answer(context=context, question=question)
-        translate_answer = qa(question=pred.answer+ "; translate to Indonesian").response
+        if pred.answer == "":
+            pred.answer += pred.reasoning # pake reasoning/cot llmnya kalau llm gak bisa jawab pertanyaan pengguna
+        # kalau pas generate_asnwer error berarti kena rate limit, tunggu 1 menit lagi baru coba lagi
+        translate_answer = translate_text(pred.answer, "Indonesian")
+        # translate_answer = qa(question=pred.answer+ "; translate to Indonesian").response
 
         # return dspy.Prediction(context=context, answer=pred.answer)
         return dspy.Prediction(context=context, answer=translate_answer)
