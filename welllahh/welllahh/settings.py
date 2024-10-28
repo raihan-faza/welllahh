@@ -21,6 +21,30 @@ import numpy as np
 import pandas as pd
 import tensorflow as tf
 from PIL import Image
+import gdown
+import zipfile
+
+
+file_id = "1S0nxpfC4ifrktLpoetCrNmTyTVSydsqM"
+output_path = "welllahh_chroma.zip"
+
+if not os.path.isfile(output_path):
+    gdown.download(
+        f"https://drive.google.com/uc?id={file_id}", output_path, quiet=False
+    )
+
+    print("Download completed.")
+else:
+    print("File already exists in the project root.")
+
+
+if not os.path.isdir("chroma_langchain_db2"):
+    print("Extract backup chromadb...")
+    with zipfile.ZipFile(output_path, "r") as zip_ref:
+        zip_ref.extractall()
+    print("Extraction completed.")
+
+
 
 # https://drive.google.com/file/d/1j6LH7JusFs2TMljP05mBZvECeHIxbrYk/view?usp=sharing
 # https://drive.google.com/file/d/11KVVZHT3cSDXeu7yPR7dGJ2NBm0IqsFX/view?usp=sharing
@@ -42,9 +66,9 @@ if os.path.exists("./recipes_sedikit.csv") == False:
     urllib.request.urlretrieve(url, path)
     print("download complete!")
 
-print("loading food image classification model....")
-INDOFOOD_IMAGE_MODEL = tf.keras.models.load_model("best_model_86.keras")
-print("selesai food image classification model....")
+# print("loading food image classification model....")
+# INDOFOOD_IMAGE_MODEL = tf.keras.models.load_model("best_model_86.keras")
+# print("selesai food image classification model....")
 
 
 with open("recommendation_cosine_sim.pkl", "rb") as file:
@@ -243,7 +267,9 @@ FOOD_CATEGORIES = [
 
 FOOD_DF = pd.read_csv(path2)
 
+
 INDICES = pd.Series(FOOD_DF.index, index=FOOD_DF["Name"])
+FOOD_NAME = FOOD_DF['Name'].tolist()
 
 INDOFOOD_NUTRITIONS_DF = pd.read_csv("indofood_with_its_nutritions.csv")
 

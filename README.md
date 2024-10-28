@@ -9,7 +9,8 @@ https://drive.google.com/file/d/1N3rkjM9C_hbyiLzKmwdTzxYYHwYS-RDW/view?usp=shari
 - Food Recommendation System:
 https://drive.google.com/uc?export=download&id=1US8wd4AsafsVGDl-HWcD0AzqTm-l-FTK
 - Backup Vector Database (ChromaDB), yang udah di index pake teks: https://huggingface.co/datasets/MedRAG/textbooks, sebagian https://huggingface.co/datasets/MedRAG/pubmed 
-https://drive.google.com/file/d/1VhGX4qmC68eCkOzlHtt82GfsQxCFEF0Y/view?usp=sharing
+https://drive.google.com/file/d/1S0nxpfC4ifrktLpoetCrNmTyTVSydsqM/view?usp=sharing
+
 ```
 
 ### Note
