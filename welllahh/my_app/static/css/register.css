@@ -5,13 +5,16 @@
   box-sizing: border-box;
   font-family: "Poppins", sans-serif;
 }
+button {
+  color: ;
+}
 body {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
-  background: #fb923c;
+  background: #ffffff;
 }
 .container {
   position: relative;
@@ -105,7 +108,7 @@ body {
   border: none;
   cursor: pointer;
   transition: all 0.2s ease;
-  background: rgb(130, 106, 251);
+  background: #fb923c;
 }
 .form button:hover {
   background: rgb(88, 56, 250);

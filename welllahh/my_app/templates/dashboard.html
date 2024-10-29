@@ -23,41 +23,43 @@
             <li>
               <a href="#" class="logo">
                 <img src="./pic/logo.jpg" />
-                <span class="nav-item">Admin</span>
+                <span class="nav-item">{{user.username}}</span>
               </a>
             </li>
             <li>
               <a href="#">
-                <i class="fas fa-menorah"></i>
-                <span class="nav-item">Dashboard</span>
+                <i class="fas fa-camera"></i>
+                <span class="nav-item">Food Using Image</span>
               </a>
             </li>
             <li>
               <a href="#">
                 <i class="fas fa-comment"></i>
-                <span class="nav-item">Message</span>
+                <span class="nav-item">Chatbot</span>
               </a>
             </li>
             <li>
               <a href="#">
                 <i class="fas fa-database"></i>
-                <span class="nav-item">Report</span>
+                <span class="nav-item">Riwayat Penyakit</span>
               </a>
             </li>
             <li>
               <a href="#">
-                <i class="fas fa-chart-bar"></i>
-                <span class="nav-item">Attendance</span>
+                <i class="fas fa-plus"></i>
+                <span class="nav-item">Add Nutrition</span>
               </a>
             </li>
+            <!--
             <li>
               <a href="#">
                 <i class="fas fa-cog"></i>
                 <span class="nav-item">Setting</span>
               </a>
             </li>
+            -->
             <li>
-              <a href="#" class="logout">
+              <a href="{% url 'my_app:logout'%}" class="logout">
                 <i class="fas fa-sign-out-alt"></i>
                 <span class="nav-item">Log out</span>
               </a>
@@ -94,21 +96,21 @@
 
               <div class="summary-calories">
                 <h2 class="calorie">Calories</h2>
-                <p class="calorie" id="total-today-calories">0</p>
+                <p class="calorie" id="total-today-calories">{{today_calory}}</p>
               </div>
 
               <div class="summary-details">
                 <div class="detes">
                   <h5 class="carbs">Carbs</h5>
-                  <p class="carbs" id="total-today-carbs">0</p>
+                  <p class="carbs" id="total-today-carbs">{{today_carbs}}</p>
                 </div>
                 <div class="detes">
                   <h5 class="fat">Fat</h5>
-                  <p class="fat" id="total-today-fat">0</p>
+                  <p class="fat" id="total-today-fat">{{today_fat}}</p>
                 </div>
                 <div class="detes">
                   <h5 class="protein">Protein</h5>
-                  <p class="protein" id="total-today-protein">0</p>
+                  <p class="protein" id="total-today-protein">{{today_protein}}</p>
                 </div>
               </div>
             </div>
@@ -118,21 +120,21 @@
 
               <div class="summary-calories">
                 <h2 class="calorie">Calories</h2>
-                <p class="calorie" id="total-week-calories">0</p>
+                <p class="calorie" id="total-week-calories">{{weekly_calory}}</p>
               </div>
 
               <div class="summary-details">
                 <div class="detes">
                   <h5 class="carbs">Carbs</h5>
-                  <p class="carbs" id="total-week-carbs">0</p>
+                  <p class="carbs" id="total-week-carbs">{{weekly_carbs}}</p>
                 </div>
                 <div class="detes">
                   <h5 class="fat">Fat</h5>
-                  <p class="fat" id="total-week-fat">0</p>
+                  <p class="fat" id="total-week-fat">{{weekly_fat}}</p>
                 </div>
                 <div class="detes">
                   <h5 class="protein">Protein</h5>
-                  <p class="protein" id="total-week-protein">0</p>
+                  <p class="protein" id="total-week-protein">{{weekly_protein}}</p>
                 </div>
               </div>
             </div>
@@ -143,7 +145,6 @@
               <table class="table">
                 <thead>
                   <tr>
-                    <th>ID</th>
                     <th>Date</th>
                     <th>Food</th>
                     <th>Calorie</th>
@@ -154,16 +155,18 @@
                   </tr>
                 </thead>
                 <tbody>
+                  {% for food in today_foods %}
                   <tr>
-                    <td>01</td>
-                    <td>03-24-22</td>
-                    <td>Nasi Goreng</td>
-                    <td class="calorie">100</td>
-                    <td class="carbs">10g</td>
-                    <td class="fat">20g</td>
-                    <td class="protein">30g</td>
-                    <td><button>Remove</button></td>
+                    <td>{{food.check_time}}</td>
+                    <td>{{food.nutrition_name}}</td>
+                    <td class="calorie">{{food.calorie}}</td>
+                    <td class="carbs">{{food.carbs}}</td>
+                    <td class="fat">{{food.fat}}</td>
+                    <td class="protein">{{food.protein}}</td>
+                    <td><form action="{% url 'my_app:delete_nutrition' food.id %}" method="post" style="display:inline;">{% csrf_token %}<button type="submit">Remove</button></form></td>
                   </tr>
+                  {% endfor %}
+                  <!--
                   <tr class="active">
                     <td>01</td>
                     <td>03-24-22</td>
@@ -194,7 +197,7 @@
                     <td class="protein">30g</td>
                     <td><button>Remove</button></td>
                   </tr>
-
+                  -->
                   <!--
                   <tr class="active">
                     <td>02</td>

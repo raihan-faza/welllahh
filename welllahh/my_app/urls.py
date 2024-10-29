@@ -14,6 +14,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path
@@ -45,6 +46,9 @@ urlpatterns = [
     path("anonymous_login", views.login_using_passphrase, name="anonymous_login"),
     path("ai/chatbot", views.get_chatbot_response, name="chatbot"),
     path("ai/chatbotpage", views.chatbot_page, name="chatbot"),
+    path("dashboard", views.dashboard, name="dashboard"),
+    path("delete_nutrition/<uuid:pk>", views.delete_nutrition, name="delete_nutrition"),
+    path("logout", views.logout_view, name="logout"),
 ]
 
 

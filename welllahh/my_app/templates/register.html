@@ -12,7 +12,8 @@
       <header>
         Register Account
       </header>
-      <form class="form">
+      <form class="form" method="post">
+        {% csrf_token %}
         <div class="input-box">
           <label>Username</label>
           <input type="text" name="username" placeholder="type your username">
@@ -27,9 +28,9 @@
         </div>
         <div class="input-box">
           <label>Age</label>
-          <input type="number" name="age" placeholder="umurku berapa ya...">
+          <input type="number" name="age" placeholder="enter your age">
         </div>
-        <button>Submit</button>
+        <button type="submit">Submit</button>
       </form>
     </section>
   </body>
