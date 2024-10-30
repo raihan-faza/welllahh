@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Welllah Add Food</title>
+    {% load static %}
+    <link href="{% static 'css/register.css' %}" rel="stylesheet">
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet">
+ </head>
+  <body>
+   <section class="container">
+      <header>
+        Add Food
+      </header>
+     <form class="form" method="post">
+        {% csrf_token %}
+        <div class="input-box">
+          <label>Food Name</label>
+          <input type="text" name="nutrition_name" placeholder="ayam goyeng">
+        </div>
+        <div class="input-box">
+          <label>Calorie</label>
+          <input type="number" name="calorie" placeholder="1000">
+        </div>
+        <div class="input-box">
+          <label>Protein</label>
+          <input type="number" name="protein" placeholder="500">
+        </div>
+        <div class="input-box">
+          <label>Carbs</label>
+          <input type="number" name="carbs" placeholder="800">
+        </div>
+        <div class="input-box">
+          <label>Fat</label>
+          <input type="number" name="fat" placeholder="800">
+        </div>
+        <div style="display:flex;flex-direction:row;gap:15px;padding:10px;"><button type="submit">Submit</button><button type="submit" name="redirect" value="true">Submit and Go to Dashboard</button></div>
+        
+      </form>
+    </section>
+  </body>
+</html>

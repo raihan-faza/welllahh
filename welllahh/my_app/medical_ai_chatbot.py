@@ -21,16 +21,14 @@ import google.generativeai as genai
 load_dotenv()
 
 
-os.environ['GEMINI_API_KEY'] = os.getenv('GEMINI_API_KEY')
+os.environ["GEMINI_API_KEY"] = os.getenv("GEMINI_API_KEY")
 
 
 model_name = "hkunlp/instructor-xl"
-model_kwargs = {'device': 'cpu'}
-encode_kwargs = {'normalize_embeddings': True}
+model_kwargs = {"device": "cpu"}
+encode_kwargs = {"normalize_embeddings": True}
 instructor_embeddings = HuggingFaceInstructEmbeddings(
-    model_name=model_name,
-    model_kwargs=model_kwargs,
-    encode_kwargs=encode_kwargs
+    model_name=model_name, model_kwargs=model_kwargs, encode_kwargs=encode_kwargs
 )
 
 
@@ -54,7 +52,6 @@ class GeminiLM(dspy.LM):
         # Must return a list of strings
         return [completions.candidates[0].content.parts[0].text]
 
-   
 
 vector_store = Chroma(
     collection_name="welllahh_rag_collection_chromadb",
@@ -63,6 +60,7 @@ vector_store = Chroma(
 )
 
 pubmed_fetcher = PubMedFetcher()
+
 
 def index_pubmed_docs_based_on_query(query):
     # loader = PubMedLoader(query) & PubmedQueryRun # hasilnya jelek
@@ -78,7 +76,7 @@ def index_pubmed_docs_based_on_query(query):
             new_doc = Document(
                 page_content=abstract.abstract,
             )
-            
+
             new_indexed_docs.append(abstract.xml)
             vector_store.add_documents([new_doc], ids=None, add_to_docstore=True)
         except Exception as e:
@@ -87,32 +85,34 @@ def index_pubmed_docs_based_on_query(query):
 
 
 ## DSPY
-ef = embedding_functions.InstructorEmbeddingFunction(model_name="hkunlp/instructor-xl", device="cpu")
+ef = embedding_functions.InstructorEmbeddingFunction(
+    model_name="hkunlp/instructor-xl", device="cpu"
+)
 
 retriever_model = ChromadbRM(
-    'welllahh_rag_collection_chromadb',
-    './chroma_langchain_db2',
+    "welllahh_rag_collection_chromadb",
+    "./chroma_langchain_db2",
     embedding_function=ef,
-    k=3
+    k=3,
 )
 
 # yang udah ku finetune pake dataset https://huggingface.co/datasets/lintangbs/medical-qa-id-good
 # llm = GeminiLM(model='tunedModels/geminimedicalqaindobatch4lrm05-qwlfewbdx', temperature=0)
 
-llm = GeminiLM(model="tunedModels/gemini-welllahh-zerotemp-lrfv-3536", temperature=0) # buat jawab pertanyaan medis
+llm = GeminiLM(
+    model="tunedModels/gemini-welllahh-zerotemp-lrfv-3536", temperature=0
+)  # buat jawab pertanyaan medis
 
 
-translate_model = genai.GenerativeModel('gemini-1.0-pro') # buat translate
+translate_model = genai.GenerativeModel("gemini-1.0-pro")  # buat translate
+
 
 def translate_text(text, language):
     text = text + f"; translate to {language}"
     return translate_model.generate_content(text).candidates[0].content.parts[0].text
 
-# llm = dspy.LM(model='gemini/gemini-1.5-flash', tempjerature=0)
-
 
 dspy.settings.configure(lm=llm, rm=retriever_model)
-
 
 
 class GenerateAnswer(dspy.Signature):
@@ -120,9 +120,9 @@ class GenerateAnswer(dspy.Signature):
 
     context = dspy.InputField(desc="may contain relevant facts")
     question = dspy.InputField()
-   
     answer = dspy.OutputField(desc="If it is not in context, answer according to your knowledge. Also if the answer is not in the context, add text from the context and from your knowledge that is relevant to the query. Explain your answer in detail. don't say 'the text doesn't mention...' in your answer ")
-    # answer = dspy.OutputField()
+
+
 
 class GenerateSearchQuery(dspy.Signature):
     """Write a simple search query that will help answer a complex question."""
@@ -133,22 +133,26 @@ class GenerateSearchQuery(dspy.Signature):
 
 
 from dsp.utils import deduplicate
-qa = dspy.Predict('question: str -> response: str')
+
+qa = dspy.Predict("question: str -> response: str")
+
 
 class SimplifiedBaleen(dspy.Module):
     def __init__(self, passages_per_hop=5, max_hops=2):
         super().__init__()
 
-        self.generate_query = [dspy.ChainOfThought(GenerateSearchQuery) for _ in range(max_hops)]
+        self.generate_query = [
+            dspy.ChainOfThought(GenerateSearchQuery) for _ in range(max_hops)
+        ]
         self.retrieve = dspy.Retrieve(k=passages_per_hop)
         self.generate_answer = dspy.ChainOfThought(GenerateAnswer)
         self.max_hops = max_hops
-    
+
     def forward(self, question):
         question = translate_text(question, "English")
         # question = qa(question=question+ "; translate to English (make sure to only translate the text and do not answer questions)").response
         context = []
-        
+
         for hop in range(self.max_hops):
             query = self.generate_query[hop](context=context, question=question).query
             passages = self.retrieve(query).passages
@@ -159,10 +163,7 @@ class SimplifiedBaleen(dspy.Module):
             pred.answer += pred.reasoning # pake reasoning/cot llmnya kalau llm gak bisa jawab pertanyaan pengguna
         # kalau pas generate_asnwer error berarti kena rate limit, tunggu 1 menit lagi baru coba lagi
         translate_answer = translate_text(pred.answer, "Indonesian")
-        # translate_answer = qa(question=pred.answer+ "; translate to Indonesian").response
+
 
         # return dspy.Prediction(context=context, answer=pred.answer)
         return dspy.Prediction(context=context, answer=translate_answer)
-
-
-

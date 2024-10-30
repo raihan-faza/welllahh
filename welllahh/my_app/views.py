@@ -7,11 +7,11 @@ import numpy as np
 import tensorflow as tf
 from constraint import *
 from django.conf import settings
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.core.files.storage import default_storage
 from django.db.models import Q
-from django.http.response import JsonResponse
+from django.http.response import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from keras.applications.imagenet_utils import decode_predictions
 from keras.preprocessing.image import img_to_array, load_img
@@ -20,6 +20,11 @@ from sklearn.metrics.pairwise import cosine_similarity
 from tensorflow.python.keras.backend import set_session
 import json
 from .models import *
+from django.views.decorators.csrf import csrf_exempt
+from django.utils import timezone
+from django.db.models import Sum
+from django.contrib.auth.decorators import login_required
+
 from .medical_ai_chatbot import SimplifiedBaleen
 
 
@@ -27,6 +32,7 @@ def landing_page(request):
     return render(request, "welllahh_landing_page.html")
 
 
+@csrf_exempt
 def register_user(request):
     if request.method == "POST":
         username = request.POST.get("username")
@@ -35,31 +41,28 @@ def register_user(request):
         age = request.POST.get("age")
 
         user_exists = CustomUser.objects.filter(
-            Q(username=username) | Q(email=email)
+            Q(user__username=username) | Q(user__email=email)
         ).exists()
         if user_exists:
             return JsonResponse(
                 {"message": "Username tersebut sudah ada, ganti username lain yaa."}
             )
-        user = User(username=username, password=password)
-        user.save()
+        user = User.objects.create_user(
+            username=username, password=password, email=email
+        )
         custom_user = CustomUser(
             user=user,
-            email=email,
             secret_phrase=generate_random_string,
             status="known",
             age=age,
         )
         custom_user.save()
         login(request, user)
-        return JsonResponse(
-            {
-                "User Berhasil Dibuat": f"Nama:{custom_user.user.username}\nSecretPhrase={custom_user.secret_phrase}"
-            }
-        )
+        return redirect("my_app:dashboard")
     return render(request, "register.html")
 
 
+@csrf_exempt
 def register_anonymous_user(request):
     if request.method == "POST":
         username = request.POST.get("username")
@@ -68,24 +71,27 @@ def register_anonymous_user(request):
             user=user, passphrase=generate_random_string, status="anonymous"
         )
         custom_user.save()
-        return JsonResponse(
-            {"User Berhasil Dibuat": f"fSecretPhrase:{custom_user.secret_phrase}"}
-        )
+        return redirect("my_app:dashboard")
     return render(request, "anonymous_register.html")
 
 
+@csrf_exempt
 def normal_login(request):
     if request.method == "POST":
         username = request.POST.get("username")
         password = request.POST.get("password")
-        user = authenticate(username=username, password=password)
+        user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user=user)
+            return redirect("my_app:dashboard")
         else:
-            return JsonResponse({"message": "invalid creds"})
+            return JsonResponse(
+                {"message": f"invalid creds {user}-{username}-{password}"}
+            )
     return render(request, "login.html")
 
 
+@csrf_exempt
 def login_using_passphrase(request):
     if request.method == "POST":
         secret_phrase = request.POST.get("secret_phrase")
@@ -93,6 +99,7 @@ def login_using_passphrase(request):
         user = authenticate(username=user.username, password=user.password)
         if user is not None:
             login(request, user=user)
+            return redirect("my_app:dashboard")
         else:
             return JsonResponse({"message": "invalid phrase"})
     return render(request, "anonymous_login.html")
@@ -701,3 +708,105 @@ def get_chatbot_response(request):
 
 def chatbot_page(request):
     return render(request, "chatbot-med.html")
+  
+
+@login_required(login_url="my_app:normal_login")
+def dashboard(request):
+    person_data = NutritionProgress.objects.filter(user__user=request.user)
+    today_foods = person_data.filter(check_time__date=timezone.now().date())
+    weekly_foods = person_data.filter(
+        check_time__gte=timezone.now() - datetime.timedelta(days=7)
+    )
+    today_calory = today_foods.aggregate(Sum("calorie"))["calorie__sum"]
+    today_carbs = today_foods.aggregate(Sum("carbs"))["carbs__sum"]
+    today_protein = today_foods.aggregate(Sum("protein"))["protein__sum"]
+    today_fat = today_foods.aggregate(Sum("fat"))["fat__sum"]
+    weekly_calory = weekly_foods.aggregate(Sum("calorie"))["calorie__sum"]
+    weekly_carbs = weekly_foods.aggregate(Sum("carbs"))["carbs__sum"]
+    weekly_protein = weekly_foods.aggregate(Sum("protein"))["protein__sum"]
+    weekly_fat = weekly_foods.aggregate(Sum("fat"))["fat__sum"]
+    context = {
+        "today_foods": today_foods,
+        "weekly_foods": weekly_foods,
+        "today_calory": today_calory,
+        "today_protein": today_protein,
+        "today_carbs": today_carbs,
+        "today_fat": today_fat,
+        "weekly_calory": weekly_calory,
+        "weekly_protein": weekly_protein,
+        "weekly_carbs": weekly_carbs,
+        "weekly_fat": weekly_fat,
+    }
+    return render(request, "dashboard.html", context=context)
+
+
+def delete_nutrition(request, pk):
+    if request.method == "POST":
+        nutrition = NutritionProgress.objects.get(id=pk)
+        if request.user != nutrition.user.user:
+            return redirect("my_app:dashboard")
+        nutrition.delete()
+        return redirect("my_app:dashboard")
+
+
+def logout_view(request):
+    logout(request)
+    return redirect("my_app:home")
+
+
+@login_required(login_url="my_app:normal_login")
+def riwayat_penyakit(request):
+    custom_user = CustomUser.objects.get(user=request.user)
+    riwayat_user = RiwayatPenyakit.objects.filter(user=custom_user)
+    context = {"riwayat_user": riwayat_user}
+    return render(request, "riwayat.html", context=context)
+
+
+@login_required(login_url="my_app:normal_login")
+def add_riwayat(request):
+    if request.method == "POST":
+        nama_penyakit = request.POST.get("nama_penyakit")
+        deskripsi_penyakit = request.POST.get("deskripsi_penyakit")
+        custom_user = CustomUser.objects.get(user=request.user)
+        riwayat = RiwayatPenyakit(
+            nama_penyakit=nama_penyakit,
+            deskripsi_penyakit=deskripsi_penyakit,
+            user=custom_user,
+        )
+        riwayat.save()
+        return redirect("my_app:riwayat")
+    return render(request, "add_riwayat.html")
+
+
+def delete_riwayat(request, pk):
+    if request.method == "POST":
+        custom_user = CustomUser.objects.get(user=request.user)
+        riwayat_user = RiwayatPenyakit.objects.get(id=pk)
+        if riwayat_user.user != custom_user:
+            return redirect("my_app:riwayat")
+        riwayat_user.delete()
+        return redirect("my_app:riwayat")
+
+
+@login_required(login_url="my_app:normal_login")
+def add_nutrition(request):
+    if request.method == "POST":
+        nutrition_name = request.POST.get("nutrition_name")
+        calorie = request.POST.get("calorie")
+        carbs = request.POST.get("carbs")
+        protein = request.POST.get("protein")
+        fat = request.POST.get("fat")
+        custom_user = CustomUser.objects.get(user=request.user)
+        nutrisi = NutritionProgress(
+            nutrition_name=nutrition_name,
+            calorie=calorie,
+            carbs=carbs,
+            protein=protein,
+            fat=fat,
+            user=custom_user,
+        )
+        nutrisi.save()
+        if request.POST.get("redirect"):
+            return redirect("my_app:dashboard")
+        return redirect("my_app:add_nutrition")
+    return render(request, "add_nutrition.html")

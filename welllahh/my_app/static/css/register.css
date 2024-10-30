@@ -5,13 +5,16 @@
   box-sizing: border-box;
   font-family: "Poppins", sans-serif;
 }
+button {
+  color: ;
+}
 body {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
-  background: #fb923c;
+  background: #ffffff;
 }
 .container {
   position: relative;
@@ -105,7 +108,7 @@ body {
   border: none;
   cursor: pointer;
   transition: all 0.2s ease;
-  background: rgb(130, 106, 251);
+  background: #fb923c;
 }
 .form button:hover {
   background: rgb(88, 56, 250);
@@ -118,4 +121,24 @@ body {
   .form :where(.gender-option, .gender) {
     row-gap: 15px;
   }
+}
+.return-button {
+  background-color: #fb923c; /* Primary color */
+  color: white; /* Text color */
+  font-size: 1rem; /* Consistent font size */
+  border: none; /* No border */
+  border-radius: 6px; /* Rounded corners */
+  padding: 10px 15px; /* Padding for better touch area */
+  cursor: pointer; /* Pointer cursor on hover */
+  transition: background 0.3s ease, transform 0.2s ease; /* Smooth transitions */
+  margin-bottom: 20px; /* Space below the button */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+.return-button:hover {
+  background-color: #0056b3; /* Darker shade on hover */
+}
+
+.return-button:active {
+  transform: scale(0.98); /* Slight shrink on click */
 }
