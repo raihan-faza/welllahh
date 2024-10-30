@@ -707,8 +707,8 @@ def get_chatbot_response(request):
 
 
 def chatbot_page(request):
-    return render(request, "chatbot.html")
-
+    return render(request, "chatbot-med.html")
+  
 
 @login_required(login_url="my_app:normal_login")
 def dashboard(request):

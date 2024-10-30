@@ -304,7 +304,34 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "my_app",
     "mathfilters",
+    "corsheaders",
 ]
+
+CORS_ALLOW_ALL_ORIGINS = True
+
+CORS_ALLOW_METHODS = [
+    "DELETE",
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
+]
+
+CORS_ALLOW_HEADERS = [
+    "accept",
+    "authorization",
+    "content-type",
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+]
+
+
+
+CORS_ALLOWED_ORIGINS = ["http://localhost:8000"]
+
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -314,6 +341,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.common.CommonMiddleware",
 ]
 
 ROOT_URLCONF = "welllahh.urls"
