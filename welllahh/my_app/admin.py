@@ -5,3 +5,4 @@ from .models import *
 admin.site.register(CustomUser)
 admin.site.register(NutritionProgress)
 admin.site.register(UserBodyInfo)
+admin.site.register(RiwayatPenyakit)

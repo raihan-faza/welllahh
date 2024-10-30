@@ -2,6 +2,7 @@ from uuid import uuid4
 
 from django.contrib.auth.models import User
 from django.db import models
+from django.utils import timezone
 
 # Create your models here.
 
@@ -61,7 +62,7 @@ class NutritionProgress(models.Model):
     # nutrition_type = models.CharField(
     #    max_length=20, choices=NutritionType.choices, default=NutritionType.CALORY
     # )
-    check_time = models.DateTimeField()
+    check_time = models.DateTimeField(default=timezone.now)
     nutrition_name = models.CharField(max_length=255, default=None)
     calorie = models.DecimalField(max_digits=10, decimal_places=2)
     carbs = models.DecimalField(max_digits=10, decimal_places=2)
@@ -71,3 +72,10 @@ class NutritionProgress(models.Model):
 
     def __str__(self):
         return f"{self.nutrition_name} - {self.calorie} at {self.check_time}"
+
+
+class RiwayatPenyakit(models.Model):
+    nama_penyakit = models.CharField(max_length=255)
+    deskripsi_penyakit = models.CharField(max_length=255)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    check_time = models.DateTimeField(default=timezone.now)

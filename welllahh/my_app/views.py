@@ -752,3 +752,61 @@ def delete_nutrition(request, pk):
 def logout_view(request):
     logout(request)
     return redirect("my_app:home")
+
+
+@login_required(login_url="my_app:normal_login")
+def riwayat_penyakit(request):
+    custom_user = CustomUser.objects.get(user=request.user)
+    riwayat_user = RiwayatPenyakit.objects.filter(user=custom_user)
+    context = {"riwayat_user": riwayat_user}
+    return render(request, "riwayat.html", context=context)
+
+
+@login_required(login_url="my_app:normal_login")
+def add_riwayat(request):
+    if request.method == "POST":
+        nama_penyakit = request.POST.get("nama_penyakit")
+        deskripsi_penyakit = request.POST.get("deskripsi_penyakit")
+        custom_user = CustomUser.objects.get(user=request.user)
+        riwayat = RiwayatPenyakit(
+            nama_penyakit=nama_penyakit,
+            deskripsi_penyakit=deskripsi_penyakit,
+            user=custom_user,
+        )
+        riwayat.save()
+        return redirect("my_app:riwayat")
+    return render(request, "add_riwayat.html")
+
+
+def delete_riwayat(request, pk):
+    if request.method == "POST":
+        custom_user = CustomUser.objects.get(user=request.user)
+        riwayat_user = RiwayatPenyakit.objects.get(id=pk)
+        if riwayat_user.user != custom_user:
+            return redirect("my_app:riwayat")
+        riwayat_user.delete()
+        return redirect("my_app:riwayat")
+
+
+@login_required(login_url="my_app:normal_login")
+def add_nutrition(request):
+    if request.method == "POST":
+        nutrition_name = request.POST.get("nutrition_name")
+        calorie = request.POST.get("calorie")
+        carbs = request.POST.get("carbs")
+        protein = request.POST.get("protein")
+        fat = request.POST.get("fat")
+        custom_user = CustomUser.objects.get(user=request.user)
+        nutrisi = NutritionProgress(
+            nutrition_name=nutrition_name,
+            calorie=calorie,
+            carbs=carbs,
+            protein=protein,
+            fat=fat,
+            user=custom_user,
+        )
+        nutrisi.save()
+        if request.POST.get("redirect"):
+            return redirect("my_app:dashboard")
+        return redirect("my_app:add_nutrition")
+    return render(request, "add_nutrition.html")

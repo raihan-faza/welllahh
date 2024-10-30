@@ -49,6 +49,10 @@ urlpatterns = [
     path("dashboard", views.dashboard, name="dashboard"),
     path("delete_nutrition/<uuid:pk>", views.delete_nutrition, name="delete_nutrition"),
     path("logout", views.logout_view, name="logout"),
+    path("riwayat", views.riwayat_penyakit, name="riwayat"),
+    path("add_nutrition", views.add_nutrition, name="add_nutrition"),
+    path("add_riwayat", views.add_riwayat, name="add_riwayat"),
+    path("delete_riwayat/<int:pk>", views.delete_riwayat, name="delete_riwayat"),
 ]
 
 
