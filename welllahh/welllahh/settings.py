@@ -45,7 +45,6 @@ if not os.path.isdir("chroma_langchain_db2"):
     print("Extraction completed.")
 
 
-
 # https://drive.google.com/file/d/1j6LH7JusFs2TMljP05mBZvECeHIxbrYk/view?usp=sharing
 # https://drive.google.com/file/d/11KVVZHT3cSDXeu7yPR7dGJ2NBm0IqsFX/view?usp=sharing
 # https://drive.google.com/file/d/1US8wd4AsafsVGDl-HWcD0AzqTm-l-FTK/view?usp=sharing
@@ -269,7 +268,7 @@ FOOD_DF = pd.read_csv(path2)
 
 
 INDICES = pd.Series(FOOD_DF.index, index=FOOD_DF["Name"])
-FOOD_NAME = FOOD_DF['Name'].tolist()
+FOOD_NAME = FOOD_DF["Name"].tolist()
 
 INDOFOOD_NUTRITIONS_DF = pd.read_csv("indofood_with_its_nutritions.csv")
 
@@ -304,8 +303,35 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "my_app",
-    'mathfilters'
+    "mathfilters",
+    "corsheaders",
 ]
+
+CORS_ALLOW_ALL_ORIGINS = True
+
+CORS_ALLOW_METHODS = [
+    "DELETE",
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
+]
+
+CORS_ALLOW_HEADERS = [
+    "accept",
+    "authorization",
+    "content-type",
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+]
+
+
+
+CORS_ALLOWED_ORIGINS = ["http://localhost:8000"]
+
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -315,6 +341,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.common.CommonMiddleware",
 ]
 
 ROOT_URLCONF = "welllahh.urls"

@@ -700,4 +700,4 @@ def get_chatbot_response(request):
 
 
 def chatbot_page(request):
-    return render(request, "chatbot.html")
+    return render(request, "chatbot-med.html")

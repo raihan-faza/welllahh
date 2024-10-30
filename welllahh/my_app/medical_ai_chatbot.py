@@ -108,7 +108,7 @@ def translate_text(text, language):
     text = text + f"; translate to {language}"
     return translate_model.generate_content(text).candidates[0].content.parts[0].text
 
-# llm = dspy.LM(model='gemini/gemini-1.5-flash', temperature=0)
+# llm = dspy.LM(model='gemini/gemini-1.5-flash', tempjerature=0)
 
 
 dspy.settings.configure(lm=llm, rm=retriever_model)
