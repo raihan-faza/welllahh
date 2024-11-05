@@ -24,7 +24,6 @@ from PIL import Image
 import gdown
 import zipfile
 
-
 file_id = "1S0nxpfC4ifrktLpoetCrNmTyTVSydsqM"
 output_path = "welllahh_chroma.zip"
 
@@ -65,10 +64,9 @@ if os.path.exists("./recipes_sedikit.csv") == False:
     urllib.request.urlretrieve(url, path)
     print("download complete!")
 
-# print("loading food image classification model....")
-# INDOFOOD_IMAGE_MODEL = tf.keras.models.load_model("best_model_86.keras")
-# print("selesai food image classification model....")
-
+print("loading food image classification model....")
+INDOFOOD_IMAGE_MODEL = tf.keras.models.load_model("best_model_86.keras")
+print("selesai food image classification model....")
 
 with open("recommendation_cosine_sim.pkl", "rb") as file:
     FOOD_COSINE_SIM = pickle.load(file)
@@ -327,7 +325,6 @@ CORS_ALLOW_HEADERS = [
     "x-csrftoken",
     "x-requested-with",
 ]
-
 
 
 CORS_ALLOWED_ORIGINS = ["http://localhost:8000"]

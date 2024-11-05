@@ -22,15 +22,14 @@
                 Welllah <span>care</span>
             </div>
             <ul class="nav__links">
-                <li class="link"> <a href="#">Home</a></li>
-                <li class="link"> <a href="#">About Us</a></li>
-                <li class="link"> <a href="#">Services</a></li>
+              <li class="link"> <a href="{% url 'my_app:home' %}">Home</a></li>
+              <li class="link"> <a href="{% url 'my_app:dashboard' %}">Dashboard</a></li>
+              <li class="link"> <a href="">Chatbot</a></li>
             </ul>
             <div class="nav_buttons">
                 <button class="btn">Login</button>
                 <button class="btn">Register</button>
             </div>
-
         </nav>
 
         {% block content %} {% endblock content %}

@@ -535,3 +535,20 @@ body {
     cursor: pointer;
     background: var(--primary-color);
 }
+
+button[name="submit-tracker"]{
+    margin-top: 30px;
+    display: block;
+    width: 37%;
+    height: 50px;
+    border: none;
+    outline: none;
+    border-radius: 25px;
+    color: #fff;
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    background: var(--primary-color);
+}

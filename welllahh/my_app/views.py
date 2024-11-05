@@ -123,26 +123,45 @@ def GetFoodNutrition(foodName: str):
 
 def inference_indofood_image(request):
     if request.method == "POST":
-        file = request.FILES["imageFile"]
-        file_name = default_storage.save(file.name, file)
-        file_url = default_storage.path(file_name)
+        if request.POST.get("submit-tracker"):
+            nutrition_name = request.POST.get("nutrition-name")
+            calorie = request.POST.get("calorie")
+            carbs = request.POST.get("carbs")
+            protein = request.POST.get("protein")
+            fat = request.POST.get("fat")
+            user = CustomUser.objects.get(user=request.user)
+            nutrition = NutritionProgress(
+                user=user,
+                nutrition_name=nutrition_name,
+                calorie=calorie,
+                carbs=carbs,
+                protein=protein,
+                fat=fat,
+            )
+            nutrition.save()
+            return redirect("my_app:dashboard")
+        file = request.FILES.get("imageFile")
+        if file is not None:
+            file_name = default_storage.save(file.name, file)
+            file_url = default_storage.path(file_name)
 
-        image = load_img(file_url, target_size=(320, 320))
-        numpy_array = img_to_array(image)
+            image = load_img(file_url, target_size=(320, 320))
+            numpy_array = img_to_array(image)
 
-        image_batch = np.expand_dims(numpy_array, axis=0)
-        prediction = settings.INDOFOOD_IMAGE_MODEL.predict(image_batch)
+            image_batch = np.expand_dims(numpy_array, axis=0)
+            prediction = settings.INDOFOOD_IMAGE_MODEL.predict(image_batch)
 
-        labels = settings.INDOFOOD_IMAGE_LABELS
-        res = labels[tf.argmax(prediction[0])]
+            labels = settings.INDOFOOD_IMAGE_LABELS
+            res = labels[tf.argmax(prediction[0])]
 
-        nutritions = GetFoodNutrition(res[1])
-        return render(
-            request,
-            "food_nutrition.html",
-            {"predictions": res, "nutritions": nutritions},
-        )
-
+            nutritions = GetFoodNutrition(res[1])
+            return render(
+                request,
+                "food_nutrition.html",
+                {"predictions": res, "nutritions": nutritions},
+            )
+        else:
+            return
     else:
         return render(
             request,
@@ -708,7 +727,7 @@ def get_chatbot_response(request):
 
 def chatbot_page(request):
     return render(request, "chatbot-med.html")
-  
+
 
 @login_required(login_url="my_app:normal_login")
 def dashboard(request):
