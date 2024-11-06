@@ -79,3 +79,11 @@ class RiwayatPenyakit(models.Model):
     deskripsi_penyakit = models.CharField(max_length=255)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     check_time = models.DateTimeField(default=timezone.now)
+
+
+class TargetPlan(models.Model):
+    target_calorie = models.IntegerField()
+    target_carbs = models.IntegerField()
+    target_protein = models.IntegerField()
+    target_fat = models.IntegerField()
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)

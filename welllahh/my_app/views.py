@@ -125,10 +125,10 @@ def inference_indofood_image(request):
     if request.method == "POST":
         if request.POST.get("submit-tracker"):
             nutrition_name = request.POST.get("nutrition-name")
-            calorie = request.POST.get("calorie")
-            carbs = request.POST.get("carbs")
-            protein = request.POST.get("protein")
-            fat = request.POST.get("fat")
+            calorie = request.POST.get("calorie").replace("kcal", "")
+            carbs = request.POST.get("carbs").replace("g", "")
+            protein = request.POST.get("protein").replace("g", "")
+            fat = request.POST.get("fat").replace("g", "")
             user = CustomUser.objects.get(user=request.user)
             nutrition = NutritionProgress(
                 user=user,
