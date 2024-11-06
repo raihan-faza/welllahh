@@ -536,7 +536,7 @@ body {
     background: var(--primary-color);
 }
 
-button[name="submit-tracker"]{
+button[name="submit-tracker"] {
     margin-top: 30px;
     display: block;
     width: 37%;
@@ -551,4 +551,141 @@ button[name="submit-tracker"]{
     text-transform: uppercase;
     cursor: pointer;
     background: var(--primary-color);
+}
+
+
+/* meal plan... */
+
+.container-meal-plan {
+    max-width: 800px;
+    margin: 0 auto;
+    margin-bottom: 50px;
+}
+
+.favorite-foods {
+    background-color: #e9f7f7;
+    padding: 2rem;
+    border-radius: 10px;
+    margin-bottom: 2rem;
+}
+
+.favorite-foods h2 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+.food-selectors {
+    display: grid;
+    gap: 1rem;
+}
+
+.meal-categories {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+.meal-category {
+    background-color: #e9f7f7;
+    padding: 1.5rem;
+    border-radius: 10px;
+}
+
+.meal-category h2 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+.selector-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+.meal-button {
+    background-color: var(--primary-color);
+    color: #FAF1E4;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 1rem;
+    margin-top: 1rem;
+    transition: opacity 0.3s;
+}
+
+.meal-button:hover {
+    opacity: 0.9;
+}
+
+.food-select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid var(--primary-color);
+    border-radius: 5px;
+    margin-bottom: 0.5rem;
+    background-color: white;
+    color: #1B2559;
+    cursor: pointer;
+}
+
+.food-select:focus {
+    outline: none;
+    border-color: #1B2559;
+}
+
+.meal-plan-title {
+    color: #1B2559;
+}
+
+.meals-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.meal-card {
+    background-color: var(--primary-color-light);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.meal-title {
+    color: var(--primary-color);
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    border-bottom: 2px solid #435334;
+    padding-bottom: 0.5rem;
+}
+
+.nutrition-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.nutrition-item {
+    font-size: 0.9rem;
+}
+
+.nutrition-label {
+    color: #1B2559;
+    font-weight: 600;
+}
+
+.ingredients {
+    background-color: #FAF1E4;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-top: 1rem;
+}
+
+.ingredients h3 {
+    color: #1B2559;
+    margin-top: 0;
+    margin-bottom: 0.5rem;
 }

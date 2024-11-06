@@ -1,0 +1,94 @@
+{% extends "base.html" %} {%load static%} {% block content %}
+<div class="container-meal-plan">
+    <h1 class="meal-plan-title">Your Meal Plan</h1>
+    <div class="meals-grid">
+        <div class="meal-card">
+            <div class="meal-title">Breakfast</div>
+            <h2 style="color:#1B2559;">{{breakfast.Name}}</h2>
+
+            <div class="nutrition-grid">
+                <div class="nutrition-item">
+                    <span class="nutrition-label">Calories:</span> {{breakfast.Calories}}
+                </div>
+                <div class="nutrition-item">
+                    <span class="nutrition-label">Protein:</span> {{breakfast.ProteinContent}}
+                </div>
+                <div class="nutrition-item">
+                    <span class="nutrition-label">Fat:</span> {{breakfast.FatContent}}
+                </div>
+                <div class="nutrition-item">
+                    <span class="nutrition-label">Carbs:</span> {{breakfast.CarbohydrateContent}}
+                </div>
+                <div class="nutrition-item">
+                    <span class="nutrition-label">Fiber:</span> {{breakfast.FiberContent}}
+                </div>
+                <div class="nutrition-item">
+                    <span class="nutrition-label">Sodium:</span> {{breakfast.SodiumContent}}
+                </div>
+            </div>
+            <div class="ingredients">
+                <h3>Ingredients</h3>
+                French baguette, butter, garlic powder, ricotta cheese, parmesan cheese, salt, tomatoes, olive oil, fresh basil leaves
+            </div>
+        </div>
+
+        <div class="meal-card">
+            <div class="meal-title">Lunch</div>
+            <h2>{{lunch.Name}}</h2>
+            <div class="nutrition-grid">
+                <div class="nutrition-item">
+                    <span class="nutrition-label">Calories:</span> {{lunch.Calories}}
+                </div>
+                <div class="nutrition-item">
+                    <span class="nutrition-label">Protein:</span> {{lunch.ProteinContent}}
+                </div>
+                <div class="nutrition-item">
+                    <span class="nutrition-label">Fat:</span> {{lunch.FatContent}}
+                </div>
+                <div class="nutrition-item">
+                    <span class="nutrition-label">Carbs:</span> {{lunch.CarbohydrateContent}}
+                </div>
+                <div class="nutrition-item">
+                    <span class="nutrition-label">Fiber:</span> {{lunch.FiberContent}}
+                </div>
+                <div class="nutrition-item">
+                    <span class="nutrition-label">Sodium:</span> {{lunch.SodiumContent}}
+                </div>
+            </div>
+            <div class="ingredients">
+                <h3>Ingredients</h3>
+                butter, cheese
+            </div>
+        </div>
+
+        <div class="meal-card">
+            <div class="meal-title">Dinner</div>
+            <h2>{{dinner.Name}}</h2>
+            <div class="nutrition-grid">
+                <div class="nutrition-item">
+                    <span class="nutrition-label">Calories:</span> {{dinner.Calories}}
+                </div>
+                <div class="nutrition-item">
+                    <span class="nutrition-label">Protein:</span> {{dinner.ProteinContent}}
+                </div>
+                <div class="nutrition-item">
+                    <span class="nutrition-label">Fat:</span> {{dinner.FatContent}}
+                </div>
+                <div class="nutrition-item">
+                    <span class="nutrition-label">Carbs:</span> {{dinner.CarbohydrateContent}}
+                </div>
+                <div class="nutrition-item">
+                    <span class="nutrition-label">Fiber:</span> {{dinner.FiberContent}}
+                </div>
+                <div class="nutrition-item">
+                    <span class="nutrition-label">Sodium:</span> {{dinner.SodiumContent}}
+                </div>
+            </div>
+            <div class="ingredients">
+                <h3>Ingredients</h3>
+                boneless skinless chicken breasts, mozzarella cheese, parmesan cheese
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
