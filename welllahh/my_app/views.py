@@ -586,11 +586,7 @@ def meal_plan(request):
     list food category ada di notebook food_recommendation_system.ipynb
     """
     if request.method == "POST":
-        # user = request.user
-        # user_body_info = UserBodyInfo.objects.filter(custom_user=user).order_by('-check_time').values()
-        # print(user_body_info)
-        # my_calorie_daily_intake = calorie_intake(user_body_info[0].weight, user_body_info[0].height, user.age)
-
+        
         my_calorie_daily_intake = calorie_intake(80, 170, 22)
         my_favorite_food = [
             request.POST.get("my_favorite_food_1"),
@@ -639,7 +635,7 @@ def meal_plan(request):
                 ],
                 "Calories": meal_plan_recommendation["breakfast"]["Calories"],
                 "FatContent": meal_plan_recommendation["breakfast"]["FatContent"],
-                "SaturatedFatContent": meal_plan_recommendation["breakfast"][
+                "SaturatedIngredientsFatContent": meal_plan_recommendation["breakfast"][
                     "SaturatedFatContent"
                 ],
                 "CholesterolContent": meal_plan_recommendation["breakfast"][
@@ -700,16 +696,21 @@ def meal_plan(request):
                 ],
             },
         }
-        return JsonResponse(data=res)
+
+        # return JsonResponse(data=res)
+        return render(request, "meal-plan-recommendation.html", res)
     else:
         return render(
             request,
-            "meal_plan.html",
+            "meal-plan.html",
             {
                 "food_categories": settings.FOOD_CATEGORIES,
                 "food_names": settings.FOOD_NAME,
             },
         )
+
+
+# def meal_plan_recom(request):
 
 
 ## AI Chatbot

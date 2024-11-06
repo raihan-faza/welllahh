@@ -120,7 +120,7 @@ class GenerateAnswer(dspy.Signature):
 
     context = dspy.InputField(desc="may contain relevant facts")
     question = dspy.InputField()
-    answer = dspy.OutputField(desc="If it is not in context, answer according to your knowledge. Also if the answer is not in the context, add text from the context and from your knowledge that is relevant to the query. Explain your answer in detail. don't say 'the text doesn't mention...' in your answer ")
+    answer = dspy.OutputField(desc="If it is not in context, answer according to your knowledge. Also if the answer is not in the context, add text from the context and from your knowledge that is relevant to the query. Explain your answer in detail. don't say 'the text doesn't mention...' in your answer. also consider user-ai chat history ")
 
 
 
@@ -152,12 +152,13 @@ class SimplifiedBaleen(dspy.Module):
         question = translate_text(question, "English")
         # question = qa(question=question+ "; translate to English (make sure to only translate the text and do not answer questions)").response
         context = []
-
+        print("retrieving relevant passages...")
         for hop in range(self.max_hops):
             query = self.generate_query[hop](context=context, question=question).query
             passages = self.retrieve(query).passages
             context = deduplicate(context + passages)
 
+        print("answering user question...")
         pred = self.generate_answer(context=context, question=question)
         if pred.answer == "":
             pred.answer += pred.reasoning # pake reasoning/cot llmnya kalau llm gak bisa jawab pertanyaan pengguna
