@@ -83,7 +83,7 @@ function loader(element) {
     loadInterval = setInterval(() => {
         element.textContent += '.';
 
-        if (element.textContent === '.......') {
+        if (element.textContent === '........') {
             element.textContent = '';
         }
     }, 300);
@@ -112,7 +112,7 @@ function generateUniqueId() {
 }
 
 
-function chatStripe(isAi, value, uniqueId) {
+function chatStripe(isAi, value, uniqueId, context) {
     if (isAi) {
         return (
             `
@@ -126,6 +126,15 @@ function chatStripe(isAi, value, uniqueId) {
                         />
                     </div>
                     <div class="message" id=${uniqueId}>${value}</div>
+                     <a class="context_button" href="#context-${uniqueId}" id="context-${uniqueId}-c">See Context/Reference</a>
+                     
+                     <div class="modal_container" id="context-${uniqueId}"  >
+                        <div class="modal">
+                                <h2 class="modal_title">Context/Reference</h2>
+                                <p class="modal_text" id="text-context-${uniqueId}">${context} </p>
+                                <a href="#context-${uniqueId}-c" class="context_closer"> </a>
+                        </div>
+                     </div>
                 </div>
             </div>
         `
@@ -165,28 +174,33 @@ async function getMessage(e) {
     }
     e.preventDefault();
 
+
     const data = new FormData(form);
     const uniqueIdUser = generateUniqueId()
-    chatContainer.innerHTML += chatStripe(false, data.get('prompt'), uniqueIdUser)
+    chatContainer.innerHTML += chatStripe(false, data.get('prompt'), uniqueIdUser, "")
 
 
     const uniqueId = generateUniqueId()
-    chatContainer.innerHTML += chatStripe(true, " ", uniqueId)
+    chatContainer.innerHTML += chatStripe(true, " ", uniqueId, "")
 
     chatContainer.scrollTop = chatContainer.scrollHeight;
 
     const messageDiv = document.getElementById(uniqueId)
+    const contextDiv = document.getElementById(`text-context-${uniqueId}`)
 
     loader(messageDiv)
 
-    context = "user-ai chat history: \n"
+    context = ""
     let body = inputElement.value
-    if (length(chatHistory) != 0) {
+    if (chatHistory.length != 0) {
         for (let i = 0; i < chatHistory.length; i++) {
-            context += `user: ${chatHistory[i]['user']}\n`
-            context += `ai: ${chatHistory[i]['ai']}\n`
+            context += `
+            user: $ { chatHistory[i]['user'] }\
+            n `
+            context += `
+            ai: $ { chatHistory[i]['ai'] }\
+            n `
         }
-        body = context + body
     }
 
 
@@ -198,14 +212,15 @@ async function getMessage(e) {
         },
         body: JSON.stringify({
             question: body,
+            chatHistory: context,
         })
     }
 
-    chatHistory.append({
-        user: inputElement.value,
-        ai: ''
+    chatHistory.push({
+        'user': inputElement.value,
+        'ai': ''
     })
-    inputElement.value = '';
+    console.log("chatHistory: ", chatHistory)
     try {
 
         const response = await fetch("http://localhost:8000/my_app/ai/chatbot", options)
@@ -220,6 +235,10 @@ async function getMessage(e) {
             const parsedData = data.chatbot_message.trim()
 
             typeText(messageDiv, parsedData)
+            console.log("data: ", data)
+            const context = data.context.trim()
+            console.log("context: ", context)
+            contextDiv.innerHTML = context
 
             chatHistory[-1]['ai'] = parsedData
         } else {
@@ -237,8 +256,8 @@ async function getMessage(e) {
             pElement.textContent = inputElement.value;
             pElement.addEventListener('click', () => changeInput(pElement.textContent))
             historyElement.appendChild(pElement);
-
         }
+        inputElement.value = '';
     } catch (error) {
         console.log(error)
     }

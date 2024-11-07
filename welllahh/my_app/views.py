@@ -24,8 +24,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
 from django.db.models import Sum
 from django.contrib.auth.decorators import login_required
-
-from .medical_ai_chatbot import SimplifiedBaleen
+from .medical_ai_chatbot import answer_pipeline
 
 
 def landing_page(request):
@@ -586,7 +585,7 @@ def meal_plan(request):
     list food category ada di notebook food_recommendation_system.ipynb
     """
     if request.method == "POST":
-        
+
         my_calorie_daily_intake = calorie_intake(80, 170, 22)
         my_favorite_food = [
             request.POST.get("my_favorite_food_1"),
@@ -714,7 +713,6 @@ def meal_plan(request):
 
 
 ## AI Chatbot
-chatbot = SimplifiedBaleen()
 
 
 def get_chatbot_response(request):
@@ -722,8 +720,10 @@ def get_chatbot_response(request):
         body_unicode = request.body.decode("utf-8")
         body = json.loads(body_unicode)
         question = body["question"]
-        chatbot_resp = chatbot(question)
-        return JsonResponse({"chatbot_message": chatbot_resp["answer"]})
+        chat_history = body["chatHistory"]
+        answer, context = answer_pipeline(question, chat_history)
+       
+        return JsonResponse({"chatbot_message": answer, "context": context})
 
 
 def chatbot_page(request):
