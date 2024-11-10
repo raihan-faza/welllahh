@@ -16,9 +16,31 @@
     <div class="container">
         <section class="side-bar">
             <button class="new-chat">
-                New Chat
+                <div class="button-new-chat">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="rgba(255,255,255,1)"><path d="M11 11V5H13V11H19V13H13V19H11V13H5V11H11Z"></path></svg>
+                    New Chat
+                </div>
+               
             </button>
-            <div class="history"></div>
+            <div class="history">
+                <div id="today">
+                    <h3>Today</h3>
+                    <ul class="chat-list"></ul>
+                </div>
+                <div id="yesterday">
+                    <h3>Yesterday</h3>
+                    <ul class="chat-list"></ul>
+                </div>
+                <div id="last-7-days">
+                    <h3>Last 7 Days</h3>
+                    <ul class="chat-list"></ul>
+                </div>
+                <div id="last-30-days">
+                    <h3>Last 30 Days</h3>
+                    <ul class="chat-list"></ul>
+                </div>
+
+            </div>
             <nav>
                 <p>Welllahh Chatbot</p>
             </nav>
@@ -46,6 +68,8 @@
         </section>
 
     </div>
+
+    {{ chat_sessions|json_script:"chat_sessions" }} {{ curr_chat_session|json_script:"curr_chat_session" }}
 
     <script src="{% static 'js/chatbot.js' %}"></script>
 </body>

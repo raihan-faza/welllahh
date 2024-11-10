@@ -709,25 +709,118 @@ def meal_plan(request):
         )
 
 
-# def meal_plan_recom(request):
-
-
 ## AI Chatbot
 
 
+@login_required(login_url="my_app:normal_login")
 def get_chatbot_response(request):
     if request.method == "POST":
         body_unicode = request.body.decode("utf-8")
         body = json.loads(body_unicode)
         question = body["question"]
         chat_history = body["chatHistory"]
-        answer, context = answer_pipeline(question, chat_history)
-       
-        return JsonResponse({"chatbot_message": answer, "context": context})
+        chat_uuid = body["chatUUID"]
+        custom_user = CustomUser.objects.get(user=request.user)
 
 
-def chatbot_page(request):
-    return render(request, "chatbot-med.html")
+        riwayat_penyakit_db = RiwayatPenyakit.objects.filter(user=custom_user)
+        
+        riwayat_penyakit = ""
+        for penyakit in riwayat_penyakit_db:
+            riwayat_penyakit += penyakit.nama_penyakit + ", "
+        answer, context = answer_pipeline(question, chat_history, riwayat_penyakit)
+        answer = set(answer.split('\n')) # hapus duplicate answer
+        answer = '\n'.join(answer)
+        
+
+        if chat_uuid != 0:
+            curr_chat_session = ChatSession.objects.get(id=chat_uuid)
+            new_message = Message(
+                prompt_content=question,
+                chatbot_content=answer,
+                context=context,
+                chat_session=curr_chat_session,
+            )
+            new_message.save()
+
+        new_session = {
+            "id": 0,
+            "created_at": 0,
+        }
+        session_title = ""
+        if chat_uuid == 0:
+            session_title = question.split(" ")[:5]
+            session_title = " ".join(session_title).lstrip() + " ...."
+
+            new_session = ChatSession(
+                message_from=custom_user, session_title=session_title
+            )
+            new_session.save()
+
+            new_message = Message(
+                prompt_content=question,
+                chatbot_content=answer,
+                context=context,
+                chat_session=new_session,
+            )
+            new_message.save()
+
+        return JsonResponse(
+            {
+                "chatbot_message": answer,
+                "context": context,
+                "new_session_id": new_session.id,
+                "new_session_created_at": new_session.created_at,
+                "new_session_title": session_title,
+            }
+        )
+
+
+@login_required(login_url="my_app:normal_login")
+def chatbot_page(request, id=None):
+    custom_user = CustomUser.objects.get(user=request.user)
+
+    chat_sessions = []
+    chat_sessions_db = ChatSession.objects.filter(
+        message_from=custom_user
+    ).prefetch_related("message_set")
+    for db_chat in chat_sessions_db:
+        chat_sessions.append(db_chat)
+
+    chat_sessions_object = []
+    for chat in chat_sessions:
+        chat_sessions_object.append(
+            {
+                "chat_session_id": chat.id,
+                "created_at": chat.created_at,
+                "session_title": chat.session_title,
+            }
+        )
+    curr_chat_session = None
+    if id != None:
+        chat_session = ChatSession.objects.get(id=id)
+        messages = Message.objects.filter(chat_session=chat_session)
+        messages_content = []
+        for message in messages:
+            messages_content.append(
+                {
+                    "prompt_content": message.prompt_content,
+                    "chatbot_content": message.chatbot_content,
+                    "context": message.context,
+                }
+            )
+
+        curr_chat_session = {
+            "chat_session_id": chat_session.id,
+            "created_at": chat_session.created_at,
+            "messages": messages_content,
+        }
+
+    return render(
+        request,
+        "chatbot-med.html",
+        {"chat_sessions": chat_sessions_object, "curr_chat_session": curr_chat_session},
+    )
 
 
 @login_required(login_url="my_app:normal_login")

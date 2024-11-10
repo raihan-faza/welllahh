@@ -25,6 +25,8 @@ from langchain.load import dumps, loads
 from langchain_core.callbacks import CallbackManagerForRetrieverRun
 from langchain_core.documents import Document
 from langchain_core.retrievers import BaseRetriever
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
+import torch
 
 
 load_dotenv()
@@ -40,13 +42,19 @@ instructor_embeddings = HuggingFaceInstructEmbeddings(
     model_name=model_name, model_kwargs=model_kwargs, encode_kwargs=encode_kwargs
 )
 
+tokenizer = AutoTokenizer.from_pretrained("ncbi/MedCPT-Cross-Encoder")
+model = AutoModelForSequenceClassification.from_pretrained("ncbi/MedCPT-Cross-Encoder")
+
 
 
 translate_model = genai.GenerativeModel("gemini-1.0-pro")  # buat translate
 
 
 def translate_text(text, language):
-    text = text + f"; translate to {language}. please just translate the text and don't answer the questions!"
+    text = (
+        text
+        + f"; translate to {language}. please just translate the text and don't answer the questions!"
+    )
     return translate_model.generate_content(text).candidates[0].content.parts[0].text
 
 
@@ -57,14 +65,13 @@ def user_summarizer(text):
     return summarizer_model.generate_content(text).candidates[0].content.parts[0].text
 
 
-
 retriever_model = Chroma(
     collection_name="welllahh_rag_collection_chromadb",
     persist_directory="./chroma_langchain_db2",
     embedding_function=instructor_embeddings,
 )
 
-retriever = retriever_model.as_retriever(search_kwargs={"k": 5})
+retriever = retriever_model.as_retriever(search_kwargs={"k": 8})
 
 
 # template = """You are an AI language model assistant. Your task is to generate search query of the given user question to retrieve relevant documents from a vector database.  Original question: {question}""" #gabisa malah gak bikin query
@@ -120,7 +127,12 @@ class GeminiLLM(LLM):
             model_name="tunedModels/gemini-welllahh-zerotemp-lrfv-3536"  # sebelumnya 0
         )  # buat jawab pertanyaan medis
 
-        ans = llm.generate_content(prompt, generation_config={'temperature': 0.05}).candidates[0].content.parts[0].text
+        ans = (
+            llm.generate_content(prompt, generation_config={"temperature": 0.05})
+            .candidates[0]
+            .content.parts[0]
+            .text
+        )
         return ans
 
     @property
@@ -133,27 +145,40 @@ llm = GeminiLLM()
 
 generate_query = search_query_prompt | llm | StrOutputParser()
 
+cant_access = {
+    "npin.cdc.gov",
+    "www.ncbi.nlm.nih.gov",
+}  # gak bisa diakses & gak muncul tag <p> nya
+
 
 def add_websearch_results(query):
-    results = DDGS().text(query, max_results=8)
+    results = DDGS().text(query, max_results=7)
 
     websearch = []
 
     for res in results:
-        if "webmd" in res["href"]:
+        domain = res["href"].split("/")[2]
+        if "webmd" in res["href"] or ".pdf" in res["href"] or domain in cant_access:
             continue
-        if len(websearch) == 3:
+        if len(websearch) == 4:
             break
-        if ".org" in res["href"] or ".gov" in res["href"]:
+        if ".org" in res["href"] or ".gov" in res["href"] or "who" in res["href"]:
 
             link = res["href"]
-            page = requests.get(link).text
-            doc = BeautifulSoup(page, "html.parser")
+            try:
+                page = requests.get(link).text
+            except requests.exceptions.RequestException as errh:
+                print(f"error: {errh}")
+                continue
+            doc = BeautifulSoup(page, features="html.parser")
             text = ""
             hs = doc.find_all("h2")
             h3s = doc.find_all("h3")
+            ps = doc.find_all("p")
             for h3 in h3s:
                 hs.append(h3)
+            for pp in ps:
+                hs.append(pp)
 
             hs_parents = set()
             for h2 in hs:
@@ -172,10 +197,11 @@ def add_websearch_results(query):
                     ):
                         text += adjacent.text + ": \n"
                     if adjacent.name == "ul" or adjacent.name == "ol":
+                        text += ": "
                         for li in adjacent.find_all("li"):
-                            text += ": " + li.text + ","
+                            text += li.text + ","
                         text += "\n"
-            if "Why have I been blocked" in text or text == "":
+            if "Why have I been blocked" in text or text == "" or text == ": \n":
                 continue
 
             websearch.append(text)
@@ -213,30 +239,42 @@ class DuckDuckGoRetriever(BaseRetriever):
         return matching_documents
 
 
-websearch_retriever = DuckDuckGoRetriever(k=3)
+websearch_retriever = DuckDuckGoRetriever(k=4)
+
+def rerank_docs_medcpt(query, docs):
+    pairs = [[query, article] for article in docs]
+    with torch.no_grad():
+        encoded = tokenizer(
+            pairs,
+            truncation=True,
+            padding=True,
+            return_tensors="pt",
+            max_length=512,
+        )
+
+        logits = model(**encoded).logits.squeeze(dim=1)
+        values, indices =torch.sort(logits, descending=True)
+        relevant = [docs[i] for i in indices[:6]]
+    return relevant
 
 
-
-def add_web_search(query):
-    websearch = add_websearch_results(query)
-
-
-retrieval_chain = (
-    generate_query
-    | {"chroma": retriever, "websearch": websearch_retriever}
-)
+retrieval_chain = generate_query | {
+    "chroma": retriever,
+    "websearch": websearch_retriever,
+     "query": StrOutputParser(),
+}
 
 
 def format_docs(docs):
+    query = docs["query"]
     chroma_docs = [doc.metadata["content"] + doc.page_content for doc in docs["chroma"]]
     docs = list(set(chroma_docs + docs["websearch"]))
-    context = "\n\n".join(doc for doc in docs)
+    relevant_docs = rerank_docs_medcpt(query, docs)
+    context = "\n\n".join(doc for doc in relevant_docs)
     return context
 
-# add a summary of the text in context to your answer
-# if the answer to the user's question is not in the context and you can't answer user questions and don't repeat your answers, add text from context that is relevant to the user's question . Don't say 'the given text does not answer the user's question or is not relevant to the user's question' in your answer. 
-# please don't repeat the same answer!
-# https://arxiv.org/pdf/2205.11916 ,https://arxiv.org/pdf/2005.11401
+
+
 template = """Answer the question based only on the following context:
 {context}
 \n
@@ -245,7 +283,7 @@ please do not mention the same answer more than once and Don't say 'the given te
 \n
 Question: {question}
 \n
-Answer: Let's think step by step in order to
+Answer: Let's think step by step.
 """
 
 
@@ -256,7 +294,7 @@ answer_chain = (
     {"context": retrieval_chain | format_docs, "question": RunnablePassthrough()}
     | prompt
     | llm
-    | { "llm_output":  StrOutputParser(), "context": retrieval_chain | format_docs} 
+    | {"llm_output": StrOutputParser(), "context": retrieval_chain | format_docs}
 )
 
 
@@ -266,18 +304,20 @@ def answer(question):
     return answer
 
 
-def answer_pipeline(question, chat_history):
+def answer_pipeline(question, chat_history, riwayat_penyakit):
     user_context = ""
-    if chat_history != "" and "insufficient data" not in chat_history.lower() :
+    if chat_history != "":
         user_context = user_summarizer(
             text=chat_history
             + "\n"
             + "summarize the user's health condition based on the user's chat history above! only explain the user's health condition and nothing else!"
         )
 
+    if user_context != "" and "insufficient data" not in user_context.lower():
+        question = ".my health condition: " + user_context  + "\n" + question
+    if riwayat_penyakit != "":
+        question = "my medical history: " + riwayat_penyakit + "\n" + question
    
-    if user_context != "":
-        question = "my health condition: " + user_context + "\n" + question
     question = translate_text(question, "English")
     question = question.replace("\n", "  ")
     print("retrieving relevant passages and answering user question....")

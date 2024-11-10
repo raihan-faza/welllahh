@@ -31,6 +31,21 @@ class UserBodyInfo(models.Model):
 
     def __str__(self) -> str:
         return self.custom_user.user.username
+    
+class ChatSession(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+    message_from = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    session_title = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+class Message(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+    prompt_content = models.TextField()
+    chatbot_content = models.TextField()
+    context = models.TextField()
+    chat_session = models.ForeignKey(ChatSession, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
 
 
 class Token(models.Model):

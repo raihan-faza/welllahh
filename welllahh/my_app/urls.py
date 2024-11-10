@@ -46,6 +46,7 @@ urlpatterns = [
     path("anonymous_login", views.login_using_passphrase, name="anonymous_login"),
     path("ai/chatbot", views.get_chatbot_response, name="chatbot"),
     path("ai/chatbotpage", views.chatbot_page, name="chatbotpage"),
+    path("ai/chatbotpage/<uuid:id>", views.chatbot_page, name="chatbotpage"),
     path("dashboard", views.dashboard, name="dashboard"),
     path("delete_nutrition/<uuid:pk>", views.delete_nutrition, name="delete_nutrition"),
     path("logout", views.logout_view, name="logout"),
