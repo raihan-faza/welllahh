@@ -1,0 +1,78 @@
+{%load static%}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Attendance Dashboard | By Code Info</title>
+
+    <!-- Font Awesome Cdn Link -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/dashboard.css' %}" rel="stylesheet" />
+</head>
+
+<body>
+    <div class="container">
+        <nav>
+            <ul>
+                <li>
+                    <a href="{% url 'my_app:dashboard' %}" class="logo">
+                        <img src="./pic/logo.jpg" />
+                        <span class="nav-item">{{user.username}}</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'my_app:food_nutrition'%}">
+                        <i class="fas fa-camera"></i>
+                        <span class="nav-item">Food Using Image</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'my_app:chatbotpage' %}">
+                        <i class="fas fa-comment"></i>
+                        <span class="nav-item">Chatbot</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'my_app:riwayat' %}">
+                        <i class="fas fa-database"></i>
+                        <span class="nav-item">Riwayat Penyakit</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'my_app:add_nutrition' %}">
+                        <i class="fas fa-plus"></i>
+                        <span class="nav-item">Add Nutrition</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'my_app:add_riwayat' %}">
+                        <i class="fas fa-book"></i>
+                        <span class="nav-item">Add Riwayat</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'my_app:meal_plan' %}">
+                        <i class="fas fa-cog"></i>
+                        <span class="nav-item">Meal Plan</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'my_app:logout'%}" class="logout">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span class="nav-item">Log out</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        {% block content %} {% endblock content %}
+
+    </div>
+</body>
+
+</html>
+</span>

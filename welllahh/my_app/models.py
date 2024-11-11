@@ -69,14 +69,18 @@ class BloodCodition(models.Model):
     blood_sugar = models.DecimalField(max_digits=10, decimal_places=2)
     uric_acid = models.DecimalField(max_digits=10, decimal_places=2)
     cholesterol = models.DecimalField(max_digits=10, decimal_places=2)
+    blood_pressure = models.DecimalField(max_digits=10, decimal_places=2)
+    check_time = models.DateTimeField(default=timezone.now)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
 
 
-class NutritionProgress(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
-    # nutrition_type = models.CharField(
+ # nutrition_type = models.CharField(
     #    max_length=20, choices=NutritionType.choices, default=NutritionType.CALORY
     # )
+
+    
+class NutritionProgress(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     check_time = models.DateTimeField(default=timezone.now)
     nutrition_name = models.CharField(max_length=255, default=None)
     calorie = models.DecimalField(max_digits=10, decimal_places=2)

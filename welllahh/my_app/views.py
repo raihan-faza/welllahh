@@ -25,6 +25,8 @@ from django.utils import timezone
 from django.db.models import Sum
 from django.contrib.auth.decorators import login_required
 from .medical_ai_chatbot import answer_pipeline
+from django.db.models.functions import TruncDate
+
 
 
 def landing_page(request):
@@ -57,7 +59,7 @@ def register_user(request):
         )
         custom_user.save()
         login(request, user)
-        return redirect("my_app:dashboard")
+        return redirect("my_app:catat_tinggi_berat")
     return render(request, "register.html")
 
 
@@ -207,7 +209,8 @@ def get_health_condition_based_on_nutrition_val(request):
         nutrition_type = request.POST.get("nutrition_type")
         nutrition_value = request.POST.get("nutrition_value")
         user = request.user
-        user_age = user.age
+        custom_user = CustomUser.objects.get(user=user)
+        user_age = custom_user.age
         if nutrition_type == "BLOOD_SUGAR":
             # https://www.halodoc.com/kesehatan/diabetes?srsltid=AfmBOorAHmPVZ_SFLW0q8RSkk8xjPeMjfor1bEsOx3HHs1kgrNbvApR9
 
@@ -239,9 +242,8 @@ def get_health_condition_based_on_nutrition_val(request):
             # asam urat
             # https://www.siloamhospitals.com/en/informasi-siloam/artikel/prosedur-cek-asam-urat
             if nutrition_value >= 7.0:
-                return JsonResponse(
-                    data={"disease_prediction": "Serangan Asam Urat Dan Batu Ginjal"}
-                )
+                return {"disease_prediction": "Serangan Asam Urat Dan Batu Ginjal"}
+
             else:
                 return JsonResponse(data={"disease_prediction": "normal"})
         if nutrition_type == "BLOOD_PRESSURE":
@@ -289,8 +291,10 @@ def catat_nutrisi(request):
         nutrition_progress.save()
 
 
+@login_required(login_url="my_app:normal_login")
 def catat_tinggi_berat(request):
     if request.method == "POST":
+        custom_user = CustomUser.objects.get(user=request.user)
         height = request.POST.get("height")
         weight = request.POST.get("weight")
         muscle_mass = request.POST.get("muscle_mass")
@@ -303,9 +307,14 @@ def catat_tinggi_berat(request):
             height=height,
             fat_mass=fat_mass,
             check_time=check_time,
-            custom_user=request.user,
+            custom_user=custom_user,
         )
         body_info.save()
+        return redirect("my_app:dashboard")
+    return render(
+        request,
+        "add_bmi.html",
+    )
 
 
 # food recommendations
@@ -722,16 +731,14 @@ def get_chatbot_response(request):
         chat_uuid = body["chatUUID"]
         custom_user = CustomUser.objects.get(user=request.user)
 
-
         riwayat_penyakit_db = RiwayatPenyakit.objects.filter(user=custom_user)
-        
+
         riwayat_penyakit = ""
         for penyakit in riwayat_penyakit_db:
             riwayat_penyakit += penyakit.nama_penyakit + ", "
         answer, context = answer_pipeline(question, chat_history, riwayat_penyakit)
-        answer = set(answer.split('\n')) # hapus duplicate answer
-        answer = '\n'.join(answer)
-        
+        answer = set(answer.split("\n"))  # hapus duplicate answer
+        answer = "\n".join(answer)
 
         if chat_uuid != 0:
             curr_chat_session = ChatSession.objects.get(id=chat_uuid)
@@ -823,8 +830,293 @@ def chatbot_page(request, id=None):
     )
 
 
+def get_health_condition_based_on_nutrition_val(nutrition_type, nutrition_value, user):
+
+    user_age = user.age
+    if nutrition_type == "BLOOD_SUGAR":
+        # https://www.halodoc.com/kesehatan/diabetes?srsltid=AfmBOorAHmPVZ_SFLW0q8RSkk8xjPeMjfor1bEsOx3HHs1kgrNbvApR9
+
+        if nutrition_value >= 126:
+            return {"disease_prediction": "diabetes"}
+        elif nutrition_value >= 100 and nutrition_value <= 125:
+            return {"disease_prediction": "prediabetes"}
+        else:
+            return {"disease_prediction": "Normal"}
+
+    if nutrition_type == "CHOLESTEROL":
+        if user_age >= 20:
+            if nutrition_value > 200:
+                # https://www.siloamhospitals.com/en/informasi-siloam/artikel/kadar-kolesterol-normal
+                return {"disease_prediction": "Penyakit Jantung dan stroke"}
+
+            else:
+                return {"disease_prediction": "Normal"}
+        else:
+            if nutrition_value > 170:
+                # https://www.siloamhospitals.com/en/informasi-siloam/artikel/kadar-kolesterol-normal
+                return {"disease_prediction": "Penyakit Jantung dan stroke"}
+
+            else:
+                return {"disease_prediction": "Normal"}
+    if nutrition_type == "URIC_ACID":
+        # asam urat
+        # https://www.siloamhospitals.com/en/informasi-siloam/artikel/prosedur-cek-asam-urat
+        if nutrition_value >= 7.0:
+            {"disease_prediction": "Serangan Asam Urat Dan Batu Ginjal"}
+
+        else:
+            return {"disease_prediction": "Normal"}
+    if nutrition_type == "BLOOD_PRESSURE":
+        # https://www.siloamhospitals.com/informasi-siloam/artikel/mengenal-tekanan-darah-normal
+        if user_age >= 18:
+            if nutrition_value > 120:
+                return {"disease_prediction": "Hipertensi"}
+            else:
+                return {"disease_prediction": "Normal"}
+        elif user_age < 18 and user_age >= 13:
+            if nutrition_value > 128:
+                return {"disease_prediction": "Hipertensi"}
+            else:
+                return {"disease_prediction": "Normal"}
+        elif user_age >= 6 and user_age <= 12:
+            if nutrition_value > 131:
+                return {"disease_prediction": "Hipertensi"}
+            else:
+                return {"disease_prediction": "Normal"}
+        elif user_age >= 3 and user_age < 6:
+            if nutrition_value > 120:
+                return {"disease_prediction": "Hipertensi"}
+            else:
+                return {"disease_prediction": "Normal"}
+        else:
+            if nutrition_value > 100:
+                return {"disease_prediction": "Hipertensi"}
+            else:
+                return {"disease_prediction": "Normal"}
+
+
+def nutrition_condition(
+    nutrition_type, nutrition_value, user_body_info, penyakit_user, user
+):
+    calorie_recomm = calorie_intake(
+        user_body_info.weight, user_body_info.height, user.age
+    )
+    if nutrition_type == "CALORIE":
+        if nutrition_value < calorie_recomm:
+            return "Normal"
+        else:
+            return "Too High"
+
+    if (
+        "diabetes" not in penyakit_user
+        and "jantung" not in penyakit_user
+        and "hipertensi" not in penyakit_user
+    ):
+        #  healthy user
+        if nutrition_type == "PROTEIN":
+            if nutrition_value <= 0.15 * calorie_recomm:
+                return "Normal"
+            else:
+                return "Too High"
+        elif nutrition_type == "FAT":
+            if nutrition_value <= 0.25 * calorie_recomm:
+                return "Normal"
+            else:
+                return "Too High"
+        elif nutrition_type == "CARBOHYDRATE":
+            if nutrition_value <= 0.60 * calorie_recomm:
+                return "Normal"
+            else:
+                return "Too High"
+
+    if "jantung" in penyakit_user or "hipertensi" in penyakit_user:
+        if nutrition_type == "PROTEIN":
+            if nutrition_value <= 0.15 * calorie_recomm:
+                return "Normal"
+            else:
+                return "Too High"
+        elif nutrition_type == "FAT":
+            if nutrition_value <= 0.25 * calorie_recomm:
+                return "Normal"
+            else:
+                return "Too High"
+        elif nutrition_type == "CARBOHYDRATE":
+            if nutrition_value <= 0.60 * calorie_recomm:
+                return "Normal"
+            else:
+                return "Too High"
+
+    if "diabetes" in penyakit_user:
+        if nutrition_type == "PROTEIN":
+            if nutrition_value <= 25 * user_body_info.weight * user.age * 1.65:
+                return "Normal"
+            else:
+                return "Too High"
+        elif nutrition_type == "FAT":
+            if nutrition_value <= 0.25 * calorie_recomm:
+                return "Normal"
+            else:
+                return "Too High"
+        elif nutrition_type == "CARBOHYDRATE":
+            if nutrition_value <= 0.60 * calorie_recomm:
+                return "Normal"
+            else:
+                return "Too High"
+
+
+def truncate(f, n):
+    """Truncates/pads a float f to n decimal places without rounding"""
+    s = "{}".format(f)
+    if "e" in s or "E" in s:
+        return "{0:.{1}f}".format(f, n)
+    i, p, d = s.partition(".")
+    return ".".join([i, (d + "0" * n)[:n]])
+
+
 @login_required(login_url="my_app:normal_login")
 def dashboard(request):
+
+    person_data = NutritionProgress.objects.filter(user__user=request.user)
+    kadar_data = BloodCodition.objects.filter(user__user=request.user).order_by(
+        "-check_time"
+    )
+    curr_kadar = {
+        "BLOOD_SUGAR": 0,
+        "BLOOD_SUGAR_DISEASE": "Normal",
+        "CHOLESTEROL": 0,
+        "CHOLESEROL_DISEASE": "Normal",
+        "URIC_ACID": 0,
+        "URIC_ACID_DISEASE": "Normal",
+        "BLOOD_PRESSURE": 0,
+        "BLOOD_PRESSURE_DISEASE": "Normal",
+    }
+    if kadar_data.exists():
+        curr_kadar = {
+            "BLOOD_SUGAR": kadar_data[0].blood_sugar,
+            "BLOOD_SUGAR_DISEASE": get_health_condition_based_on_nutrition_val(
+                "BLOOD_SUGAR", kadar_data[0].blood_sugar, request.user
+            ),
+            "CHOLESTEROL": kadar_data[0].cholesterol,
+            "CHOLESEROL_DISEASE": get_health_condition_based_on_nutrition_val(
+                "CHOLESTEROL", kadar_data[0].cholesterol, request.user
+            ),
+            "URIC_ACID": kadar_data[0].uric_acid,
+            "URIC_ACID_DISEASE": get_health_condition_based_on_nutrition_val(
+                "URIC_ACID", kadar_data[0].uric_acid, request.user
+            ),
+            "BLOOD_PRESSURE": kadar_data[0].blood_pressure,
+            "BLOOD_PRESSURE_DISEASE": get_health_condition_based_on_nutrition_val(
+                "BLOOD_PRESSURE", kadar_data[0].blood_pressure, request.user
+            ),
+        }
+
+    today_foods = person_data.filter(check_time__date=timezone.now().date())
+    weekly_foods = person_data.filter(
+        check_time__gte=timezone.now() - datetime.timedelta(days=7)
+    )
+    today_calory = today_foods.aggregate(Sum("calorie"))["calorie__sum"]
+    today_carbs = today_foods.aggregate(Sum("carbs"))["carbs__sum"]
+    today_protein = today_foods.aggregate(Sum("protein"))["protein__sum"]
+    today_fat = today_foods.aggregate(Sum("fat"))["fat__sum"]
+    weekly_calory = weekly_foods.aggregate(Sum("calorie"))["calorie__sum"]
+    weekly_carbs = weekly_foods.aggregate(Sum("carbs"))["carbs__sum"]
+    weekly_protein = weekly_foods.aggregate(Sum("protein"))["protein__sum"]
+    weekly_fat = weekly_foods.aggregate(Sum("fat"))["fat__sum"]
+
+    user_body_info = UserBodyInfo.objects.filter(
+        custom_user__user=request.user
+    ).order_by("-check_time")[0]
+    penyakit_user_db = RiwayatPenyakit.objects.filter(user__user=request.user)
+    riwayat_penyakit_user = []
+    for penyakit in penyakit_user_db:
+        riwayat_penyakit_user.append(penyakit.nama_penyakit)
+    custom_user = CustomUser.objects.get(user=request.user)
+
+    bmi = truncate(user_body_info.weight / ((user_body_info.height / 100) ** 2), 2)
+
+    detailed_daily_nutrition = (
+        NutritionProgress.objects.filter(user__user=request.user)
+        .annotate(date=TruncDate("check_time"))
+        .values("date")
+        .annotate(
+            total_calories=Sum("calorie"),
+            total_carbs=Sum("carbs"),
+            total_protein=Sum("protein"),
+            total_fat=Sum("fat"),
+        )
+        .order_by("date")
+    )
+    daily_nutrition_input_db = NutritionProgress.objects.filter(user__user=request.user)
+    daily_nutrition_input = []
+    for daily in daily_nutrition_input_db:
+        daily_nutrition_input.append(
+            [
+                daily.check_time,
+                daily.nutrition_name,
+                 daily.calorie,
+                daily.carbs,
+                 daily.fat,
+                daily.protein,
+            ]
+        )
+
+    daily_nutrition = []
+    for daily in detailed_daily_nutrition:
+        daily_nutrition.append(
+            {
+                "date": daily["date"],
+                "total_calories": daily["total_calories"],
+                "total_carbs": daily["total_carbs"],
+                "total_protein": daily["total_protein"],
+                "total_fat": daily["total_fat"],
+            }
+        )       
+
+    context = {
+        "today_foods": today_foods,
+        "weekly_foods": weekly_foods,
+        "today_calory": today_calory,
+        "today_protein": today_protein,
+        "today_carbs": today_carbs,
+        "today_fat": today_fat,
+        "weekly_calory": weekly_calory,
+        "weekly_protein": weekly_protein,
+        "weekly_carbs": weekly_carbs,
+        "weekly_fat": weekly_fat,
+        "calory_condition": nutrition_condition(
+            "CALORIE", today_calory, user_body_info, riwayat_penyakit_user, custom_user
+        ),
+        "protein_condition": nutrition_condition(
+            "PROTEIN", today_calory, user_body_info, riwayat_penyakit_user, custom_user
+        ),
+        "fat_condition": nutrition_condition(
+            "FAT", today_calory, user_body_info, riwayat_penyakit_user, custom_user
+        ),
+        "carbo_condition": nutrition_condition(
+            "CARBOHYDRATE",
+            today_calory,
+            user_body_info,
+            riwayat_penyakit_user,
+            custom_user,
+        ),
+        "kadar": curr_kadar,
+        "body_info": user_body_info,
+        "bmi": bmi,
+        "daily_nutrition": daily_nutrition,
+        "daily_nutrition_input": daily_nutrition_input,
+    }
+
+    return render(request, "dashboard_cantik.html", context=context)
+
+
+# @login_required(login_url="my_app:normal_login")
+# def add_bmi(request):
+
+#     return render(request, "add_bmi.html",)
+
+
+@login_required(login_url="my_app:normal_login")
+def dashboard_cantik(request):
     person_data = NutritionProgress.objects.filter(user__user=request.user)
     today_foods = person_data.filter(check_time__date=timezone.now().date())
     weekly_foods = person_data.filter(
@@ -850,7 +1142,7 @@ def dashboard(request):
         "weekly_carbs": weekly_carbs,
         "weekly_fat": weekly_fat,
     }
-    return render(request, "dashboard.html", context=context)
+    return render(request, "dashboard_cantik.html", context=context)
 
 
 def delete_nutrition(request, pk):

@@ -1,0 +1,705 @@
+{%load static%}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Welllahh Dashboard</title>
+    <link rel="stylesheet" href="{% static 'css/welllahh_dashboard.css' %}" />
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <aside class="left-section">
+        <div class="logo">
+          <img src="{% static 'img/logo_figma.png' %}" alt="" />
+        </div>
+
+        <div class="sidebar">
+          <div class="item" id="active">
+            <i class="bx bxs-dashboard"></i>
+            <a href="{% url 'my_app:dashboard' %}">Dashboard</a>
+          </div>
+          <div class="item">
+            <i class="bx bx-bowl-rice"></i>
+            <a href="{% url 'my_app:food_nutrition'%}"
+              >Food Nutrition Detector</a
+            >
+          </div>
+          <div class="item">
+            <i class="bx bx-message-square-dots"></i>
+            <a href="{% url 'my_app:chatbotpage' %}">Chatbot</a>
+          </div>
+
+          <div class="item">
+            <i class="bx bx-shield-plus"></i>
+            <a href="{% url 'my_app:riwayat' %}">Medical History</a>
+          </div>
+
+          <div class="item">
+            <i class="bx bx-capsule"></i>
+            <a href="{% url 'my_app:add_nutrition' %}"
+              >Add Nutrition Progress</a
+            >
+          </div>
+
+          <div class="item">
+            <i class="bx bx-add-to-queue"></i>
+            <a href="{% url 'my_app:add_riwayat' %}">Add Medical History</a>
+          </div>
+
+          <div class="item">
+            <i class="bx bx-add-to-queue"></i>
+            <a href="{% url 'my_app:meal_plan' %}">Meal Plan</a>
+          </div>
+
+
+          <div class="item">
+            <i class="bx bx-user"></i>
+            <a href="{% url 'my_app:catat_tinggi_berat' %}">Record BMI</a>
+          </div>
+        </div>
+      </aside>
+
+      <main>
+        <header>
+          <div>
+            <h2>Health Overview</h2>
+            <p class="current-date">10 November 2024</p>
+          </div>
+          <div class="search-notif">
+            <div class="search">
+              <i class="bx bx-search"></i>
+            </div>
+
+            <div class="search">
+              <i class="bx bx-bell"></i>
+            </div>
+          </div>
+        </header>
+
+        <div class="health-stats">
+          <div class="metric-card">
+            <div class="metric-header">
+              <div class="icon-container blood-sugar-icon">
+                <svg
+                  width="30px"
+                  height="30px"
+                  viewBox="0 -0.5 49 49"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    clip-rule="evenodd"
+                    d="M33.9536 8.19629L15.9536 8.21103L15.9684 26.211L33.9683 26.1963L33.9536 8.19629ZM24.9648 21.8704C27.2048 21.8685 28.9634 20.1909 28.9617 18.0576C28.9601 16.0766 24.9561 11.2037 24.9561 11.2037C24.9561 11.2037 20.9599 15.9308 20.9617 18.0641C20.9634 20.1974 22.7248 21.8722 24.9648 21.8704Z"
+                    fill="#E79B38"
+                  />
+                  <path
+                    fill-rule="evenodd"
+                    clip-rule="evenodd"
+                    d="M16.9823 28.9869C16.9818 28.4346 17.4292 27.9865 17.9814 27.9861L21.9814 27.9828C22.5337 27.9824 22.9818 28.4297 22.9823 28.982C22.9827 29.5343 22.5354 29.9824 21.9831 29.9828L17.9831 29.9861C17.4308 29.9865 16.9827 29.5392 16.9823 28.9869Z"
+                    fill="#333333"
+                  />
+                  <path
+                    fill-rule="evenodd"
+                    clip-rule="evenodd"
+                    d="M26.9823 28.9787C26.9818 28.4264 27.4292 27.9784 27.9814 27.9779L31.9814 27.9746C32.5337 27.9742 32.9818 28.4215 32.9823 28.9738C32.9827 29.5261 32.5354 29.9742 31.9831 29.9746L27.9831 29.9779C27.4308 29.9784 26.9827 29.531 26.9823 28.9787Z"
+                    fill="#333333"
+                  />
+                  <path
+                    fill-rule="evenodd"
+                    clip-rule="evenodd"
+                    d="M13.9519 6.21266L35.9519 6.19464C36.5042 6.19419 36.9523 6.64154 36.9528 7.19382L36.9732 32.1938C36.9737 32.7461 36.5263 33.1942 35.974 33.1946L29.9741 33.1995L29.9757 35.1995L35.9757 35.1946C37.6325 35.1933 38.9746 33.849 38.9732 32.1922L38.9528 7.19218C38.9514 5.53533 37.6072 4.19329 35.9503 4.19464L13.9503 4.21266C12.2934 4.21402 10.9514 5.55826 10.9528 7.21512L10.9732 32.2151C10.9746 33.872 12.3188 35.214 13.9757 35.2127L19.9757 35.2077L19.9741 33.2077L13.9741 33.2127C13.4218 33.2131 12.9737 32.7658 12.9732 32.2135L12.9528 7.21348C12.9523 6.66119 13.3997 6.21311 13.9519 6.21266Z"
+                    fill="#333333"
+                  />
+                  <path
+                    fill-rule="evenodd"
+                    clip-rule="evenodd"
+                    d="M28.974 33.2004L20.974 33.2069L20.9814 42.2069L28.9814 42.2004L28.974 33.2004ZM18.9724 31.2086L18.9831 44.2086L30.9831 44.1987L30.9724 31.1987L18.9724 31.2086Z"
+                    fill="#333333"
+                  />
+                  <path
+                    d="M26.9782 38.202C26.9791 39.3066 26.0844 40.2027 24.9798 40.2037C23.8753 40.2046 22.9791 39.3099 22.9782 38.2053C22.9773 37.1007 23.872 36.2046 24.9766 36.2037C26.0811 36.2027 26.9773 37.0974 26.9782 38.202Z"
+                    fill="#333333"
+                  />
+                </svg>
+              </div>
+              <span class="metric-title">Blood Sugar</span>
+            </div>
+            <div class="metric-value">
+              {{kadar.BLOOD_SUGAR}} <span class="metric-unit">mg/dL</span>
+            </div>
+            <span class="status-badge status-normal">{{kadar.BLOOD_SUGAR_DISEASE}}</span>
+            <div class="graph-container">
+              <div class="graph graph-blood-sugar">
+                <svg
+                  class="graph-line blood-sugar-line"
+                  preserveAspectRatio="none"
+                  viewBox="0 0 100 100"
+                >
+                  <path
+                    d="M0,50 Q25,40 50,45 T100,30"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-header">
+              <div class="icon-container heart-rate-icon">
+                <svg
+                  fill="#F44336"
+                  version="1.1"
+                  id="Layer_1"
+                  width="30px"
+                  height="30px"
+                  xmlns="http://www.w3.org/2000/svg"
+                  xmlns:xlink="http://www.w3.org/1999/xlink"
+                  viewBox="0 0 496 496"
+                  xml:space="preserve"
+                >
+                  <g>
+                    <g>
+                      <g>
+                        <path
+                          d="M496,24c0-13.232-10.768-24-24-24H248c-13.232,0-24,10.768-24,24v128H0v16h224v16H0v16h112.4
+                  c2.024,17.952,17.112,32,35.6,32c18.48,0,33.576-14.048,35.592-32H224v40.576c-2.656-0.328-5.32-0.576-8-0.576
+                  c-30.872,0-56,21.528-56,48s25.128,48,56,48c2.68,0,5.344-0.24,8-0.576V360c0,10.416,1.288,20.52,3.512,30.272
+                  c-11.768-3.296-21.96-11.16-28.064-22.128l-6.976-12.552C180.28,333.632,157.112,320,132,320s-48.28,13.632-60.48,35.584
+                  l-6.976,12.552C56.368,382.856,40.824,392,24,392h-8H0v16h16h8h208.912c2.08,5.496,4.408,10.872,7.152,16H0v16h250.264
+                  c24.76,33.872,64.664,56,109.736,56c45.072,0,84.976-22.128,109.736-56H496v-16h-16.064c2.752-5.128,5.072-10.504,7.152-16H496
+                  v-16h-3.96c2.496-10.28,3.96-20.96,3.96-32V24z M148,216c-9.664,0-17.736-6.88-19.6-16h39.192
+                  C165.736,209.12,157.664,216,148,216z M224,319.256c-2.648,0.456-5.32,0.744-8,0.744c-22.056,0-40-14.352-40-32s17.944-32,40-32
+                  c2.68,0,5.352,0.288,8,0.736V319.256z M65.504,392c5.112-4.568,9.592-9.912,13.024-16.096l6.976-12.552
+                  C94.88,346.488,112.696,336,132,336s37.12,10.488,46.488,27.352l6.976,12.552c3.432,6.176,7.92,11.52,13.032,16.096H65.504z
+                   M480,360c0,66.168-53.832,120-120,120c-66.176,0-120-53.832-120-120V24c0-4.416,3.584-8,8-8h224c4.416,0,8,3.584,8,8V360z"
+                        />
+                        <path
+                          d="M256,184v8v16h16v-16h16v16h16v-16h16v16h16v-16h16v16h16v-16h16v16h16v-16h16v16h16v-16h16v16h16v-16v-8V32H256V184z
+                   M272,48h176v128H272V48z"
+                        />
+                        <path
+                          d="M56,320c30.872,0,56-25.128,56-56s-25.128-56-56-56S0,233.128,0,264S25.128,320,56,320z M56,224
+                  c22.056,0,40,17.944,40,40c0,22.056-17.944,40-40,40c-22.056,0-40-17.944-40-40C16,241.944,33.944,224,56,224z"
+                        />
+                        <path
+                          d="M56,288v-16c-4.416,0-8-3.584-8-8c0-4.416,3.584-8,8-8v-16c-13.232,0-24,10.768-24,24S42.768,288,56,288z"
+                        />
+                        <rect x="288" y="144" width="64" height="16" />
+                        <rect x="368" y="144" width="64" height="16" />
+                        <path
+                          d="M256,304h96v-80h-96V304z M272,240h64v48h-64V240z"
+                        />
+                        <path
+                          d="M368,304h96v-80h-96V304z M384,240h64v48h-64V240z"
+                        />
+                        <path
+                          d="M256,400h96v-80h-96V400z M272,336h64v48h-64V336z"
+                        />
+                        <path
+                          d="M368,400h96v-80h-96V400z M384,336h64v48h-64V336z"
+                        />
+                      </g>
+                    </g>
+                  </g>
+                </svg>
+              </div>
+              <span class="metric-title">Cholesterol</span>
+            </div>
+            <div class="metric-value">
+              {{kadar.CHOLESTEROL}} <span class="metric-unit">mg/dl</span>
+            </div>
+            <span class="status-badge status-normal">{{kadar.CHOLESEROL_DISEASE}}</span>
+            <div class="graph-container">
+              <div class="graph graph-heart-rate">
+                <svg
+                  class="graph-line heart-rate-line"
+                  preserveAspectRatio="none"
+                  viewBox="0 0 100 100"
+                >
+                  <path
+                    d="M0,60 Q25,55 50,50 T100,40"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-header">
+              <div class="icon-container blood-pressure-icon">
+                <svg
+                  width="30px"
+                  height="30px"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M9 7.5L9.35355 7.14645C9.15829 6.95118 8.84171 6.95118 8.64645 7.14645L9 7.5ZM9 7.5C8.64645 7.14645 8.64635 7.14654 8.64624 7.14665C8.64618 7.14671 8.64605 7.14684 8.64593 7.14696C8.64569 7.1472 8.64539 7.14751 8.64501 7.14789C8.64426 7.14864 8.64323 7.14967 8.64194 7.15097C8.63936 7.15357 8.63571 7.15725 8.63103 7.162C8.62166 7.1715 8.60816 7.18527 8.59079 7.20316C8.55605 7.23892 8.50584 7.29117 8.44238 7.35866C8.31549 7.49361 8.1354 7.68974 7.91983 7.93723C7.48919 8.43168 6.91451 9.13396 6.3389 9.96539C5.20317 11.6059 4 13.8387 4 16H5C5 14.1613 6.04683 12.1441 7.1611 10.5346C7.71049 9.74104 8.26081 9.06832 8.67392 8.59402C8.88023 8.35714 9.0517 8.17045 9.1709 8.04368C9.23048 7.98032 9.27696 7.93197 9.30814 7.89987C9.32373 7.88382 9.33549 7.87183 9.34315 7.86406C9.34698 7.86017 9.34979 7.85734 9.35153 7.85559C9.35241 7.85471 9.35301 7.8541 9.35335 7.85376C9.35352 7.85359 9.35362 7.85349 9.35366 7.85345C9.35367 7.85343 9.35365 7.85346 9.35366 7.85345C9.35361 7.85349 9.35355 7.85355 9 7.5ZM14 16C14 13.8387 12.7968 11.6059 11.6611 9.96539C11.0855 9.13396 10.5108 8.43168 10.0802 7.93723C9.8646 7.68974 9.68451 7.49361 9.55762 7.35866C9.49416 7.29117 9.44395 7.23892 9.40921 7.20316C9.39184 7.18527 9.37834 7.1715 9.36897 7.162C9.36429 7.15725 9.36064 7.15357 9.35806 7.15097C9.35677 7.14967 9.35574 7.14864 9.35499 7.14789C9.35461 7.14751 9.35431 7.1472 9.35407 7.14696C9.35395 7.14684 9.35382 7.14671 9.35376 7.14665C9.35365 7.14654 9.35355 7.14645 9 7.5C8.64645 7.85355 8.64639 7.85349 8.64634 7.85345C8.64635 7.85346 8.64633 7.85343 8.64634 7.85345C8.64638 7.85349 8.64648 7.85359 8.64665 7.85376C8.64699 7.8541 8.64759 7.85471 8.64847 7.85559C8.65021 7.85734 8.65302 7.86017 8.65685 7.86406C8.66451 7.87183 8.67627 7.88382 8.69186 7.89987C8.72304 7.93197 8.76952 7.98032 8.8291 8.04368C8.9483 8.17045 9.11977 8.35714 9.32608 8.59402C9.73919 9.06832 10.2895 9.74104 10.8389 10.5346C11.9532 12.1441 13 14.1613 13 16H14ZM13 16C13 18.2091 11.2091 20 9 20V21C11.7614 21 14 18.7614 14 16H13ZM9 20C6.79086 20 5 18.2091 5 16H4C4 18.7614 6.23858 21 9 21V20Z"
+                    fill="#2196F3"
+                  />
+                  <path
+                    d="M13.5 7.5H19.5M16.5 4.5V10.5"
+                    stroke="#2196F3"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </div>
+              <span class="metric-title">Blood Pressure</span>
+            </div>
+            <div class="metric-value">
+              {{kadar.BLOOD_PRESSURE}} <span class="metric-unit">/72 mmHg</span>
+            </div>
+            <span class="status-badge status-normal">{{kadar.BLOOD_PRESSURE_DISEASE}}</span>
+            <div class="graph-container">
+              <div class="graph graph-blood-pressure">
+                <svg
+                  class="graph-line blood-pressure-line"
+                  preserveAspectRatio="none"
+                  viewBox="0 0 100 100"
+                >
+                  <path
+                    d="M0,40 Q25,45 50,35 T100,45"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-header">
+              <div class="icon-container blood-sugar-icon">
+                <svg
+                  fill="#E79B38"
+                  width="24px"
+                  height="24px"
+                  viewBox="0 0 32 32"
+                  version="1.1"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <title>acid</title>
+                  <path
+                    d="M12.25 12.25c0.937 0 1.875 0.937 3.75 0.937s2.813-0.937 3.75-0.937c2.813 0 0.937 1.875 0 2.813 0 9.375 7.5 14.063 7.5 15.937h-22.5c0-1.875 7.5-6.562 7.5-15.937-0.938-0.937-2.813-2.813-0.001-2.813zM16.938 11.313c0 0.518-0.42 0.937-0.937 0.937s-0.937-0.42-0.937-0.937 0.42-0.937 0.937-0.937c0.517-0.001 0.937 0.42 0.937 0.937zM17.875 2.875c0 1.035-0.839 1.875-1.875 1.875s-1.875-0.839-1.875-1.875c0-1.035 0.839-1.875 1.875-1.875s1.875 0.84 1.875 1.875zM15.062 7.563c0 1.035-0.839 1.875-1.875 1.875s-1.875-0.839-1.875-1.875c0-1.035 0.839-1.875 1.875-1.875s1.875 0.839 1.875 1.875zM18.812 8.5c0 0.518-0.42 0.937-0.937 0.937s-0.937-0.42-0.937-0.937 0.42-0.937 0.937-0.937 0.937 0.42 0.937 0.937z"
+                  ></path>
+                </svg>
+              </div>
+              <span class="metric-title">Uric Acid</span>
+            </div>
+            <div class="metric-value">
+              {{kadar.URIC_ACID}} <span class="metric-unit">mg/dl</span>
+            </div>
+            <span class="status-badge status-normal">{{kadar.URIC_ACID_DISEASE}}</span>
+            <div class="graph-container">
+              <div class="graph graph-blood-sugar">
+                <svg
+                  class="graph-line blood-sugar-line"
+                  preserveAspectRatio="none"
+                  viewBox="0 0 100 100"
+                >
+                  <path
+                    d="M0,50 Q25,40 50,45 T100,30"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-header">
+              <div class="icon-container heart-rate-icon">
+                <svg
+                  width="800px"
+                  height="800px"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M14.5 10.0003C14.5 9.20875 15.5528 8.99895 15.8321 9.73957C16.5077 11.5311 17 13.1337 17 14.0002C17 16.7616 14.7614 19.0002 12 19.0002C9.23858 19.0002 7 16.7616 7 14.0002C7 13.0693 7.56822 11.2887 8.32156 9.33698C9.29743 6.80879 9.78536 5.54469 10.3877 5.4766C10.5804 5.45482 10.7907 5.49399 10.9626 5.58371C11.5 5.86413 11.5 7.24285 11.5 10.0003C11.5 10.8287 12.1716 11.5003 13 11.5003C13.8284 11.5003 14.5 10.8287 14.5 10.0003Z"
+                    stroke="#F44336"
+                  />
+                  <path
+                    d="M11 19L10.7372 18.343C10.2816 17.204 10.4737 15.9079 11.24 14.95V14.95C11.6296 14.463 12.3704 14.463 12.76 14.95V14.95C13.5263 15.9079 13.7184 17.204 13.2628 18.343L13 19"
+                    stroke="#F44336"
+                  />
+                </svg>
+              </div>
+              <span class="metric-title">Calorie</span>
+            </div>
+            <div class="daily-weekly">
+              <div class="daily">
+                <span class="nutri-daily-weekly">Daily</span>
+                <div class="metric-value">
+                  {{today_calory}} <span class="metric-unit">kcal</span>
+                </div>
+              </div>
+              <div class="weekly">
+                <span class="nutri-daily-weekly">Weekly</span>
+                <div class="metric-value">
+                  {{weekly_calory}} <span class="metric-unit">kcal</span>
+                </div>
+              </div>
+            </div>
+            <span class="status-badge status-normal">{{calory_condition}}</span>
+            <div class="graph-container">
+              <div class="graph graph-heart-rate">
+                <svg
+                  class="graph-line heart-rate-line"
+                  preserveAspectRatio="none"
+                  viewBox="0 0 100 100"
+                >
+                  <path
+                    d="M0,60 Q25,55 50,50 T100,40"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-header">
+              <div class="icon-container blood-pressure-icon">
+                <svg
+                  width="800px"
+                  height="800px"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M12 4L10.8522 5.91303C9.94978 7.41704 9.49857 8.16905 9.49857 9C9.49857 9.83095 9.94978 10.583 10.8522 12.087L11.5713 13.2854C11.7627 13.6045 11.8585 13.7641 12 13.7641C12.1415 13.7641 12.2373 13.6045 12.4287 13.2854L13.1478 12.087C14.0502 10.583 14.5014 9.83095 14.5014 9C14.5014 8.16905 14.0502 7.41704 13.1478 5.91303L12 4ZM12 4V2"
+                    stroke="#2196F3"
+                  />
+                  <path
+                    d="M20.1603 12.5981L17.9296 12.5606C16.1759 12.5311 15.2991 12.5163 14.5794 12.9318C13.8598 13.3473 13.4342 14.114 12.5828 15.6475L11.9045 16.8695C11.7239 17.1949 11.6336 17.3575 11.7043 17.4801C11.7751 17.6027 11.9612 17.6058 12.3332 17.6121L13.7307 17.6356C15.4844 17.6651 16.3612 17.6799 17.0809 17.2644C17.8005 16.8489 18.2262 16.0821 19.0775 14.5486L20.1603 12.5981ZM20.1603 12.5981L21.8923 11.5981"
+                    stroke="#2196F3"
+                  />
+                  <path
+                    d="M3.83972 12.5981L6.07035 12.5606C7.82407 12.5311 8.70093 12.5163 9.42056 12.9318C10.1402 13.3473 10.5658 14.114 11.4172 15.6475L12.0955 16.8695C12.2761 17.1949 12.3664 17.3575 12.2957 17.4801C12.2249 17.6027 12.0388 17.6058 11.6668 17.6121L10.2693 17.6356C8.51561 17.6651 7.63876 17.6799 6.91913 17.2644C6.1995 16.8489 5.77385 16.0821 4.92254 14.5486L3.83972 12.5981ZM3.83972 12.5981L2.10767 11.5981"
+                    stroke="#2196F3"
+                  />
+                  <path d="M12 15V22.5" stroke="#2196F3" />
+                </svg>
+              </div>
+              <span class="metric-title">Carbohydrate</span>
+            </div>
+
+            <div class="daily-weekly">
+              <div class="daily">
+                <span class="nutri-daily-weekly">Daily</span>
+                <div class="metric-value">
+                  {{today_carbs}} <span class="metric-unit">g</span>
+                </div>
+              </div>
+              <div class="weekly">
+                <span class="nutri-daily-weekly">Weekly</span>
+                <div class="metric-value">
+                  {{weekly_carbs}} <span class="metric-unit">g</span>
+                </div>
+              </div>
+            </div>
+
+            <span class="status-badge status-normal">{{carbo_condition}}</span>
+            <div class="graph-container">
+              <div class="graph graph-blood-pressure">
+                <svg
+                  class="graph-line blood-pressure-line"
+                  preserveAspectRatio="none"
+                  viewBox="0 0 100 100"
+                >
+                  <path
+                    d="M0,40 Q25,45 50,35 T100,45"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-header">
+              <div class="icon-container blood-sugar-icon">
+                <svg
+                  width="800px"
+                  height="800px"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <circle cx="12" cy="12" r="8.5" stroke="#E79B38" />
+                  <circle cx="12" cy="12" r="3" stroke="#E79B38" />
+                  <path
+                    d="M15 12L15.6263 11.2632C16.475 10.2647 18.1042 10.9576 17.9739 12.2615V12.2615C17.833 13.6704 19.6928 14.3019 20.4389 13.0985L20.5 13"
+                    stroke="#E79B38"
+                  />
+                  <path
+                    d="M9 12L8.82254 13.0056C8.54237 14.5932 6.27667 14.628 5.94787 13.0498L5.77663 12.2278C5.53741 11.0795 3.96205 10.9219 3.5 12V12"
+                    stroke="#E79B38"
+                  />
+                  <circle cx="9.5" cy="6.5" r="0.5" stroke="#E79B38" />
+                  <circle cx="16.5" cy="8.5" r="0.5" stroke="#E79B38" />
+                  <circle cx="13.5" cy="5.5" r="0.5" stroke="#E79B38" />
+                </svg>
+              </div>
+              <span class="metric-title">Fat</span>
+            </div>
+            <div class="daily-weekly">
+              <div class="daily">
+                <span class="nutri-daily-weekly">Daily</span>
+                <div class="metric-value">
+                  {{today_fat}} <span class="metric-unit">g</span>
+                </div>
+              </div>
+              <div class="weekly">
+                <span class="nutri-daily-weekly">Weekly</span>
+                <div class="metric-value">
+                  {{weekly_fat}} <span class="metric-unit">g</span>
+                </div>
+              </div>
+            </div>
+            <span class="status-badge status-normal">{{fat_condition}}</span>
+            <div class="graph-container">
+              <div class="graph graph-blood-sugar">
+                <svg
+                  class="graph-line blood-sugar-line"
+                  preserveAspectRatio="none"
+                  viewBox="0 0 100 100"
+                >
+                  <path
+                    d="M0,50 Q25,40 50,45 T100,30"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-header">
+              <div class="icon-container heart-rate-icon">
+                <svg
+                  width="800px"
+                  height="800px"
+                  viewBox="0 0 1024 1024"
+                  class="icon"
+                  version="1.1"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M512 960C264 960 64 760 64 512S264 64 512 64s448 200 448 448-200 448-448 448z m0-32c230.4 0 416-185.6 416-416S742.4 96 512 96 96 281.6 96 512s185.6 416 416 416z"
+                    fill="#F44336"
+                  />
+                  <path
+                    d="M470.4 654.4c-1.6-1.6-3.2-6.4-6.4-9.6-6.4 8-9.6 14.4-11.2 16-9.6 14.4-19.2 27.2-27.2 36.8 20.8-3.2 40-9.6 59.2-19.2-4.8-6.4-9.6-14.4-14.4-24z m-99.2 9.6c8-11.2 17.6-22.4 28.8-40 1.6-3.2 22.4-32 30.4-44.8-8-17.6-16-40-25.6-70.4 0-1.6 0-1.6-1.6-3.2-1.6-3.2-1.6-6.4-3.2-9.6-11.2 4.8-33.6 14.4-38.4 16-16 6.4-27.2 11.2-38.4 16-8 3.2-16 6.4-22.4 9.6-36.8 17.6-59.2 36.8-70.4 57.6 22.4 48 57.6 83.2 94.4 92.8l19.2 4.8c8-6.4 17.6-16 27.2-28.8z m-96-182.4c8-3.2 16-6.4 24-11.2 11.2-4.8 24-9.6 40-16 3.2-1.6 30.4-12.8 40-16-11.2-25.6-19.2-41.6-30.4-56-9.6-12.8-20.8-19.2-33.6-20.8 1.6 16 6.4 30.4 16 43.2 11.2 14.4 8 33.6-4.8 44.8-14.4 11.2-33.6 8-44.8-4.8-14.4-17.6-22.4-38.4-27.2-59.2-36.8 28.8-51.2 78.4-43.2 139.2 16-17.6 36.8-32 64-43.2z m246.4 249.6c-46.4 28.8-97.6 36.8-163.2 28.8-19.2 9.6-38.4 12.8-60.8 8-67.2-14.4-120-62.4-132.8-120-3.2-16-3.2-30.4-1.6-46.4-38.4-105.6-22.4-235.2 78.4-286.4 4.8-1.6 8-4.8 12.8-6.4 9.6-38.4 30.4-75.2 60.8-105.6 73.6-75.2 176-83.2 259.2-3.2 68.8 67.2 73.6 132.8 19.2 188.8-28.8 28.8-68.8 52.8-134.4 81.6l4.8 14.4c0 1.6 0 1.6 1.6 3.2 3.2 11.2 8 20.8 11.2 30.4 56-65.6 108.8-97.6 179.2-97.6 211.2 0 281.6 246.4 113.6 355.2-70.4 44.8-131.2 48-187.2 12.8-22.4-11.2-41.6-30.4-60.8-57.6z m-124.8-390.4c16 19.2 27.2 40 41.6 72 56-25.6 89.6-44.8 110.4-67.2 28.8-28.8 27.2-56-17.6-97.6-56-54.4-120-49.6-169.6 1.6-14.4 14.4-25.6 32-33.6 49.6 24 3.2 48 17.6 68.8 41.6zM512 600c1.6 1.6 11.2 17.6 12.8 22.4 3.2 4.8 6.4 9.6 9.6 16 11.2-11.2 20.8-24 32-40 43.2-60.8 112-72 156.8-32 46.4 40 41.6 108.8-16 148.8-14.4 9.6-35.2 6.4-44.8-8-9.6-14.4-6.4-35.2 8-44.8 24-17.6 25.6-35.2 11.2-48-16-14.4-40-9.6-62.4 20.8-16 22.4-30.4 40-46.4 57.6 54.4 70.4 94.4 78.4 163.2 33.6 115.2-73.6 68.8-236.8-78.4-236.8-54.4 0-97.6 30.4-150.4 99.2 0 3.2 1.6 6.4 4.8 11.2z"
+                    fill="#F44336"
+                  />
+                  <path
+                    d="M491.2 673.6l4.8 6.4-6.4 4.8c-19.2 11.2-40 17.6-62.4 20.8l-19.2 1.6 11.2-14.4c8-9.6 16-20.8 27.2-36.8 1.6-1.6 1.6-1.6 3.2-4.8 3.2-4.8 3.2-4.8 8-11.2l6.4-9.6 6.4 11.2c3.2 6.4 4.8 8 6.4 9.6 4.8 8 9.6 16 14.4 22.4z m-27.2-12.8c-3.2 3.2-3.2 3.2-3.2 6.4-4.8 8-9.6 14.4-14.4 20.8 9.6-3.2 19.2-6.4 28.8-11.2-4.8-6.4-8-11.2-11.2-16 0-1.6 0 0 0 0z m-115.2 38.4l-3.2 3.2h-3.2l-19.2-4.8c-38.4-9.6-75.2-46.4-99.2-96l-1.6-3.2 1.6-3.2c11.2-22.4 36.8-43.2 73.6-60.8 6.4-3.2 14.4-6.4 22.4-9.6 11.2-4.8 22.4-9.6 38.4-16 1.6 0 19.2-8 20.8-8 8-3.2 12.8-4.8 17.6-6.4l8-3.2 3.2 8c1.6 3.2 1.6 6.4 3.2 9.6v3.2c11.2 32 19.2 52.8 25.6 68.8l1.6 4.8-3.2 3.2c-3.2 4.8-8 11.2-12.8 19.2-4.8 6.4-16 24-17.6 24-12.8 17.6-20.8 30.4-30.4 40-8 9.6-16 19.2-25.6 27.2z m16-40c8-9.6 17.6-22.4 28.8-40 0 0 12.8-17.6 17.6-24 4.8-6.4 8-11.2 11.2-16-6.4-16-14.4-36.8-24-65.6v-3.2-1.6c-3.2 1.6-6.4 1.6-9.6 3.2-1.6 0-19.2 8-20.8 8-16 6.4-27.2 11.2-38.4 16-8 3.2-16 6.4-22.4 9.6-32 14.4-54.4 32-64 49.6 22.4 44.8 54.4 76.8 86.4 84.8 4.8 1.6 9.6 1.6 14.4 3.2 4.8-4.8 12.8-12.8 20.8-24z m-150.4-129.6l-11.2 9.6-1.6-14.4c-9.6-62.4 6.4-115.2 46.4-145.6l9.6-8 3.2 12.8c4.8 20.8 12.8 40 25.6 56 8 11.2 24 12.8 33.6 4.8s12.8-24 4.8-33.6c-9.6-12.8-16-28.8-17.6-46.4v-9.6l9.6 1.6c14.4 1.6 27.2 9.6 40 24 11.2 14.4 20.8 30.4 32 57.6l3.2 8-8 3.2c-3.2 1.6-9.6 3.2-19.2 8-1.6 0-19.2 8-20.8 8-16 6.4-28.8 11.2-40 16-8 3.2-16 8-24 11.2-27.2 6.4-48 20.8-65.6 36.8z m57.6-56c8-3.2 16-6.4 24-11.2-9.6-1.6-17.6-6.4-22.4-14.4-11.2-14.4-20.8-32-25.6-49.6-24 25.6-35.2 62.4-32 108.8 16-12.8 33.6-24 56-33.6z m84.8-35.2c4.8-1.6 8-3.2 11.2-4.8-9.6-20.8-17.6-35.2-27.2-46.4-6.4-8-12.8-12.8-17.6-14.4 1.6 9.6 6.4 19.2 12.8 27.2 11.2 14.4 11.2 32 1.6 46.4 4.8-3.2 19.2-8 19.2-8z m160 286.4l6.4-3.2 4.8 6.4c20.8 27.2 38.4 44.8 60.8 59.2 52.8 33.6 110.4 30.4 177.6-12.8C928 667.2 856 432 656 432c-65.6 0-116.8 28.8-172.8 94.4l-9.6 11.2-4.8-12.8c-3.2-9.6-6.4-19.2-11.2-30.4v-3.2l-4.8-14.4-3.2-6.4 6.4-3.2c67.2-28.8 104-52.8 131.2-80 51.2-52.8 46.4-115.2-19.2-177.6-76.8-73.6-176-70.4-248 3.2-28.8 28.8-49.6 65.6-57.6 102.4l-1.6 3.2-3.2 1.6c-4.8 1.6-8 3.2-12.8 6.4-89.6 44.8-116.8 163.2-75.2 276.8v3.2c-3.2 14.4-1.6 28.8 1.6 43.2 11.2 54.4 62.4 99.2 126.4 113.6 19.2 4.8 38.4 1.6 56-6.4l1.6-1.6h3.2c64 4.8 113.6-3.2 158.4-30.4zM360 768c-20.8 9.6-41.6 11.2-64 6.4-70.4-14.4-126.4-65.6-139.2-126.4-3.2-16-3.2-32-1.6-46.4-43.2-118.4-14.4-244.8 83.2-292.8l9.6-4.8c9.6-38.4 32-75.2 60.8-105.6 80-80 187.2-83.2 270.4-3.2 72 68.8 78.4 140.8 19.2 200-28.8 28.8-65.6 51.2-129.6 81.6 0 1.6 1.6 4.8 3.2 6.4l1.6 3.2c1.6 6.4 4.8 12.8 6.4 17.6 56-62.4 108.8-89.6 176-89.6 216 0 294.4 256 118.4 369.6-72 46.4-137.6 51.2-195.2 12.8-22.4-14.4-40-32-59.2-56-46.4 27.2-97.6 35.2-160 27.2z m30.4-422.4c-19.2-22.4-41.6-35.2-65.6-40l-11.2-1.6 4.8-9.6c8-19.2 20.8-36.8 35.2-51.2 54.4-56 123.2-57.6 180.8-1.6 46.4 44.8 51.2 75.2 17.6 110.4-22.4 22.4-56 43.2-113.6 68.8l-8 3.2V416c-12.8-32-24-51.2-40-70.4z m12.8-9.6c16 17.6 27.2 38.4 38.4 65.6 51.2-24 81.6-41.6 100.8-62.4 25.6-27.2 22.4-48-17.6-86.4-51.2-49.6-110.4-48-158.4 1.6-11.2 11.2-20.8 24-28.8 38.4 24 6.4 46.4 20.8 65.6 43.2z m94.4 256l-1.6-4.8 3.2-4.8c56-73.6 100.8-102.4 156.8-102.4 152 0 206.4 172.8 83.2 251.2-73.6 48-118.4 38.4-174.4-35.2l-4.8-4.8 4.8-4.8c16-16 30.4-33.6 46.4-56 24-33.6 52.8-41.6 75.2-22.4 19.2 17.6 16 41.6-11.2 60.8-11.2 8-12.8 22.4-6.4 33.6 8 11.2 22.4 12.8 33.6 6.4 52.8-36.8 59.2-99.2 16-136s-105.6-25.6-145.6 30.4c-11.2 16-20.8 28.8-32 40l-6.4 8-6.4-9.6c-3.2-4.8-6.4-9.6-9.6-16-1.6-1.6-3.2-3.2-6.4-9.6-4.8-8-4.8-8-6.4-11.2v-1.6c-3.2-3.2-4.8-8-8-11.2z m20.8 3.2c3.2 4.8 3.2 4.8 8 12.8 3.2 6.4 4.8 8 6.4 9.6 1.6 1.6 3.2 4.8 3.2 6.4 8-9.6 16-19.2 24-30.4 44.8-64 118.4-78.4 169.6-33.6 51.2 44.8 44.8 118.4-17.6 161.6-17.6 12.8-43.2 8-56-9.6-12.8-17.6-8-43.2 9.6-56 19.2-12.8 20.8-25.6 9.6-35.2-12.8-11.2-32-6.4-51.2 19.2-14.4 20.8-28.8 38.4-43.2 52.8 49.6 62.4 84.8 67.2 148.8 27.2 110.4-72 62.4-224-73.6-224-49.6 0-89.6 27.2-140.8 92.8 0 1.6 1.6 4.8 3.2 6.4z"
+                    fill="#F44336"
+                  />
+                </svg>
+              </div>
+              <span class="metric-title">Proteins</span>
+            </div>
+            <div class="daily-weekly">
+              <div class="daily">
+                <span class="nutri-daily-weekly">Daily</span>
+                <div class="metric-value">
+                  {{today_protein}} <span class="metric-unit">g</span>
+                </div>
+              </div>
+              <div class="weekly">
+                <span class="nutri-daily-weekly">Weekly</span>
+                <div class="metric-value">
+                  {{weekly_protein}} <span class="metric-unit">g</span>
+                </div>
+              </div>
+            </div>
+            <span class="status-badge status-normal">{{protein_condition}}</span>
+            <div class="graph-container">
+              <div class="graph graph-heart-rate">
+                <svg
+                  class="graph-line heart-rate-line"
+                  preserveAspectRatio="none"
+                  viewBox="0 0 100 100"
+                >
+                  <path
+                    d="M0,60 Q25,55 50,50 T100,40"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- tabel dan graph section -->
+        <div class="graph-tabel-panel">
+          <div class="graph-table-title">
+            <h2>Nutrition Progress</h2>
+            <div class="nutri-date-selector-container">
+              <select name="" id="graph-nutri-type" class="nutri-date-selector">
+                <option value="CALORIE">Calorie</option>
+                <option value="CARBS">Carbohydrate</option>
+                <option value="FAT">Fat</option>
+                <option value="PROTEIN">Proteins</option>
+                <option value="BLOOD_SUGAR">Blood Sugar</option>
+                <option value="CHOLESTEROL">Cholesterol</option>
+                <option value="BLOOD_PRESSURE">Blood Pressure</option>
+                <option value="URIC_ACID">Uric Acid</option>
+               
+              </select>
+            </div>
+
+            <div class="nutri-date-selector-container">
+              <select name="" id="graph-date" class="nutri-date-selector">
+                <option value="">Nov 2024</option>
+                <option value="">Oct 2024</option>
+                <option value="">Sep 2024</option>
+                <option value="">Aug 2024</option>
+                <option value="">Jul 2024</option>
+                <option value="">Jun 2024</option>
+                <option value="">May 2024</option>
+                <option value="">Apr 2024</option>
+                <option value="">Mar 2024</option>
+                <option value="">Feb 2024</option>
+                <option value="">Jan 2024</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="graph">
+            <canvas id="nutriChart"></canvas>
+          </div>
+
+          <div class="table">
+            <div id="wrapper"></div>
+          </div>
+        </div>
+        <!-- end tabel dan graph section -->
+      </main>
+      <!-- end main section -->
+
+      <!-- Right Section -->
+      <aside class="right-section">
+        <div class="bmi-calc">
+          <div class="bmi-title">
+            <h2>BMI Calculator</h2>
+            <div class="bmi-selector-container">
+              <select name="" id="" class="bmi-select">
+                <option value="today">Today</option>
+                <option value="last_week">Last Week</option>
+                <option value="last_month">Last Month</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="bmi-weight">
+            <div class="bmi-scale">
+              <div class="measurement-input height-input">
+                <span class="measurement-label">Height</span>
+                <div class="measurement-value">{{body_info.height}} cm</div>
+                <div class="slider-marks">
+                  <div class="mark long"></div>
+                  <div class="mark"></div>
+                  <div class="mark"></div>
+                  <div class="mark long"></div>
+                  <div class="mark"></div>
+                  <div class="mark"></div>
+                  <div class="mark long"></div>
+                </div>
+              </div>
+
+              <div class="measurement-input weight-input">
+                <span class="measurement-label">Weight</span>
+                <div class="measurement-value">{{body_info.weight}} kg</div>
+                <div class="slider-marks">
+                  <div class="mark long"></div>
+                  <div class="mark"></div>
+                  <div class="mark"></div>
+                  <div class="mark long"></div>
+                  <div class="mark"></div>
+                  <div class="mark"></div>
+                  <div class="mark long"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="bmi-display">
+              <div class="bmi-label">
+                <span>Body Mass Index (BMI)</span>
+                <span class="health-status">You're Healthy</span>
+              </div>
+              <div class="bmi-value">{{bmi}}</div>
+              <div class="bmi-scale">
+                <div class="bmi-indicator"></div>
+              </div>
+              <div class="scale-markers">
+                <span>15</span>
+                <span>18.5</span>
+                <span>25</span>
+                <span>30</span>
+                <span>40</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="line-separator">
+          <div class="body-measurements">
+            <h2>Body Measurements</h2>
+            <div class="body-figure">
+              <img src="{% static 'img/manusia.png' %}" alt="" />
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
+
+    {{ daily_nutrition|json_script:"daily_nutrition" }}
+    {{ daily_nutrition_input|json_script:"daily_nutrition_input" }}
+    {{ bmi|json_script:"bmi" }}
+
+    <script src="{% static 'js/script_dashboard.js' %}"></script>
+    
+  </body>
+</html>
