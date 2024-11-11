@@ -1,4 +1,5 @@
 import datetime
+import json
 import random
 import string
 from uuid import uuid4
@@ -8,24 +9,22 @@ import tensorflow as tf
 from constraint import *
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.files.storage import default_storage
-from django.db.models import Q
+from django.db.models import Q, Sum
 from django.http.response import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
+from django.utils import timezone
+from django.views.decorators.csrf import csrf_exempt
 from keras.applications.imagenet_utils import decode_predictions
 from keras.preprocessing.image import img_to_array, load_img
 from PIL import Image
 from sklearn.metrics.pairwise import cosine_similarity
 from tensorflow.python.keras.backend import set_session
-import json
-from .models import *
-from django.views.decorators.csrf import csrf_exempt
-from django.utils import timezone
-from django.db.models import Sum
-from django.contrib.auth.decorators import login_required
 
 from .medical_ai_chatbot import SimplifiedBaleen
+from .models import *
 
 
 def landing_page(request):
@@ -586,7 +585,7 @@ def meal_plan(request):
     list food category ada di notebook food_recommendation_system.ipynb
     """
     if request.method == "POST":
-        
+
         my_calorie_daily_intake = calorie_intake(80, 170, 22)
         my_favorite_food = [
             request.POST.get("my_favorite_food_1"),
@@ -830,3 +829,20 @@ def add_nutrition(request):
             return redirect("my_app:dashboard")
         return redirect("my_app:add_nutrition")
     return render(request, "add_nutrition.html")
+
+
+@login_required(login_url="my_app:normal_login")
+def add_target(request):
+    if request.method == "POST":
+        calorie = request.POST.get("calorie")
+        carbs = request.POST.get("carbs")
+        protein = request.POST.get("protein")
+        fat = request.POST.get("fat")
+        target = TargetPlan.objects.create(
+            target_calorie=calorie,
+            target_carbs=carbs,
+            target_protein=protein,
+            target_fat=fat,
+            user=CustomUser.objects.get(user=request.user),
+        )
+    return render(request, "target.html")
