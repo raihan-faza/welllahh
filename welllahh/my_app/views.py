@@ -834,10 +834,10 @@ def add_nutrition(request):
 @login_required(login_url="my_app:normal_login")
 def add_target(request):
     if request.method == "POST":
-        calorie = request.POST.get("calorie")
-        carbs = request.POST.get("carbs")
-        protein = request.POST.get("protein")
-        fat = request.POST.get("fat")
+        calorie = request.POST.get("target_calorie")
+        carbs = request.POST.get("target_carbs")
+        protein = request.POST.get("target_protein")
+        fat = request.POST.get("target_fat")
         target = TargetPlan.objects.create(
             target_calorie=calorie,
             target_carbs=carbs,
@@ -845,4 +845,6 @@ def add_target(request):
             target_fat=fat,
             user=CustomUser.objects.get(user=request.user),
         )
+        target.save()
+        return redirect("my_app:dashboard")
     return render(request, "target.html")
