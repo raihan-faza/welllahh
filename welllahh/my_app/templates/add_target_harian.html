@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Welllah Add Target Harian</title>
+    {% load static %}
+    <link href="{% static 'css/register.css' %}" rel="stylesheet">
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet">
+  </head>
+  <body>
+    <section class="container">
+      <header>
+        Add Target
+      </header>
+      <form class="form" method="post">
+        {% csrf_token %}
+        <div class="input-box">
+          <label>Total Calorie</label>
+          <input type="text" name="target_calorie" placeholder="1500">
+        </div>
+        <div class="input-box">
+          <label>Total Carbohydrate</label>
+          <input type="text" name="target_carbs" placeholder="300">
+        </div>
+        <div class="input-box">
+          <label>Total Protein</label>
+          <input type="text" name="target_protein" placeholder="128">
+        </div>
+        <div class="input-box">
+          <label>Total Fat</label>
+          <input type="text" name="target_fat" placeholder="100">
+        </div>
+        <div style="display:flex;flex-direction:row;gap:15px;padding:10px;"><button type="submit">Submit</button>
+        </form>
+      </section>
+    </body>
+  </html>

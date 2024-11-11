@@ -14,15 +14,15 @@ import os
 import pickle
 import time
 import urllib
+import zipfile
 from pathlib import Path
 
+import gdown
 import joblib
 import numpy as np
 import pandas as pd
 import tensorflow as tf
 from PIL import Image
-import gdown
-import zipfile
 
 file_id = "1S0nxpfC4ifrktLpoetCrNmTyTVSydsqM"
 output_path = "welllahh_chroma.zip"
@@ -67,7 +67,6 @@ if os.path.exists("./recipes_sedikit.csv") == False:
 # print("loading food image classification model....")
 # INDOFOOD_IMAGE_MODEL = tf.keras.models.load_model("best_model_86.keras")
 # print("selesai food image classification model....")
-
 with open("recommendation_cosine_sim.pkl", "rb") as file:
     FOOD_COSINE_SIM = pickle.load(file)
 with open("search_count_vec.pkl", "rb") as file:

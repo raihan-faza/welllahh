@@ -1,4 +1,5 @@
 import datetime
+import json
 import random
 import string
 from uuid import uuid4
@@ -8,11 +9,14 @@ import tensorflow as tf
 from constraint import *
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.files.storage import default_storage
-from django.db.models import Q
+from django.db.models import Q, Sum
 from django.http.response import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
+from django.utils import timezone
+from django.views.decorators.csrf import csrf_exempt
 from keras.applications.imagenet_utils import decode_predictions
 from keras.preprocessing.image import img_to_array, load_img
 from PIL import Image
@@ -1215,3 +1219,22 @@ def add_nutrition(request):
             return redirect("my_app:dashboard")
         return redirect("my_app:add_nutrition")
     return render(request, "add_nutrition.html")
+
+
+@login_required(login_url="my_app:normal_login")
+def add_target(request):
+    if request.method == "POST":
+        calorie = request.POST.get("target_calorie")
+        carbs = request.POST.get("target_carbs")
+        protein = request.POST.get("target_protein")
+        fat = request.POST.get("target_fat")
+        target = TargetPlan.objects.create(
+            target_calorie=calorie,
+            target_carbs=carbs,
+            target_protein=protein,
+            target_fat=fat,
+            user=CustomUser.objects.get(user=request.user),
+        )
+        target.save()
+        return redirect("my_app:dashboard")
+    return render(request, "target.html")
