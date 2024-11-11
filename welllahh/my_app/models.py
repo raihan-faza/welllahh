@@ -31,6 +31,21 @@ class UserBodyInfo(models.Model):
 
     def __str__(self) -> str:
         return self.custom_user.user.username
+    
+class ChatSession(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+    message_from = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    session_title = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+class Message(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+    prompt_content = models.TextField()
+    chatbot_content = models.TextField()
+    context = models.TextField()
+    chat_session = models.ForeignKey(ChatSession, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
 
 
 class Token(models.Model):
@@ -54,14 +69,18 @@ class BloodCodition(models.Model):
     blood_sugar = models.DecimalField(max_digits=10, decimal_places=2)
     uric_acid = models.DecimalField(max_digits=10, decimal_places=2)
     cholesterol = models.DecimalField(max_digits=10, decimal_places=2)
+    blood_pressure = models.DecimalField(max_digits=10, decimal_places=2)
+    check_time = models.DateTimeField(default=timezone.now)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
 
 
-class NutritionProgress(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
-    # nutrition_type = models.CharField(
+ # nutrition_type = models.CharField(
     #    max_length=20, choices=NutritionType.choices, default=NutritionType.CALORY
     # )
+
+    
+class NutritionProgress(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     check_time = models.DateTimeField(default=timezone.now)
     nutrition_name = models.CharField(max_length=255, default=None)
     calorie = models.DecimalField(max_digits=10, decimal_places=2)

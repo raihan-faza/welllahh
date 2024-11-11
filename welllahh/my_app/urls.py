@@ -46,6 +46,7 @@ urlpatterns = [
     path("anonymous_login", views.login_using_passphrase, name="anonymous_login"),
     path("ai/chatbot", views.get_chatbot_response, name="chatbot"),
     path("ai/chatbotpage", views.chatbot_page, name="chatbotpage"),
+    path("ai/chatbotpage/<uuid:id>", views.chatbot_page, name="chatbotpage"),
     path("dashboard", views.dashboard, name="dashboard"),
     path("delete_nutrition/<uuid:pk>", views.delete_nutrition, name="delete_nutrition"),
     path("logout", views.logout_view, name="logout"),
@@ -53,6 +54,7 @@ urlpatterns = [
     path("add_nutrition", views.add_nutrition, name="add_nutrition"),
     path("add_riwayat", views.add_riwayat, name="add_riwayat"),
     path("delete_riwayat/<int:pk>", views.delete_riwayat, name="delete_riwayat"),
+    path("dashboard_cantik", views.dashboard_cantik, name="dashboard_cantik"), 
 ]
 
 

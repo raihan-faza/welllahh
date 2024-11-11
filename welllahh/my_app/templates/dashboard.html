@@ -1,262 +1,97 @@
-{%load static%}
+{% extends "base_dashboard.html" %} {% block content %}
 
-<span style="font-family: verdana, geneva, sans-serif"><!DOCTYPE html>
-  <html lang="en">
-    <head>
-      <meta charset="UTF-8" />
-      <title>Attendance Dashboard | By Code Info</title>
-
-      <!-- Font Awesome Cdn Link -->
-      <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
-      />
-
-      <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
-      <link href="{% static 'css/dashboard.css' %}" rel="stylesheet" />
-    </head>
-    <body>
-      <div class="container">
-        <nav>
-          <ul>
-            <li>
-              <a href="{% url 'my_app:dashboard' %}" class="logo">
-                <img src="./pic/logo.jpg" />
-                <span class="nav-item">{{user.username}}</span>
-</a>
-</li>
-<li>
-    <a href="{% url 'my_app:food_nutrition'%}">
-        <i class="fas fa-camera"></i>
-        <span class="nav-item">Food Using Image</span>
-    </a>
-</li>
-<li>
-    <a href="{% url 'my_app:chatbotpage' %}">
-        <i class="fas fa-comment"></i>
-        <span class="nav-item">Chatbot</span>
-    </a>
-</li>
-<li>
-    <a href="{% url 'my_app:riwayat' %}">
-        <i class="fas fa-database"></i>
-        <span class="nav-item">Riwayat Penyakit</span>
-    </a>
-</li>
-<li>
-    <a href="{% url 'my_app:add_nutrition' %}">
-        <i class="fas fa-plus"></i>
-        <span class="nav-item">Add Nutrition</span>
-    </a>
-</li>
-<li>
-    <a href="{% url 'my_app:add_riwayat' %}">
-        <i class="fas fa-book"></i>
-        <span class="nav-item">Add Riwayat</span>
-    </a>
-</li>
-<li>
-    <a href="{% url 'my_app:meal_plan' %}">
-        <i class="fas fa-cog"></i>
-        <span class="nav-item">Meal Plan</span>
-    </a>
-</li>
-<li>
-    <a href="{% url 'my_app:logout'%}" class="logout">
-        <i class="fas fa-sign-out-alt"></i>
-        <span class="nav-item">Log out</span>
-    </a>
-</li>
-</ul>
-</nav>
 <section class="main">
-    <div class="main-top">
-        <h1>Summary</h1>
-        <i class="fas fa-user-cog"></i>
+  <div class="main-top">
+    <h1>Summary</h1>
+    <i class="fas fa-user-cog"></i>
+  </div>
+  <div class="users">
+    <div class="card">
+      <h2>Today Summary</h2>
+
+      <div class="summary-calories">
+        <h2 class="calorie">Calories</h2>
+        <p class="calorie" id="total-today-calories">{{today_calory}}</p>
+      </div>
+
+      <div class="summary-details">
+        <div class="detes">
+          <h5 class="carbs">Carbs</h5>
+          <p class="carbs" id="total-today-carbs">{{today_carbs}}</p>
+        </div>
+        <div class="detes">
+          <h5 class="fat">Fat</h5>
+          <p class="fat" id="total-today-fat">{{today_fat}}</p>
+        </div>
+        <div class="detes">
+          <h5 class="protein">Protein</h5>
+          <p class="protein" id="total-today-protein">{{today_protein}}</p>
+        </div>
+      </div>
     </div>
-    <div class="users">
-        <!-- <div class="card">
-              {% comment %} <img src="./pic/img1.jpg" /> {% endcomment %}
-              <h4>Sam David</h4>
-              <p>Ui designer</p>
-              <div class="per">
-                <table>
-                  <tr>
-                    <td><span>85%</span></td>
-                    <td><span>87%</span></td>
-                  </tr>
-                  <tr>
-                    <td>Month</td>
-                    <td>Year</td>
-                  </tr>
-                </table>
-              </div>
-              <button>Profile</button>
-            </div> -->
 
-        <div class="card">
-            <h2>Today Summary</h2>
+    <div class="card">
+      <h2>Last 7 Day Summary</h2>
 
-            <div class="summary-calories">
-                <h2 class="calorie">Calories</h2>
-                <p class="calorie" id="total-today-calories">{{today_calory}}</p>
-            </div>
+      <div class="summary-calories">
+        <h2 class="calorie">Calories</h2>
+        <p class="calorie" id="total-week-calories">{{weekly_calory}}</p>
+      </div>
 
-            <div class="summary-details">
-                <div class="detes">
-                    <h5 class="carbs">Carbs</h5>
-                    <p class="carbs" id="total-today-carbs">{{today_carbs}}</p>
-                </div>
-                <div class="detes">
-                    <h5 class="fat">Fat</h5>
-                    <p class="fat" id="total-today-fat">{{today_fat}}</p>
-                </div>
-                <div class="detes">
-                    <h5 class="protein">Protein</h5>
-                    <p class="protein" id="total-today-protein">{{today_protein}}</p>
-                </div>
-            </div>
+      <div class="summary-details">
+        <div class="detes">
+          <h5 class="carbs">Carbs</h5>
+          <p class="carbs" id="total-week-carbs">{{weekly_carbs}}</p>
         </div>
-
-        <div class="card">
-            <h2>Last 7 Day Summary</h2>
-
-            <div class="summary-calories">
-                <h2 class="calorie">Calories</h2>
-                <p class="calorie" id="total-week-calories">{{weekly_calory}}</p>
-            </div>
-
-            <div class="summary-details">
-                <div class="detes">
-                    <h5 class="carbs">Carbs</h5>
-                    <p class="carbs" id="total-week-carbs">{{weekly_carbs}}</p>
-                </div>
-                <div class="detes">
-                    <h5 class="fat">Fat</h5>
-                    <p class="fat" id="total-week-fat">{{weekly_fat}}</p>
-                </div>
-                <div class="detes">
-                    <h5 class="protein">Protein</h5>
-                    <p class="protein" id="total-week-protein">{{weekly_protein}}</p>
-                </div>
-            </div>
+        <div class="detes">
+          <h5 class="fat">Fat</h5>
+          <p class="fat" id="total-week-fat">{{weekly_fat}}</p>
         </div>
+        <div class="detes">
+          <h5 class="protein">Protein</h5>
+          <p class="protein" id="total-week-protein">{{weekly_protein}}</p>
+        </div>
+      </div>
     </div>
-    <section class="attendance">
-        <div class="attendance-list">
-            <h1>Food Tracker</h1>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Food</th>
-                        <th>Calorie</th>
-                        <th>Carbs</th>
-                        <th>Fat</th>
-                        <th>Protein</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for food in today_foods %}
-                    <tr>
-                        <td>{{food.check_time}}</td>
-                        <td>{{food.nutrition_name}}</td>
-                        <td class="calorie">{{food.calorie}}</td>
-                        <td class="carbs">{{food.carbs}}</td>
-                        <td class="fat">{{food.fat}}</td>
-                        <td class="protein">{{food.protein}}</td>
-                        <td>
-                            <form action="{% url 'my_app:delete_nutrition' food.id %}" method="post" style="display:inline;">{% csrf_token %}<button type="submit">Remove</button></form>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                    <!--
-                  <tr class="active">
-                    <td>01</td>
-                    <td>03-24-22</td>
-                    <td>Indomie</td>
-                    <td class="calorie">100</td>
-                    <td class="carbs">10g</td>
-                    <td class="fat">20g</td>
-                    <td class="protein">30g</td>
-                    <td><button>Remove</button></td>
-                  </tr>
-                  <tr>
-                    <td>01</td>
-                    <td>03-24-22</td>
-                    <td>Sate</td>
-                    <td class="calorie">100</td>
-                    <td class="carbs">10g</td>
-                    <td class="fat">20g</td>
-                    <td class="protein">30g</td>
-                    <td><button>Remove</button></td>
-                  </tr>
-                  <tr>
-                    <td>01</td>
-                    <td>03-24-22</td>
-                    <td>Geprek</td>
-                    <td class="calorie">100</td>
-                    <td class="carbs">10g</td>
-                    <td class="fat">20g</td>
-                    <td class="protein">30g</td>
-                    <td><button>Remove</button></td>
-                  </tr>
-                  -->
-                    <!--
-                  <tr class="active">
-                    <td>02</td>
-                    <td>Balbina Kherr</td>
-                    <td>Coding</td>
-                    <td>03-24-22</td>
-                    <td>9:00AM</td>
-                    <td>4:00PM</td>
-                    <td><button>View</button></td>
-                  </tr>
-                  <tr>
-                    <td>03</td>
-                    <td>Badan John</td>
-                    <td>testing</td>
-                    <td>03-24-22</td>
-                    <td>8:00AM</td>
-                    <td>3:00PM</td>
-                    <td><button>View</button></td>
-                  </tr>
-                  <tr>
-                    <td>04</td>
-                    <td>Sara David</td>
-                    <td>Design</td>
-                    <td>03-24-22</td>
-                    <td>8:00AM</td>
-                    <td>3:00PM</td>
-                    <td><button>View</button></td>
-                  </tr> -->
-
-                    <!-- <tr >
-                <td>05</td>
-                <td>Salina</td>
-                <td>Coding</td>
-                <td>03-24-22</td>
-                <td>9:00AM</td>
-                <td>4:00PM</td>
-                <td><button>View</button></td>
-              </tr>
-              <tr >
-                <td>06</td>
-                <td>Tara Smith</td>
-                <td>Testing</td>
-                <td>03-24-22</td>
-                <td>9:00AM</td>
-                <td>4:00PM</td>
-                <td><button>View</button></td>
-              </tr> -->
-                </tbody>
-            </table>
-        </div>
-    </section>
+  </div>
+  <section class="attendance">
+    <div class="attendance-list">
+      <h1>Food Tracker</h1>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Food</th>
+            <th>Calorie</th>
+            <th>Carbs</th>
+            <th>Fat</th>
+            <th>Protein</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for food in today_foods %}
+          <tr>
+            <td>{{food.check_time}}</td>
+            <td>{{food.nutrition_name}}</td>
+            <td class="calorie">{{food.calorie}}</td>
+            <td class="carbs">{{food.carbs}}</td>
+            <td class="fat">{{food.fat}}</td>
+            <td class="protein">{{food.protein}}</td>
+            <td>
+              <form
+                action="{% url 'my_app:delete_nutrition' food.id %}"
+                method="post"
+                style="display: inline"
+              >
+                {% csrf_token %}<button type="submit">Remove</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
 </section>
-</div>
-</body>
-
-</html>
-</span>
+{% endblock content %}

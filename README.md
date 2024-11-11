@@ -17,4 +17,4 @@ https://drive.google.com/file/d/1S0nxpfC4ifrktLpoetCrNmTyTVSydsqM/view?usp=shari
 - Ekstrak dulu welllahh_chroma.zip 
 - pake python versi 3.11.0 aja bang (bisa pake pyenv), soalnya modelnya cuma bisa di tensorflow 2.15.0 .
 - agak lama emang run servernya, karena parameter modelnya gede
-
+- buat pakai chatbot harus pakai ProtonVPN, karena pakai hasil search DuckDuckGoSearch (diblokir di indo).

@@ -1,0 +1,85 @@
+{%load static%}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Welllahh Dashboard</title>
+    <link
+      rel="stylesheet"
+      href="{% static 'css/base_dashboard_cantik.css' %}"
+    />
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="container-base">
+      <aside class="left-section">
+        <div class="logo">
+          <img src="{% static 'img/logo_figma.png' %}" alt="" />
+        </div>
+
+        <div class="sidebar">
+          <div class="item" id="active">
+            <i class="bx bxs-dashboard"></i>
+            <a href="{% url 'my_app:dashboard' %}">Dashboard</a>
+          </div>
+          <div class="item">
+            <i class="bx bx-bowl-rice"></i>
+            <a href="{% url 'my_app:food_nutrition'%}"
+              >Food Nutrition Detector</a
+            >
+          </div>
+          <div class="item">
+            <i class="bx bx-message-square-dots"></i>
+            <a href="{% url 'my_app:chatbotpage' %}">Chatbot</a>
+          </div>
+
+          <div class="item">
+            <i class="bx bx-shield-plus"></i>
+            <a href="{% url 'my_app:riwayat' %}">Medical History</a>
+          </div>
+
+          <div class="item">
+            <i class="bx bx-capsule"></i>
+            <a href="{% url 'my_app:add_nutrition' %}"
+              >Add Nutrition Progress</a
+            >
+          </div>
+
+          <div class="item">
+            <i class="bx bx-add-to-queue"></i>
+            <a href="{% url 'my_app:add_riwayat' %}">Add Medical History</a>
+          </div>
+
+          <div class="item">
+            <i class="bx bx-add-to-queue"></i>
+            <a href="{% url 'my_app:meal_plan' %}">Meal Plan</a>
+          </div>
+          <div class="item">
+            <i class="bx bx-user"></i>
+            <a href="{% url 'my_app:catat_tinggi_berat' %}">Record BMI</a>
+          </div>
+        </div>
+      </aside>
+
+      {% block content %} {% endblock content %}
+    </div>
+
+    {% block script %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
+
+    <script src="{% static 'js/script_dashboard.js' %}"></script>
+
+    {% endblock script %}
+  </body>
+</html>
