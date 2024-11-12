@@ -18,6 +18,18 @@
       href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css"
       rel="stylesheet"
     />
+
+    <script
+      src="https://code.jquery.com/jquery-3.7.1.min.js"
+      integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+      crossorigin="anonymous"
+    ></script>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
   </head>
   <body>
     <div class="container-base">
@@ -60,14 +72,20 @@
           </div>
 
           <div class="item">
-            <i class="bx bx-add-to-queue"></i>
+            <i class="bx bx-bowl-hot"></i>
             <a href="{% url 'my_app:meal_plan' %}">Meal Plan</a>
           </div>
           <div class="item">
             <i class="bx bx-user"></i>
             <a href="{% url 'my_app:catat_tinggi_berat' %}">Record BMI</a>
           </div>
-<div class="item">
+
+          <div class="item">
+            <i class="bx bx-star"></i>
+            <a href="{% url 'my_app:add_target' %}">Add Target</a>
+          </div>
+            
+          <div class="item">
             <i class="bx bx-log-out-circle"></i>
             <a href="{% url 'my_app:logout' %}">Logout</a>
           </div>
@@ -78,11 +96,15 @@
     </div>
 
     {% block script %}
+     <!-- prettier-ignore -->
+    {{ curr_date|json_script:"curr_date"}}
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
 
     <script src="{% static 'js/script_dashboard.js' %}"></script>
+    
 
     {% endblock script %}
   </body>

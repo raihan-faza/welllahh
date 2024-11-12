@@ -14,3 +14,20 @@ function updateValue(field, change) {
   function updateHeight(value, type) {
     document.getElementById(type).value = value;
   }
+
+  const dateString = JSON.parse(
+    document.getElementById("curr_date").textContent
+  );
+  
+  const date = new Date(dateString);
+  
+  const options = {
+  weekday: "long",
+  year: "numeric",
+  month: "long",
+  day: "numeric"
+  };
+  
+  const formattedDate = date.toLocaleDateString("en-US", options);
+  let curentDate = document.getElementsByClassName("current-date");
+  curentDate[0].textContent = formattedDate;

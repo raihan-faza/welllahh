@@ -124,5 +124,7 @@
   </form>
 </main>
 {% endblock content %} {% block script%}
+<!-- prettier-ignore -->
+{{ curr_date|json_script:"curr_date"}}
 <script src="{% static 'js/add_bmi.js' %}"></script>
 {% endblock script%}

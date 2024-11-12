@@ -18,6 +18,7 @@ best_model_86.keras
 
 AI-notebooks/.ipynb_checkpoints/
 AI-notebooks/*.csv
+AI-notebooks/rag/.ipynb_checkpoints/
 
 recommendation_cosine_sim.pkl
 search_count_vec.pkl

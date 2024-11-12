@@ -106,3 +106,4 @@ class TargetPlan(models.Model):
     target_protein = models.IntegerField()
     target_fat = models.IntegerField()
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+

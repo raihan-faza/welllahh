@@ -25,8 +25,10 @@ from keras.preprocessing.image import img_to_array, load_img
 from PIL import Image
 from sklearn.metrics.pairwise import cosine_similarity
 from tensorflow.python.keras.backend import set_session
-
 from .models import *
+
+from .medical_ai_chatbot import answer_pipeline
+from datetime import date
 
 
 def landing_page(request):
@@ -311,10 +313,7 @@ def catat_tinggi_berat(request):
         )
         body_info.save()
         return redirect("my_app:dashboard")
-    return render(
-        request,
-        "add_bmi.html",
-    )
+    return render(request, "add_bmi.html", {"curr_date": date.today()})
 
 
 # food recommendations
@@ -367,7 +366,7 @@ def get_all_food_recommendations(my_favorite_food):
 
 
 def filter_based_on_disease(
-    breakfast, lunch, dinner, calorie_intake, disease, category
+    breakfast, lunch, dinner, calorie_intake, disease, category, target_plan
 ):
     """
     https://journal.ipb.ac.id/index.php/jtep/article/view/52452/27802
@@ -380,6 +379,10 @@ def filter_based_on_disease(
     )
     fat = breakfast["FatContent"] + lunch["FatContent"] + dinner["FatContent"]
     mufa_pufa = fat - saturated_fat
+
+    max_calorie = (
+        breakfast["Calories"] + lunch["Calories"] + dinner["Calories"] <= calorie_intake * 1.4
+    )
 
     makanan_bervariasi = breakfast != lunch and lunch != dinner and breakfast != dinner
     match_category = (
@@ -428,6 +431,7 @@ def filter_based_on_disease(
                 and max_saturated_fat
                 and makanan_bervariasi
                 and match_category
+                and max_calorie 
             )
         else:
             return (
@@ -438,6 +442,7 @@ def filter_based_on_disease(
                 and max_cholesterol
                 and max_saturated_fat
                 and makanan_bervariasi
+                and max_calorie 
             )
 
     elif disease == "cardiovascular":
@@ -480,6 +485,7 @@ def filter_based_on_disease(
                 and max_saturated_fat
                 and makanan_bervariasi
                 and match_category
+                and max_calorie ,
             )
         else:
             return (
@@ -490,6 +496,7 @@ def filter_based_on_disease(
                 and max_cholesterol
                 and max_saturated_fat
                 and makanan_bervariasi
+                and max_calorie 
             )
 
     elif disease == "hypertension":
@@ -525,6 +532,7 @@ def filter_based_on_disease(
                 and max_saturated_fat
                 and makanan_bervariasi
                 and match_category
+                and max_calorie 
             )
         else:
             return (
@@ -534,6 +542,7 @@ def filter_based_on_disease(
                 and max_sodium
                 and max_saturated_fat
                 and makanan_bervariasi
+                and max_calorie 
             )
 
     elif disease == "normal":
@@ -567,6 +576,7 @@ def filter_based_on_disease(
                 and max_sodium
                 and makanan_bervariasi
                 and match_category
+                and max_calorie 
             )
         else:
             return (
@@ -575,6 +585,49 @@ def filter_based_on_disease(
                 and max_carbo
                 and max_sodium
                 and makanan_bervariasi
+                and max_calorie 
+            )
+    elif disease == "target_plan":
+        max_fat = (
+            breakfast["FatContent"] + lunch["FatContent"] + dinner["FatContent"]
+             <= target_plan["fat"]
+        )
+        max_protein = (
+            breakfast["ProteinContent"]
+            + lunch["ProteinContent"]
+            + dinner["ProteinContent"]
+            <= target_plan["protein"]
+        )
+        max_carbo = (
+            breakfast["CarbohydrateContent"]
+            + lunch["CarbohydrateContent"]
+            + dinner["CarbohydrateContent"]
+            <= target_plan["carbs"]
+        )
+        max_sodium = (
+            breakfast["SodiumContent"]
+            + lunch["SodiumContent"]
+            + dinner["SodiumContent"]
+            < 2000
+        )
+        if category != "":
+            return (
+                max_fat
+                and max_protein
+                and max_carbo
+                and max_sodium
+                and makanan_bervariasi
+                and match_category
+                and max_calorie 
+            )
+        else:
+            return (
+                max_fat
+                and max_protein
+                and max_carbo
+                and max_sodium
+                and makanan_bervariasi
+                and max_calorie 
             )
 
 
@@ -594,6 +647,22 @@ def meal_plan(request):
     list food category ada di notebook food_recommendation_system.ipynb
     """
     if request.method == "POST":
+        target_plan = TargetPlan.objects.filter(user__user=request.user)
+        nutri_target = {}
+        if target_plan.exists():
+            target_plan = target_plan.first()
+            nutri_target = {
+                "calories": target_plan.target_calorie,
+                "protein": target_plan.target_protein,
+                "carbs": target_plan.target_carbs,
+                "fat": target_plan.target_fat,
+            }
+        penyakit_user = RiwayatPenyakit.objects.filter(user__user=request.user)
+        list_penyakit = []
+        if penyakit_user.exists():
+            for penyakit in penyakit_user:
+                list_penyakit.append(penyakit.nama_penyakit.lower())
+        list_penyakit = set(list_penyakit)
 
         my_calorie_daily_intake = calorie_intake(80, 170, 22)
         my_favorite_food = [
@@ -617,22 +686,143 @@ def meal_plan(request):
         problem.addVariable("lunch", foods_recommendation)
 
         problem.addVariable("dinner", foods_recommendation)
+        max_nutrition = {}
 
-        problem.addConstraint(
-            lambda breakfast, lunch, dinner: filter_based_on_disease(
-                breakfast,
-                lunch,
-                dinner,
-                my_calorie_daily_intake,
-                "diabetes",
-                {
-                    "breakfast": breakfast_category,
-                    "lunch": lunch_category,
-                    "dinner": dinner_category,
-                },
-            ),
-            ("breakfast", "lunch", "dinner"),
-        )
+        if "diabetes" in list_penyakit:
+            problem.addConstraint(
+                lambda breakfast, lunch, dinner: filter_based_on_disease(
+                    breakfast,
+                    lunch,
+                    dinner,
+                    my_calorie_daily_intake,
+                    "diabetes",
+                    {
+                        "breakfast": breakfast_category,
+                        "lunch": lunch_category,
+                        "dinner": dinner_category,
+                    },
+                    nutri_target,
+                ),
+                ("breakfast", "lunch", "dinner"),
+            )
+
+            max_nutrition = {
+                "calorie": my_calorie_daily_intake,
+                "fat": 0.25 * my_calorie_daily_intake,
+                "protein": 0.15 * my_calorie_daily_intake,
+                "carbs": 0.60 * my_calorie_daily_intake,
+                "sodium": 2000,
+                "cholesterol": 200,
+                "penyakit": "diabetes",
+            }
+        elif "jantung" in list_penyakit:
+            problem.addConstraint(
+                lambda breakfast, lunch, dinner: filter_based_on_disease(
+                    breakfast,
+                    lunch,
+                    dinner,
+                    my_calorie_daily_intake,
+                    "cardiovascular",
+                    {
+                        "breakfast": breakfast_category,
+                        "lunch": lunch_category,
+                        "dinner": dinner_category,
+                    },
+                    nutri_target,
+                ),
+                ("breakfast", "lunch", "dinner"),
+            )
+
+            max_nutrition = {
+                "calorie": my_calorie_daily_intake,
+                "fat": 0.25 * my_calorie_daily_intake,
+                "protein": 0.15 * my_calorie_daily_intake,
+                "carbs": 0.60 * my_calorie_daily_intake,
+                "sodium": 2000,
+                "cholesterol": 200,
+                "penyakit": "jantung",
+            }
+        elif "hipertensi" in list_penyakit:
+            problem.addConstraint(
+                lambda breakfast, lunch, dinner: filter_based_on_disease(
+                    breakfast,
+                    lunch,
+                    dinner,
+                    my_calorie_daily_intake,
+                    "hypertension",
+                    {
+                        "breakfast": breakfast_category,
+                        "lunch": lunch_category,
+                        "dinner": dinner_category,
+                    },
+                    nutri_target,
+                ),
+                ("breakfast", "lunch", "dinner"),
+            )
+
+            max_nutrition = {
+                "calorie": my_calorie_daily_intake,
+                "fat": 0.25 * my_calorie_daily_intake,
+                "protein": 0.15 * my_calorie_daily_intake,
+                "carbs": 0.60 * my_calorie_daily_intake,
+                "sodium": 1000,
+                "cholesterol": 200,
+                "penyakit": "hipertensi",
+            }
+        elif "fat" in nutri_target:
+            problem.addConstraint(
+                lambda breakfast, lunch, dinner: filter_based_on_disease(
+                    breakfast,
+                    lunch,
+                    dinner,
+                    nutri_target["calories"],
+                    "target_plan",
+                    {
+                        "breakfast": breakfast_category,
+                        "lunch": lunch_category,
+                        "dinner": dinner_category,
+                    },
+                    nutri_target,
+                ),
+                ("breakfast", "lunch", "dinner"),
+            )
+
+            max_nutrition = {
+                "calorie": nutri_target["calories"],
+                "fat": nutri_target["fat"],
+                "protein": nutri_target["protein"],
+                "carbs": nutri_target["carbs"],
+                "sodium": 2000,
+                "cholesterol": 200,
+                "penyakit": "Target Plan",
+            }
+        else:
+            problem.addConstraint(
+                lambda breakfast, lunch, dinner: filter_based_on_disease(
+                    breakfast,
+                    lunch,
+                    dinner,
+                    my_calorie_daily_intake,
+                    "normal",
+                    {
+                        "breakfast": breakfast_category,
+                        "lunch": lunch_category,
+                        "dinner": dinner_category,
+                    },
+                    nutri_target,
+                ),
+                ("breakfast", "lunch", "dinner"),
+            )
+
+            max_nutrition = {
+                "calorie": my_calorie_daily_intake,
+                "fat": 0.25 * my_calorie_daily_intake,
+                "protein": 0.15 * my_calorie_daily_intake,
+                "carbs": 0.60 * my_calorie_daily_intake,
+                "sodium": 2000,
+                "cholesterol": 200,
+                "penyakit": "normal",
+            }
 
         meal_plan_recommendation = problem.getSolution()
         res = {
@@ -703,6 +893,8 @@ def meal_plan(request):
                     "RecipeIngredientParts"
                 ],
             },
+            "curr_date": date.today(),
+            "max_nutrition": max_nutrition,
         }
 
         # return JsonResponse(data=res)
@@ -714,6 +906,7 @@ def meal_plan(request):
             {
                 "food_categories": settings.FOOD_CATEGORIES,
                 "food_names": settings.FOOD_NAME,
+                "curr_date": date.today(),
             },
         )
 
@@ -975,7 +1168,7 @@ def truncate(f, n):
 
 @login_required(login_url="my_app:normal_login")
 def dashboard(request):
-
+    current_date = date.today()
     person_data = NutritionProgress.objects.filter(user__user=request.user)
     kadar_data = BloodCodition.objects.filter(user__user=request.user).order_by(
         "-check_time"
@@ -1104,6 +1297,7 @@ def dashboard(request):
         "bmi": bmi,
         "daily_nutrition": daily_nutrition,
         "daily_nutrition_input": daily_nutrition_input,
+        "curr_date": current_date,
     }
 
     return render(request, "dashboard_cantik.html", context=context)
@@ -1219,11 +1413,14 @@ def add_nutrition(request):
 
 @login_required(login_url="my_app:normal_login")
 def add_target(request):
+    current_date = date.today()
+
     if request.method == "POST":
-        calorie = request.POST.get("target_calorie")
-        carbs = request.POST.get("target_carbs")
-        protein = request.POST.get("target_protein")
-        fat = request.POST.get("target_fat")
+
+        calorie = request.POST.get("calorie_input")
+        carbs = request.POST.get("carbo_input")
+        protein = request.POST.get("protein_input")
+        fat = request.POST.get("fat_input")
         target = TargetPlan.objects.create(
             target_calorie=calorie,
             target_carbs=carbs,
@@ -1233,4 +1430,5 @@ def add_target(request):
         )
         target.save()
         return redirect("my_app:dashboard")
-    return render(request, "add_target_new.html")
+    return render(request, "target-plan.html", {"curr_date": current_date})
+

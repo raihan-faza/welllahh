@@ -131,7 +131,6 @@ main header {
     background: white;
     border-radius: 16px;
     padding: 20px;
-    /* width: 24; */
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     border: 0.2px solid #E8E7E7;
 }
