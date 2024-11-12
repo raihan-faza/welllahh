@@ -260,6 +260,16 @@ button{
     width: 150px;
   }
 
+input[type="text"] {
+    -moz-appearance: textfield;
+    text-align: center;
+    font-size: 30px;
+    border: none;
+    background-color: #fbf6ee;
+    color: #e6a544;
+    width: 100%;
+  }
+
   input::-webkit-outer-spin-button,
   input::-webkit-inner-spin-button {
     -webkit-appearance: none;
@@ -292,3 +302,36 @@ button{
     cursor: pointer;
     border-radius: 3px;
 }
+
+.input-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .input-box {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .input-box label {
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+
+  .input-box input {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+
+  .input-container input[type="number"] {
+    -moz-appearance: textfield;
+    text-align: center;
+    font-size: 17px;
+    border: none;
+    background-color: #fbf6ee;
+    color: #e6a544;
+    width: 100%;
+  }

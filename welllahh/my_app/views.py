@@ -13,6 +13,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.files.storage import default_storage
 from django.db.models import Q, Sum
+
+# from .medical_ai_chatbot import answer_pipeline
+from django.db.models.functions import TruncDate
 from django.http.response import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.utils import timezone
@@ -22,15 +25,8 @@ from keras.preprocessing.image import img_to_array, load_img
 from PIL import Image
 from sklearn.metrics.pairwise import cosine_similarity
 from tensorflow.python.keras.backend import set_session
-import json
-from .models import *
-from django.views.decorators.csrf import csrf_exempt
-from django.utils import timezone
-from django.db.models import Sum
-from django.contrib.auth.decorators import login_required
-from .medical_ai_chatbot import answer_pipeline
-from django.db.models.functions import TruncDate
 
+from .models import *
 
 
 def landing_page(request):
@@ -1018,14 +1014,14 @@ def dashboard(request):
     weekly_foods = person_data.filter(
         check_time__gte=timezone.now() - datetime.timedelta(days=7)
     )
-    today_calory = today_foods.aggregate(Sum("calorie"))["calorie__sum"]
-    today_carbs = today_foods.aggregate(Sum("carbs"))["carbs__sum"]
-    today_protein = today_foods.aggregate(Sum("protein"))["protein__sum"]
-    today_fat = today_foods.aggregate(Sum("fat"))["fat__sum"]
-    weekly_calory = weekly_foods.aggregate(Sum("calorie"))["calorie__sum"]
-    weekly_carbs = weekly_foods.aggregate(Sum("carbs"))["carbs__sum"]
-    weekly_protein = weekly_foods.aggregate(Sum("protein"))["protein__sum"]
-    weekly_fat = weekly_foods.aggregate(Sum("fat"))["fat__sum"]
+    today_calory = today_foods.aggregate(Sum("calorie"))["calorie__sum"] or 0
+    today_carbs = today_foods.aggregate(Sum("carbs"))["carbs__sum"] or 0
+    today_protein = today_foods.aggregate(Sum("protein"))["protein__sum"] or 0
+    today_fat = today_foods.aggregate(Sum("fat"))["fat__sum"] or 0
+    weekly_calory = weekly_foods.aggregate(Sum("calorie"))["calorie__sum"] or 0
+    weekly_carbs = weekly_foods.aggregate(Sum("carbs"))["carbs__sum"] or 0
+    weekly_protein = weekly_foods.aggregate(Sum("protein"))["protein__sum"] or 0
+    weekly_fat = weekly_foods.aggregate(Sum("fat"))["fat__sum"] or 0
 
     user_body_info = UserBodyInfo.objects.filter(
         custom_user__user=request.user
@@ -1057,9 +1053,9 @@ def dashboard(request):
             [
                 daily.check_time,
                 daily.nutrition_name,
-                 daily.calorie,
+                daily.calorie,
                 daily.carbs,
-                 daily.fat,
+                daily.fat,
                 daily.protein,
             ]
         )
@@ -1074,7 +1070,7 @@ def dashboard(request):
                 "total_protein": daily["total_protein"],
                 "total_fat": daily["total_fat"],
             }
-        )       
+        )
 
     context = {
         "today_foods": today_foods,
@@ -1184,7 +1180,7 @@ def add_riwayat(request):
         )
         riwayat.save()
         return redirect("my_app:riwayat")
-    return render(request, "add_riwayat.html")
+    return render(request, "add_riwayat_new.html")
 
 
 def delete_riwayat(request, pk):
@@ -1218,7 +1214,7 @@ def add_nutrition(request):
         if request.POST.get("redirect"):
             return redirect("my_app:dashboard")
         return redirect("my_app:add_nutrition")
-    return render(request, "add_nutrition.html")
+    return render(request, "add_nutrition_new.html")
 
 
 @login_required(login_url="my_app:normal_login")
@@ -1237,4 +1233,4 @@ def add_target(request):
         )
         target.save()
         return redirect("my_app:dashboard")
-    return render(request, "target.html")
+    return render(request, "add_target_new.html")
