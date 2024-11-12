@@ -1,5 +1,5 @@
 {%load static%}
-
+{%load tz%}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -85,6 +85,10 @@
             <a href="{% url 'my_app:add_target' %}">Add Target</a>
           </div>
             
+          <div class="item">
+            <i class="bx bx-log-out-circle"></i>
+            <a href="{% url 'my_app:logout' %}">Logout</a>
+          </div>
         </div>
       </aside>
 

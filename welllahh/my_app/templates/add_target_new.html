@@ -1,0 +1,36 @@
+{% extends "base_dashboard_cantik.html" %} {%load static%} {% block content %}
+<main>
+  <header>
+    <div>
+      <h2>Record Your Weight and Height</h2>
+      <p class="current-date">{% now "Y-m-d" %}</p>
+    </div>
+  </header>
+  <form method="POST">
+    {% csrf_token %}
+    <div class="add-bmi-container">
+      <div class="input-container">
+        <div class="input-box">
+          <label>Total Calorie</label>
+          <input type="text" name="target_calorie" placeholder="1500">
+        </div>
+        <div class="input-box">
+          <label>Total Carbohydrate</label>
+          <input type="text" name="target_carbs" placeholder="300">
+        </div>
+        <div class="input-box">
+          <label>Total Protein</label>
+          <input type="text" name="target_protein" placeholder="128">
+        </div>
+        <div class="input-box">
+          <label>Total Fat</label>
+          <input type="text" name="target_fat" placeholder="100">
+        </div>
+        <button type="submit" class="calculate-btn">Submit</button>
+      </div>
+    </div>
+  </form>
+</main>
+{% endblock content %} {% block script%}
+<script src="{% static 'js/add_bmi.js' %}"></script>
+{% endblock script%}
