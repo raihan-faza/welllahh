@@ -1,106 +1,196 @@
-{% extends "base.html" %} {%load static%} {% block content %}
-<div class="container-meal-plan">
+{% extends "base_dashboard_cantik.html" %} {%load static%} {% block content %}
+
+<main>
+  <header>
+    <div>
+      <h2>Choose Your Meal Plan</h2>
+      <p class="current-date">10 November 2024</p>
+    </div>
+  </header>
+
+  <div class="container-meal-plan">
     <form method="POST">
-        {% csrf_token %}
-        <h1 class="meal-plan-title">Meal Plan</h1>
+      {% csrf_token %}
 
-        <div class="favorite-foods">
-            <h2>Your Favorite Foods</h2>
-            <div class="food-selectors">
-                <div>
-                    <label class="selector-label">Favorite Food 1</label>
-                    <select class="food-select searchable-select-food" name="my_favorite_food_1" id="my_favorite_food_1">
-                    
-                            {% for food_name in food_names %}
-                                <option value="{{ food_name }}">{{ food_name }}</option>
-                            {% endfor %}
-                        </select>
-                </div>
-                <div>
-                    <label class="selector-label">Favorite Food 2</label>
-                    <select class="food-select searchable-select-food" name="my_favorite_food_2" id="my_favorite_food_2">
-                    
-                            {% for food_name in food_names %}
-                                <option value="{{ food_name }}">{{ food_name }}</option>
-                            {% endfor %}
-                        </select>
-                </div>
-                <div>
-                    <label class="selector-label">Favorite Food 3</label>
-                    <select class="food-select searchable-select-food" name="my_favorite_food_3" id="my_favorite_food_3">
-                    
-                            {% for food_name in food_names %}
-                                <option value="{{ food_name }}">{{ food_name }}</option>
-                            {% endfor %}
-                        </select>
-                </div>
-                <div>
-                    <label class="selector-label">Favorite Food 4</label>
-                    <select class="food-select searchable-select-food" name="my_favorite_food_4" id="my_favorite_food_4">
-                    
-                            {% for food_name in food_names %}
-                                <option value="{{ food_name }}">{{ food_name }}</option>
-                            {% endfor %}
-                        </select>
-                </div>
-                <div>
-                    <label class="selector-label">Favorite Food 5</label>
-                    <select class="food-select searchable-select-food" name="my_favorite_food_5" id="my_favorite_food_5">
-                    
-                            {% for food_name in food_names %}
-                                <option value="{{ food_name }}">{{ food_name }}</option>
-                            {% endfor %}
-                        </select>
-                </div>
-            </div>
+      <div class="favorite-foods">
+        <h2>Your Favorite Foods</h2>
+        <div class="food-selectors">
+          <div>
+            <label class="selector-label">Favorite Food 1</label>
+            <select
+            style=" border-radius: 5px;  padding: 1.0rem;"
+              class="food-select searchable-select-food"
+              name="my_favorite_food_1"
+              id="my_favorite_food_1"
+            >
+              {% for food_name in food_names %}
+              <option value="{{ food_name }}">{{ food_name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div>
+            <label class="selector-label">Favorite Food 2</label>
+            <select
+            style=" border-radius: 5px;  padding: 1.0rem;"
+              class="food-select searchable-select-food"
+              name="my_favorite_food_2"
+              id="my_favorite_food_2"
+            >
+              {% for food_name in food_names %}
+              <option value="{{ food_name }}">{{ food_name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div>
+            <label class="selector-label">Favorite Food 3</label>
+            <select
+            style=" border-radius: 5px;  padding: 1.0rem;"
+              class="food-select searchable-select-food"
+              name="my_favorite_food_3"
+              id="my_favorite_food_3"
+            >
+              {% for food_name in food_names %}
+              <option value="{{ food_name }}">{{ food_name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div>
+            <label class="selector-label">Favorite Food 4</label>
+            <select
+            style=" border-radius: 5px;  padding: 1.0rem;"
+              class="food-select searchable-select-food"
+              name="my_favorite_food_4"
+              id="my_favorite_food_4"
+            >
+              {% for food_name in food_names %}
+              <option value="{{ food_name }}">{{ food_name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div>
+            <label class="selector-label">Favorite Food 5</label>
+            <select
+            style=" border-radius: 5px;  padding: 1.0rem;"
+              class="food-select searchable-select-food"
+              name="my_favorite_food_5"
+              id="my_favorite_food_5"
+            >
+              {% for food_name in food_names %}
+              <option value="{{ food_name }}">{{ food_name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="meal-categories">
+        <div class="meal-category">
+          <h3>Breakfast</h3>
+          <label class="selector-label">Select Breakfast</label>
+          <select
+          style=" border-radius: 5px;  padding: 1.0rem;"
+            class="food-select searchable-select"
+            name="meal_plan_category_breakfast"
+            id="meal_plan_category_breakfast"
+            class="searchable-select"
+          >
+            {% for category in food_categories %}
+            <option value="{{ category }}">{{ category }}</option>
+            {% endfor %}
+          </select>
         </div>
 
-        <div class="meal-categories">
-            <div class="meal-category">
-                <h2>Breakfast</h2>
-                <label class="selector-label">Select Breakfast</label>
-                <select class="food-select searchable-select" name="meal_plan_category_breakfast" id="meal_plan_category_breakfast" class="searchable-select">
-                        {% for category in food_categories %}
-                            <option value="{{ category }}">{{ category }}</option>
-                        {% endfor %}
-                    </select>
-            </div>
-
-            <div class="meal-category">
-                <h2>Lunch</h2>
-                <label class="selector-label">Select Lunch</label>
-                <select class="food-select searchable-select" name="meal_plan_category_lunch" id="meal_plan_category_lunch" class="searchable-select">
-                        {% for category in food_categories %}
-                            <option value="{{ category }}">{{ category }}</option>
-                        {% endfor %}
-                    </select>
-            </div>
-
-            <div class="meal-category">
-                <h2>Dinner</h2>
-                <label class="selector-label">Select Dinner</label>
-                <select class="food-select searchable-select" name="meal_plan_category_dinner" id="meal_plan_category_dinner" class="searchable-select">
-                        {% for category in food_categories %}
-                            <option value="{{ category }}">{{ category }}</option>
-                        {% endfor %}
-                    </select>
-                <button class="meal-button" type="submit">Meal Plan!</button>
-            </div>
+        <div class="meal-category">
+          <h3>Lunch</h3>
+          <label class="selector-label">Select Lunch</label>
+          <select
+          style=" border-radius: 5px;  padding: 1.0rem;"
+            class="food-select searchable-select"
+            name="meal_plan_category_lunch"
+            id="meal_plan_category_lunch"
+            class="searchable-select"
+          >
+            {% for category in food_categories %}
+            <option value="{{ category }}">{{ category }}</option>
+            {% endfor %}
+          </select>
         </div>
+
+        <div class="meal-category">
+          <h3>Dinner</h3>
+          <label class="selector-label">Select Dinner</label>
+          <select
+          style=" border-radius: 5px;  padding: 1.0rem;"
+            class="food-select searchable-select"
+            name="meal_plan_category_dinner"
+            id="meal_plan_category_dinner"
+            class="searchable-select"
+          >
+            {% for category in food_categories %}
+            <option value="{{ category }}">{{ category }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="meal-button-container">
+          <button class="meal-button" type="submit">Meal Plan!</button>
+        </div>
+      </div>
     </form>
-</div>
+  </div>
+</main>
+<aside class="right-section">
+  <div class="right-title">
+    <h2>Meal Plan Example</h2>
+  </div>
+  <div class="container-food-gallery">
+    <div class="food-gallery-container">
+      <img class="food-img" src="{% static 'img/salad.png' %}" alt="" />
+      <p>Breakfast: Grilled Chicken Salad </p>
+    </div>
+    <div class="food-gallery-container">
+      <img class="food-img" src="{% static 'img/grilled-chicken.png' %}" alt="" />
+      <p>Lunch: Grilled Chicken </p>
+    </div>
+    <div class="food-gallery-container">
+      <img  class="food-img"src="{% static 'img/salmon.png' %}" alt="" />
+      <p>Dinner: Salmon </p>
+    </div>
+  </div>
+</aside>
 {% endblock content %} {% block script%}
+<!-- prettier-ignore -->
+{{ curr_date|json_script:"curr_date"}}
+
 <script>
-    $('.searchable-select').select2({
-        placeholder: 'Select food category',
-        allowClear: true
-    });
+  $(".searchable-select").select2({
+    placeholder: "Select food category",
+    allowClear: true,
+  });
+
+  $(".searchable-select-food").select2({
+    placeholder: "Select food name",
+    allowClear: true,
+  });
 
 
-
-    $('.searchable-select-food').select2({
-        placeholder: 'Select food name',
-        allowClear: true
-    });
+  const dateString = JSON.parse(
+    document.getElementById("curr_date").textContent
+  );
+  
+  const date = new Date(dateString);
+  
+  const options = {
+  weekday: "long",
+  year: "numeric",
+  month: "long",
+  day: "numeric"
+  };
+  
+  const formattedDate = date.toLocaleDateString("en-US", options);
+  let curentDate = document.getElementsByClassName("current-date");
+  curentDate[0].textContent = formattedDate;
 </script>
 {% endblock script%}
+
+

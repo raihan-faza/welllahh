@@ -54,7 +54,7 @@ urlpatterns = [
     path("add_nutrition", views.add_nutrition, name="add_nutrition"),
     path("add_riwayat", views.add_riwayat, name="add_riwayat"),
     path("delete_riwayat/<int:pk>", views.delete_riwayat, name="delete_riwayat"),
-    path("dashboard_cantik", views.dashboard_cantik, name="dashboard_cantik"), 
+    path("add_target", views.add_target, name="add_target"),
 ]
 
 

@@ -69,7 +69,8 @@
         </section>
 
     </div>
-
+    
+    <!-- prettier-ignore -->
     {{ chat_sessions|json_script:"chat_sessions" }} {{ curr_chat_session|json_script:"curr_chat_session" }}
 
     <script src="{% static 'js/chatbot.js' %}"></script>

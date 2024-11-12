@@ -27,6 +27,8 @@ from langchain_core.documents import Document
 from langchain_core.retrievers import BaseRetriever
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import torch
+import numpy as np
+
 
 
 load_dotenv()

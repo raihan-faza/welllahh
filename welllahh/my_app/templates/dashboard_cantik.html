@@ -57,14 +57,18 @@
           </div>
 
           <div class="item">
-            <i class="bx bx-add-to-queue"></i>
+            <i class="bx bx-bowl-hot"></i>
             <a href="{% url 'my_app:meal_plan' %}">Meal Plan</a>
           </div>
-
 
           <div class="item">
             <i class="bx bx-user"></i>
             <a href="{% url 'my_app:catat_tinggi_berat' %}">Record BMI</a>
+          </div>
+
+          <div class="item">
+            <i class="bx bx-star"></i>
+            <a href="{% url 'my_app:add_target' %}">Add Target</a>
           </div>
         </div>
       </aside>
@@ -138,7 +142,9 @@
             <div class="metric-value">
               {{kadar.BLOOD_SUGAR}} <span class="metric-unit">mg/dL</span>
             </div>
-            <span class="status-badge status-normal">{{kadar.BLOOD_SUGAR_DISEASE}}</span>
+            <span class="status-badge status-normal"
+              >{{kadar.BLOOD_SUGAR_DISEASE}}</span
+            >
             <div class="graph-container">
               <div class="graph graph-blood-sugar">
                 <svg
@@ -222,7 +228,9 @@
             <div class="metric-value">
               {{kadar.CHOLESTEROL}} <span class="metric-unit">mg/dl</span>
             </div>
-            <span class="status-badge status-normal">{{kadar.CHOLESEROL_DISEASE}}</span>
+            <span class="status-badge status-normal"
+              >{{kadar.CHOLESEROL_DISEASE}}</span
+            >
             <div class="graph-container">
               <div class="graph graph-heart-rate">
                 <svg
@@ -268,7 +276,9 @@
             <div class="metric-value">
               {{kadar.BLOOD_PRESSURE}} <span class="metric-unit">/72 mmHg</span>
             </div>
-            <span class="status-badge status-normal">{{kadar.BLOOD_PRESSURE_DISEASE}}</span>
+            <span class="status-badge status-normal"
+              >{{kadar.BLOOD_PRESSURE_DISEASE}}</span
+            >
             <div class="graph-container">
               <div class="graph graph-blood-pressure">
                 <svg
@@ -309,7 +319,9 @@
             <div class="metric-value">
               {{kadar.URIC_ACID}} <span class="metric-unit">mg/dl</span>
             </div>
-            <span class="status-badge status-normal">{{kadar.URIC_ACID_DISEASE}}</span>
+            <span class="status-badge status-normal"
+              >{{kadar.URIC_ACID_DISEASE}}</span
+            >
             <div class="graph-container">
               <div class="graph graph-blood-sugar">
                 <svg
@@ -546,7 +558,9 @@
                 </div>
               </div>
             </div>
-            <span class="status-badge status-normal">{{protein_condition}}</span>
+            <span class="status-badge status-normal"
+              >{{protein_condition}}</span
+            >
             <div class="graph-container">
               <div class="graph graph-heart-rate">
                 <svg
@@ -580,7 +594,6 @@
                 <option value="CHOLESTEROL">Cholesterol</option>
                 <option value="BLOOD_PRESSURE">Blood Pressure</option>
                 <option value="URIC_ACID">Uric Acid</option>
-               
               </select>
             </div>
 
@@ -695,11 +708,13 @@
 
     <script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
 
+    <!-- prettier-ignore -->
     {{ daily_nutrition|json_script:"daily_nutrition" }}
-    {{ daily_nutrition_input|json_script:"daily_nutrition_input" }}
+    {{ daily_nutrition_input|json_script:"daily_nutrition_input" }} 
     {{ bmi|json_script:"bmi" }}
+      <!-- prettier-ignore -->
+      {{ curr_date|json_script:"curr_date"}}
 
     <script src="{% static 'js/script_dashboard.js' %}"></script>
-    
   </body>
 </html>

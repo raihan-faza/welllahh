@@ -1,0 +1,139 @@
+{% extends "base_dashboard_cantik.html" %} {%load static%} {% block content %}
+<main>
+  <header>
+    <div>
+      <h2>Plan Your Daily Nutritional Targets</h2>
+      <p class="current-date">{{curr_date}}</p>
+    </div>
+  </header>
+  <div class="container-meal-plan">
+    <form class="form" method="post">
+      {% csrf_token %}
+      <div class="form-target-plan">
+        <div>
+          <label for="calorie-input">Target Calorie</label>
+          <div class="number-input">
+            <button
+              type="button"
+              id="decrement-target-plan"
+              onclick="stepper(this, 'calorie-input')"
+            >
+              -
+            </button>
+            <input
+              type="number"
+              min="1800"
+              max="3500"
+              step="50"
+              value="200"
+              name="calorie_input"
+              id="calorie-input"
+            />
+            <button
+              type="button"
+              id="increment-target-plan"
+              onclick="stepper(this,  'calorie-input')"
+            >
+              +
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <label for="calorie-input">Target Carbohydrate</label>
+          <div class="number-input">
+            <button
+              type="button"
+              id="decrement-target-plan"
+              onclick="stepper(this, 'carbo-input')"
+            >
+              -
+            </button>
+            <input
+              type="number"
+              min="150"
+              max="1000"
+              step="5"
+              value="200"
+              name="carbo_input"
+              id="carbo-input"
+            />
+            <button
+              type="button"
+              id="increment-target-plan"
+              onclick="stepper(this, 'carbo-input')"
+            >
+              +
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <label for="calorie-input">Target Protein</label>
+          <div class="number-input">
+            <button
+              type="button"
+              id="decrement-target-plan"
+              onclick="stepper(this, 'protein-input')"
+            >
+              -
+            </button>
+            <input
+              type="number"
+              min="0"
+              max="500"
+              step="1"
+              value="200"
+              name="protein_input"
+              id="protein-input"
+            />
+            <button
+              type="button"
+              id="increment-target-plan"
+              onclick="stepper(this, 'protein-input')"
+            >
+              +
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <label for="calorie-input">Target Fat</label>
+          <div class="number-input">
+            <button
+              type="button"
+              id="decrement-target-plan"
+              onclick="stepper(this, 'fat-input')"
+            >
+              -
+            </button>
+            <input
+              type="number"
+              min="10"
+              max="1000"
+              step="10"
+              value="200"
+              name="fat_input"
+              id="fat-input"
+            />
+            <button
+              type="button"
+              id="increment-target-plan"
+              onclick="stepper(this, 'fat-input')"
+            >
+              +
+            </button>
+          </div>
+        </div>
+        <div class="target-plan-btn">
+          <button type="submit" class="calculate-btn">Submit</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</main>
+{% endblock content %} {% block script%}
+<!-- prettier-ignore -->
+{{ curr_date|json_script:"curr_date"}}
+<script src="{% static 'js/target-plan.js' %}"></script>
+{% endblock script%}
