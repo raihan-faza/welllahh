@@ -2,6 +2,7 @@ import datetime
 import json
 import random
 import string
+from datetime import date
 from uuid import uuid4
 
 import numpy as np
@@ -25,10 +26,9 @@ from keras.preprocessing.image import img_to_array, load_img
 from PIL import Image
 from sklearn.metrics.pairwise import cosine_similarity
 from tensorflow.python.keras.backend import set_session
-from .models import *
 
 from .medical_ai_chatbot import answer_pipeline
-from datetime import date
+from .models import *
 
 
 def landing_page(request):
@@ -244,7 +244,9 @@ def get_health_condition_based_on_nutrition_val(request):
             # asam urat
             # https://www.siloamhospitals.com/en/informasi-siloam/artikel/prosedur-cek-asam-urat
             if nutrition_value >= 7.0:
-                return {"disease_prediction": "Serangan Asam Urat Dan Batu Ginjal"}
+                return JsonResponse(
+                    data={"disease_prediction": "Serangan Asam Urat Dan Batu Ginjal"}
+                )
 
             else:
                 return JsonResponse(data={"disease_prediction": "normal"})
@@ -381,7 +383,8 @@ def filter_based_on_disease(
     mufa_pufa = fat - saturated_fat
 
     max_calorie = (
-        breakfast["Calories"] + lunch["Calories"] + dinner["Calories"] <= calorie_intake * 1.4
+        breakfast["Calories"] + lunch["Calories"] + dinner["Calories"]
+        <= calorie_intake * 1.4
     )
 
     makanan_bervariasi = breakfast != lunch and lunch != dinner and breakfast != dinner
@@ -431,7 +434,7 @@ def filter_based_on_disease(
                 and max_saturated_fat
                 and makanan_bervariasi
                 and match_category
-                and max_calorie 
+                and max_calorie
             )
         else:
             return (
@@ -442,7 +445,7 @@ def filter_based_on_disease(
                 and max_cholesterol
                 and max_saturated_fat
                 and makanan_bervariasi
-                and max_calorie 
+                and max_calorie
             )
 
     elif disease == "cardiovascular":
@@ -485,7 +488,7 @@ def filter_based_on_disease(
                 and max_saturated_fat
                 and makanan_bervariasi
                 and match_category
-                and max_calorie ,
+                and max_calorie,
             )
         else:
             return (
@@ -496,7 +499,7 @@ def filter_based_on_disease(
                 and max_cholesterol
                 and max_saturated_fat
                 and makanan_bervariasi
-                and max_calorie 
+                and max_calorie
             )
 
     elif disease == "hypertension":
@@ -532,7 +535,7 @@ def filter_based_on_disease(
                 and max_saturated_fat
                 and makanan_bervariasi
                 and match_category
-                and max_calorie 
+                and max_calorie
             )
         else:
             return (
@@ -542,7 +545,7 @@ def filter_based_on_disease(
                 and max_sodium
                 and max_saturated_fat
                 and makanan_bervariasi
-                and max_calorie 
+                and max_calorie
             )
 
     elif disease == "normal":
@@ -576,7 +579,7 @@ def filter_based_on_disease(
                 and max_sodium
                 and makanan_bervariasi
                 and match_category
-                and max_calorie 
+                and max_calorie
             )
         else:
             return (
@@ -585,12 +588,12 @@ def filter_based_on_disease(
                 and max_carbo
                 and max_sodium
                 and makanan_bervariasi
-                and max_calorie 
+                and max_calorie
             )
     elif disease == "target_plan":
         max_fat = (
             breakfast["FatContent"] + lunch["FatContent"] + dinner["FatContent"]
-             <= target_plan["fat"]
+            <= target_plan["fat"]
         )
         max_protein = (
             breakfast["ProteinContent"]
@@ -618,7 +621,7 @@ def filter_based_on_disease(
                 and max_sodium
                 and makanan_bervariasi
                 and match_category
-                and max_calorie 
+                and max_calorie
             )
         else:
             return (
@@ -627,7 +630,7 @@ def filter_based_on_disease(
                 and max_carbo
                 and max_sodium
                 and makanan_bervariasi
-                and max_calorie 
+                and max_calorie
             )
 
 
@@ -1183,23 +1186,24 @@ def dashboard(request):
         "BLOOD_PRESSURE": 0,
         "BLOOD_PRESSURE_DISEASE": "Normal",
     }
+    custom_user = CustomUser.objects.get(user=request.user)
     if kadar_data.exists():
         curr_kadar = {
             "BLOOD_SUGAR": kadar_data[0].blood_sugar,
             "BLOOD_SUGAR_DISEASE": get_health_condition_based_on_nutrition_val(
-                "BLOOD_SUGAR", kadar_data[0].blood_sugar, request.user
+                "BLOOD_SUGAR", kadar_data[0].blood_sugar, custom_user
             ),
             "CHOLESTEROL": kadar_data[0].cholesterol,
             "CHOLESEROL_DISEASE": get_health_condition_based_on_nutrition_val(
-                "CHOLESTEROL", kadar_data[0].cholesterol, request.user
+                "CHOLESTEROL", kadar_data[0].cholesterol, custom_user
             ),
             "URIC_ACID": kadar_data[0].uric_acid,
             "URIC_ACID_DISEASE": get_health_condition_based_on_nutrition_val(
-                "URIC_ACID", kadar_data[0].uric_acid, request.user
+                "URIC_ACID", kadar_data[0].uric_acid, custom_user
             ),
             "BLOOD_PRESSURE": kadar_data[0].blood_pressure,
             "BLOOD_PRESSURE_DISEASE": get_health_condition_based_on_nutrition_val(
-                "BLOOD_PRESSURE", kadar_data[0].blood_pressure, request.user
+                "BLOOD_PRESSURE", kadar_data[0].blood_pressure, custom_user
             ),
         }
 
@@ -1432,3 +1436,20 @@ def add_target(request):
         return redirect("my_app:dashboard")
     return render(request, "target-plan.html", {"curr_date": current_date})
 
+
+@login_required(login_url="my_app:normal_login")
+def add_blood_condition(request):
+    if request.method == "POST":
+        blood_sugar = request.POST.get("blood_sugar")
+        uric_acid = request.POST.get("uric_acid")
+        cholesterol = request.POST.get("cholesterol")
+        blood_pressure = request.POST.get("blood_pressure")
+        blood_condition = BloodCodition.objects.create(
+            user=CustomUser.objects.get(user=request.user),
+            blood_sugar=blood_sugar,
+            uric_acid=uric_acid,
+            cholesterol=cholesterol,
+            blood_pressure=blood_pressure,
+        )
+        blood_condition.save()
+    return render(request, "add_blood.html")
