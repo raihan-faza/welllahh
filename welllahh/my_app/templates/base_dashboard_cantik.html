@@ -1,5 +1,4 @@
-{%load static%}
-{%load tz%}
+{%load static%} {%load tz%}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -84,6 +83,7 @@
             <i class="bx bx-star"></i>
             <a href="{% url 'my_app:add_target' %}">Add Target</a>
           </div>
+
          <div class="item">
             <i class="bx bx-droplet "></i>
             <a href="{% url 'my_app:add_blood' %}">Add Blood Condition</a>
@@ -99,7 +99,7 @@
     </div>
 
     {% block script %}
-     <!-- prettier-ignore -->
+    <!-- prettier-ignore -->
     {{ curr_date|json_script:"curr_date"}}
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -107,7 +107,6 @@
     <script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
 
     <script src="{% static 'js/script_dashboard.js' %}"></script>
-    
 
     {% endblock script %}
   </body>

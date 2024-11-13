@@ -1,182 +1,76 @@
-{% load static %}
+{% extends "base_dashboard_cantik.html" %} {%load static%} {% block content %}
+<main>
+  <header>
+    <div>
+      <h2>Your Medical History</h2>
+      <p class="current-date">10 November 2024</p>
+    </div>
+  </header>
+  <div class="container-meal-plan">
+    <div class="table">
+      <div id="wrapper"></div>
+    </div>
+  </div>
+</main>
+{% endblock content %}{% block script%}
+<script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
+<!-- prettier-ignore -->
+{{ riwayat_user|json_script:"riwayat_user"}}
+{{ curr_date|json_script:"curr_date"}}
 
-<span style="font-family: verdana, geneva, sans-serif"
-  ><!DOCTYPE html>
-  <html lang="en">
-    <head>
-      <meta charset="UTF-8" />
-      <title>Riwayat Penyakit</title>
+<script>
 
-      <!-- Font Awesome Cdn Link -->
-      <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
-      />
 
-      <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
-      <link href="{% static 'css/dashboard.css' %}" rel="stylesheet" />
-    </head>
-    <body>
-      <div class="container">
-        <nav>
-          <ul>
-            <li>
-              <a href="{% url 'my_app:dashboard' %}" class="logo">
-                <img src="./pic/logo.jpg" />
-                <span class="nav-item">{{user.username}}</span>
-              </a>
-            </li>
-            <li>
-              <a href="{% url 'my_app:food_nutrition' %}">
-                <i class="fas fa-camera"></i>
-                <span class="nav-item">Food Using Image</span>
-              </a>
-            </li>
-            <li>
-              <a href="#">
-                <i class="fas fa-comment"></i>
-                <span class="nav-item">Chatbot</span>
-              </a>
-            </li>
-            <li>
-              <a href="{% url 'my_app:riwayat'%}">
-                <i class="fas fa-database"></i>
-                <span class="nav-item">Riwayat Penyakit</span>
-              </a>
-            </li>
-            <li>
-              <a href="{% url 'my_app:add_nutrition' %}">
-                <i class="fas fa-plus"></i>
-                <span class="nav-item">Add Nutrition</span>
-              </a>
-            </li>
-            <li>
-              <a href="{% url 'my_app:add_riwayat' %}">
-                <i class="fas fa-book"></i>
-                <span class="nav-item">Add Riwayat</span>
-              </a>
-            </li>
-            <li>
-              <a href="{% url 'my_app:meal_plan' %}">
-                <i class="fas fa-cog"></i>
-                <span class="nav-item">Meal Plan</span>
-              </a>
-            </li>
-            <li>
-              <a href="{% url 'my_app:logout'%}" class="logout">
-                <i class="fas fa-sign-out-alt"></i>
-                <span class="nav-item">Log out</span>
-              </a>
-            </li>
-          </ul>
-        </nav>
-        <section class="main">
-          <section class="attendance">
-            <div class="attendance-list">
-              <h1>Riwayat Penyakit</h1>
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th>Date</th>
-                    <th>Nama Penyakit</th>
-                    <th>Deskripsi Penyakit</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for riwayat in riwayat_user %}
-                  <tr>
-                    <td>{{riwayat.check_time}}</td>
-                    <td>{{riwayat.nama_penyakit}}</td>
-                    <td>{{riwayat.deskripsi_penyakit}}</td>
-                    <td><form action="{% url 'my_app:delete_riwayat' riwayat.id %}" method="post" style="display:inline;">{% csrf_token %}<button type="submit">Remove</button></form></td>
-                  </tr>
-                  {% endfor %}
-                  <!--
-                  <tr class="active">
-                    <td>01</td>
-                    <td>03-24-22</td>
-                    <td>Indomie</td>
-                    <td class="calorie">100</td>
-                    <td class="carbs">10g</td>
-                    <td class="fat">20g</td>
-                    <td class="protein">30g</td>
-                    <td><button>Remove</button></td>
-                  </tr>
-                  <tr>
-                    <td>01</td>
-                    <td>03-24-22</td>
-                    <td>Sate</td>
-                    <td class="calorie">100</td>
-                    <td class="carbs">10g</td>
-                    <td class="fat">20g</td>
-                    <td class="protein">30g</td>
-                    <td><button>Remove</button></td>
-                  </tr>
-                  <tr>
-                    <td>01</td>
-                    <td>03-24-22</td>
-                    <td>Geprek</td>
-                    <td class="calorie">100</td>
-                    <td class="carbs">10g</td>
-                    <td class="fat">20g</td>
-                    <td class="protein">30g</td>
-                    <td><button>Remove</button></td>
-                  </tr>
-                  -->
-                  <!--
-                  <tr class="active">
-                    <td>02</td>
-                    <td>Balbina Kherr</td>
-                    <td>Coding</td>
-                    <td>03-24-22</td>
-                    <td>9:00AM</td>
-                    <td>4:00PM</td>
-                    <td><button>View</button></td>
-                  </tr>
-                  <tr>
-                    <td>03</td>
-                    <td>Badan John</td>
-                    <td>testing</td>
-                    <td>03-24-22</td>
-                    <td>8:00AM</td>
-                    <td>3:00PM</td>
-                    <td><button>View</button></td>
-                  </tr>
-                  <tr>
-                    <td>04</td>
-                    <td>Sara David</td>
-                    <td>Design</td>
-                    <td>03-24-22</td>
-                    <td>8:00AM</td>
-                    <td>3:00PM</td>
-                    <td><button>View</button></td>
-                  </tr> -->
+const riwayatUser = JSON.parse(
+    document.getElementById("riwayat_user").textContent
+);
 
-                  <!-- <tr >
-                <td>05</td>
-                <td>Salina</td>
-                <td>Coding</td>
-                <td>03-24-22</td>
-                <td>9:00AM</td>
-                <td>4:00PM</td>
-                <td><button>View</button></td>
-              </tr>
-              <tr >
-                <td>06</td>
-                <td>Tara Smith</td>
-                <td>Testing</td>
-                <td>03-24-22</td>
-                <td>9:00AM</td>
-                <td>4:00PM</td>
-                <td><button>View</button></td>
-              </tr> -->
-                </tbody>
-              </table>
-            </div>
-          </section>
-        </section>
-      </div>
-    </body>
-  </html>
-</span>
+
+
+let riwayatPenyakit = []
+
+for (let penyakit of riwayatUser) {
+    riwayatPenyakit.push([
+      penyakit.nama_penyakit,
+      penyakit.deskripsi_penyakit,
+      penyakit.check_time,
+    ])
+}
+
+new gridjs.Grid({
+  columns: ["Penyakit", "Deskripsi", "Tanggal"],
+  data: riwayatPenyakit,
+  style: {
+    td: {
+      border: "1px solid #ffe8e8",
+    },
+    th: {
+      border: "1px solid #ffe8e8",
+    },
+  },
+}).render(document.getElementById("wrapper"));
+
+
+
+const dateString = JSON.parse(
+    document.getElementById("curr_date").textContent
+  );
+  
+  const date = new Date(dateString);
+  
+  const options = {
+  weekday: "long",
+  year: "numeric",
+  month: "long",
+  day: "numeric"
+  };
+  
+  const formattedDate = date.toLocaleDateString("en-US", options);
+  let curentDate = document.getElementsByClassName("current-date");
+  curentDate[0].textContent = formattedDate;
+
+
+</script>
+
+{% endblock script%}
+

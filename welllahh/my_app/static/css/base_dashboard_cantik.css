@@ -301,11 +301,7 @@ input::-webkit-inner-spin-button{
 }
 
 
-
-
-
 /* meal plan... */
-
 .container-meal-plan {
   background-color: #fff;
   border-radius: 15px;
@@ -597,3 +593,8 @@ label[for="calorie-input"] {
     color: #e6a544;
     width: 100%;
   }
+
+
+
+
+/*Attendance List serction  */
