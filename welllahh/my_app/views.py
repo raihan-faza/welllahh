@@ -26,8 +26,8 @@ from PIL import Image
 from sklearn.metrics.pairwise import cosine_similarity
 from tensorflow.python.keras.backend import set_session
 from .models import *
+
 from .medical_ai_chatbot import answer_pipeline
-from django.db.models.functions import TruncDate
 from datetime import date
 
 

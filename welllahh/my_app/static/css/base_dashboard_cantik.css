@@ -258,7 +258,6 @@ input::-webkit-inner-spin-button{
 
   input[type="number"]#calorie-input, input[type="number"]#carbo-input ,
   input[type="number"]#fat-input, input[type="number"]#protein-input {
-
     -moz-appearance: textfield;
     text-align: center;
     font-size: 30px;
@@ -266,7 +265,6 @@ input::-webkit-inner-spin-button{
     background-color: #fdfdfd;
     color: var(--text-dark);
     width: 150px;
-
   }
 
   input::-webkit-outer-spin-button,
@@ -301,7 +299,6 @@ input::-webkit-inner-spin-button{
     cursor: pointer;
     border-radius: 3px;
 }
-
 
 
 /* meal plan... */
@@ -562,7 +559,6 @@ label[for="calorie-input"] {
   background: #fff;
   
 }
-
 
 
 .input-container {
