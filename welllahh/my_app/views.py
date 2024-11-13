@@ -1217,6 +1217,15 @@ def dashboard(request):
     weekly_carbs = weekly_foods.aggregate(Sum("carbs"))["carbs__sum"]
     weekly_protein = weekly_foods.aggregate(Sum("protein"))["protein__sum"]
     weekly_fat = weekly_foods.aggregate(Sum("fat"))["fat__sum"]
+    if today_calory == None:
+        today_calory = 0
+    if today_carbs == None:
+        today_carbs = 0
+    if today_protein == None:
+        today_protein = 0
+    if today_fat == None:
+        today_fat = 0
+    
 
     user_body_info = UserBodyInfo.objects.filter(
         custom_user__user=request.user
