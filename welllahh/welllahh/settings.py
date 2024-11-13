@@ -64,9 +64,9 @@ if os.path.exists("./recipes_sedikit.csv") == False:
     urllib.request.urlretrieve(url, path)
     print("download complete!")
 
-print("loading food image classification model....")
-INDOFOOD_IMAGE_MODEL = tf.keras.models.load_model("best_model_86.keras")
-print("selesai food image classification model....")
+# print("loading food image classification model....")
+# INDOFOOD_IMAGE_MODEL = tf.keras.models.load_model("best_model_86.keras")
+# print("selesai food image classification model....")
 with open("recommendation_cosine_sim.pkl", "rb") as file:
     FOOD_COSINE_SIM = pickle.load(file)
 with open("search_count_vec.pkl", "rb") as file:

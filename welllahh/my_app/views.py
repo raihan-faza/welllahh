@@ -931,8 +931,8 @@ def get_chatbot_response(request):
         for penyakit in riwayat_penyakit_db:
             riwayat_penyakit += penyakit.nama_penyakit + ", "
         answer, context = answer_pipeline(question, chat_history, riwayat_penyakit)
-        answer = set(answer.split("\n"))  # hapus duplicate answer
-        answer = "\n".join(answer)
+        # answer = set(answer.split("\n"))  # hapus duplicate answer 
+        # answer = "\n".join(answer) # kalau pakai ini jawaban chatbotnya gak urut
 
         if chat_uuid != 0:
             curr_chat_session = ChatSession.objects.get(id=chat_uuid)
@@ -966,15 +966,25 @@ def get_chatbot_response(request):
             )
             new_message.save()
 
+            return JsonResponse(
+                {
+                    "chatbot_message": answer,
+                    "context": context,
+                    "new_session_id": new_session.id,
+                    "new_session_created_at": new_session.created_at,
+                    "new_session_title": session_title,
+                }
+            )
+       
         return JsonResponse(
-            {
-                "chatbot_message": answer,
-                "context": context,
-                "new_session_id": new_session.id,
-                "new_session_created_at": new_session.created_at,
-                "new_session_title": session_title,
-            }
-        )
+                {
+                    "chatbot_message": answer,
+                    "context": context,
+                    "new_session_id": 0,
+                    "new_session_created_at": 0,
+                    "new_session_title": session_title,
+                }
+            )
 
 
 @login_required(login_url="my_app:normal_login")

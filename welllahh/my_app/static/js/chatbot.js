@@ -157,17 +157,13 @@ document.addEventListener("DOMContentLoaded", () => {
             console.log("message: ", message)
             const uniqueId = generateUniqueId();
 
-            let userPrompt = message['prompt_content'].split('\n');
+            let userPrompt = message['prompt_content'];
 
-            let uniqueLinesUser = [...new Set(userPrompt)];
+        
 
-            userPrompt = uniqueLinesUser.join('\n');
+            let aiPrompt = message['chatbot_content'];
 
-            let aiPrompt = message['chatbot_content'].split('\n');
-
-            let uniqueLinesAI = [...new Set(aiPrompt)];
-
-            aiPrompt = uniqueLinesAI.join('\n');
+           
 
             chatContainer.innerHTML += chatStripe(false, userPrompt, uniqueId, '');
             chatContainer.innerHTML += chatStripe(true, aiPrompt, uniqueId, message['context']);
@@ -208,11 +204,13 @@ function loader(element) {
 
 function typeText(element, text) {
     let index = 0
-    let lines = text.split('\n');
+    // kalau pakai ini jawaban chatbotnya gak urut
 
-    let uniqueLines = [...new Set(lines)];
+    // let lines = text.split('\n');
 
-    text = uniqueLines.join('\n');
+    // let uniqueLines = [...new Set(lines)];
+
+    // text = uniqueLines.join('\n');
 
 
     let interval = setInterval(() => {
@@ -441,3 +439,18 @@ function clearChat() {
 
 
 buttonNewChatElement.addEventListener('click', clearChat)
+
+
+// # kalau pakai ini jawaban chatbotnya gak urut
+
+ // let userPrompt = message['prompt_content'].split('\n');
+
+            // let uniqueLinesUser = [...new Set(userPrompt)];
+
+            // userPrompt = uniqueLinesUser.join('\n');
+
+            // let aiPrompt = message['chatbot_content'].split('\n');
+
+            // let uniqueLinesAI = [...new Set(aiPrompt)];
+
+            // aiPrompt = uniqueLinesAI.join('\n');
