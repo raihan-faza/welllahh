@@ -18,17 +18,31 @@ function showNutriGraph(ctx, selectedMonth) {
     api_nutri_data[i] = 0;
   }
 
+  const daily_kadar = JSON.parse(
+    document.getElementById("daily_kadar").textContent
+  );
+
   const daily_nutrition = JSON.parse(
     document.getElementById("daily_nutrition").textContent
   );
 
+  
   let groupedDailyNutrition = {
     CALORIE: [],
     CARBS: [],
     FAT: [],
     PROTEIN: [],
     DATE: [],
+  
   };
+
+  let groupedDailyBloodCondition = {
+    DATE: [],
+    BLOOD_SUGAR: [],
+    URIC_ACID: [],
+    CHOLESTEROL: [],
+    BLOOD_PRESSURE: [],
+  }
 
   for (let i = 0; i < daily_nutrition.length; i++) {
     groupedDailyNutrition["CALORIE"].push(daily_nutrition[i].total_calories);
@@ -36,6 +50,14 @@ function showNutriGraph(ctx, selectedMonth) {
     groupedDailyNutrition["FAT"].push(daily_nutrition[i].total_fat);
     groupedDailyNutrition["PROTEIN"].push(daily_nutrition[i].total_protein);
     groupedDailyNutrition["DATE"].push(daily_nutrition[i].date);
+  }
+
+  for (let i=0; i<daily_kadar.length; i++){
+    groupedDailyBloodCondition["BLOOD_SUGAR"].push(daily_kadar[i].blood_sugar);
+    groupedDailyBloodCondition["URIC_ACID"].push(daily_kadar[i].uric_acid);
+    groupedDailyBloodCondition["CHOLESTEROL"].push(daily_kadar[i].cholesterol);
+    groupedDailyBloodCondition["BLOOD_PRESSURE"].push(daily_kadar[i].blood_pressure);
+    groupedDailyBloodCondition["DATE"].push(daily_kadar[i].date)
   }
   
   
@@ -86,10 +108,53 @@ function showNutriGraph(ctx, selectedMonth) {
       let curr_data_date = groupedDailyNutrition["DATE"][i].split("-")
 
       if (curr_data_date[curr_data_date.length-2] == selectedMonth) {
-      api_nutri_data[curr_date - 1] = groupedDailyNutrition["PROTEIN"][i];
+        api_nutri_data[curr_date - 1] = groupedDailyNutrition["PROTEIN"][i];
       }
     }
-   
+  } else if (daily_nutri_type == "BLOOD_SUGAR") {
+    for (let i = 0; i < groupedDailyBloodCondition["BLOOD_SUGAR"].length; i++) {
+      let curr_date = groupedDailyBloodCondition["DATE"][i].split("-");
+      curr_date = curr_date[curr_date.length - 1];
+
+      let curr_data_date = groupedDailyBloodCondition["DATE"][i].split("-")
+
+      if (curr_data_date[curr_data_date.length-2] == selectedMonth) {
+        api_nutri_data[curr_date - 1] = groupedDailyBloodCondition["BLOOD_SUGAR"][i];
+      }
+    }
+  } else if (daily_nutri_type == "URIC_ACID") {
+    for (let i = 0; i < groupedDailyBloodCondition["URIC_ACID"].length; i++) {
+      let curr_date = groupedDailyBloodCondition["DATE"][i].split("-");
+      curr_date = curr_date[curr_date.length - 1];
+
+      let curr_data_date = groupedDailyBloodCondition["DATE"][i].split("-")
+
+      if (curr_data_date[curr_data_date.length-2] == selectedMonth) {
+        api_nutri_data[curr_date - 1] = groupedDailyBloodCondition["URIC_ACID"][i];
+      }
+    }
+  }else if (daily_nutri_type == "CHOLESTEROL") {
+    for (let i = 0; i < groupedDailyBloodCondition["CHOLESTEROL"].length; i++) {
+      let curr_date = groupedDailyBloodCondition["DATE"][i].split("-");
+      curr_date = curr_date[curr_date.length - 1];
+
+      let curr_data_date = groupedDailyBloodCondition["DATE"][i].split("-")
+
+      if (curr_data_date[curr_data_date.length-2] == selectedMonth) {
+        api_nutri_data[curr_date - 1] = groupedDailyBloodCondition["CHOLESTEROL"][i];
+      }
+    }
+  }else if (daily_nutri_type == "BLOOD_PRESSURE") {
+    for (let i = 0; i < groupedDailyBloodCondition["BLOOD_PRESSURE"].length; i++) {
+      let curr_date = groupedDailyBloodCondition["DATE"][i].split("-");
+      curr_date = curr_date[curr_date.length - 1];
+
+      let curr_data_date = groupedDailyBloodCondition["DATE"][i].split("-")
+
+      if (curr_data_date[curr_data_date.length-2] == selectedMonth) {
+        api_nutri_data[curr_date - 1] = groupedDailyBloodCondition["BLOOD_PRESSURE"][i];
+      }
+    }
   }
 
 
@@ -183,17 +248,17 @@ bmiSelectDate.addEventListener("change", function() {
 
   if (bmiDate == "last_week") {
     console.log("bmi change last_week")
-    heightWeight[0].textContent = bodyInfoLastWeek.height;
-    heightWeight[1].textContent = bodyInfoLastWeek.weight;
+    heightWeight[0].textContent = bodyInfoLastWeek.height + " cm";
+    heightWeight[1].textContent = bodyInfoLastWeek.weight + " kg";
     bmiValue.textContent = bmiLastWeek;
   }else if  (bmiDate == "last_month") {
     console.log("bmi change last_month")
-    heightWeight[0].textContent = bodyInfoLastYear.height;
-    heightWeight[1].textContent = bodyInfoLastYear.weight;
+    heightWeight[0].textContent = bodyInfoLastYear.height + " cm";
+    heightWeight[1].textContent = bodyInfoLastYear.weight + " kg";
     bmiValue.textContent = bmiLastYear
   }else {
-    heightWeight[0].textContent = currBodyInfo.height;
-    heightWeight[1].textContent = currBodyInfo.weight;
+    heightWeight[0].textContent = currBodyInfo.height + " cm";
+    heightWeight[1].textContent = currBodyInfo.weight + " kg";
     bmiValue.textContent = currBMI;
   }
 

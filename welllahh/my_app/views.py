@@ -13,7 +13,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.files.storage import default_storage
-from django.db.models import Q, Sum
+from django.db.models import Q, Sum, Avg
 
 # from .medical_ai_chatbot import answer_pipeline
 from django.db.models.functions import TruncDate
@@ -27,7 +27,7 @@ from PIL import Image
 from sklearn.metrics.pairwise import cosine_similarity
 from tensorflow.python.keras.backend import set_session
 
-# from .medical_ai_chatbot import answer_pipeline
+from .medical_ai_chatbot import answer_pipeline
 from .models import *
 
 
@@ -1058,7 +1058,7 @@ def get_health_condition_based_on_nutrition_val(nutrition_type, nutrition_value,
         # asam urat
         # https://www.siloamhospitals.com/en/informasi-siloam/artikel/prosedur-cek-asam-urat
         if nutrition_value >= 7.0:
-            {"disease_prediction": "Serangan Asam Urat Dan Batu Ginjal"}
+            return {"disease_prediction": "Serangan Asam Urat Dan Batu Ginjal"}
 
         else:
             return {"disease_prediction": "Normal"}
@@ -1190,6 +1190,7 @@ def dashboard(request):
         "BLOOD_PRESSURE_DISEASE": "Normal",
     }
     custom_user = CustomUser.objects.get(user=request.user)
+
     if kadar_data:
         curr_kadar = {
             "BLOOD_SUGAR": kadar_data.blood_sugar,
@@ -1243,19 +1244,30 @@ def dashboard(request):
     end_last_month = today
 
     one_week_ago = today - datetime.timedelta(days=7)
-    
 
-    last_month_entries = UserBodyInfo.objects.filter(check_time__range=(start_last_month, end_last_month))
-    
-    body_last_month = last_month_entries.order_by("-check_time")[len(last_month_entries)-1] 
-    bmi_last_month = truncate(body_last_month.weight / ((body_last_month.height / 100) ** 2), 2)       
+    last_month_entries = UserBodyInfo.objects.filter(
+        check_time__range=(start_last_month, end_last_month)
+    )
+
+    body_last_month = last_month_entries.order_by("-check_time")[
+        len(last_month_entries) - 1
+    ]
+    bmi_last_month = truncate(
+        body_last_month.weight / ((body_last_month.height / 100) ** 2), 2
+    )
     body_last_month = {
         "weight": body_last_month.weight,
         "height": body_last_month.height,
     }
-    one_week_ago_entries = UserBodyInfo.objects.filter(check_time__range=(one_week_ago,today))
-    body_last_week = one_week_ago_entries.order_by("-check_time")[len(one_week_ago_entries)-1]
-    bmi_last_week = truncate(body_last_week.weight / ((body_last_week.height / 100) ** 2), 2)
+    one_week_ago_entries = UserBodyInfo.objects.filter(
+        check_time__range=(one_week_ago, today)
+    )
+    body_last_week = one_week_ago_entries.order_by("-check_time")[
+        len(one_week_ago_entries) - 1
+    ]
+    bmi_last_week = truncate(
+        body_last_week.weight / ((body_last_week.height / 100) ** 2), 2
+    )
     body_last_week = {
         "weight": body_last_week.weight,
         "height": body_last_week.height,
@@ -1264,11 +1276,9 @@ def dashboard(request):
     user_body_info_dict = {
         "weight": user_body_info.weight,
         "height": user_body_info.height,
-
     }
 
     detailed_daily_nutrition = (
-
         NutritionProgress.objects.filter(user__user=request.user)
         .annotate(date=TruncDate("check_time"))
         .values("date")
@@ -1280,6 +1290,20 @@ def dashboard(request):
         )
         .order_by("date")
     )
+
+    history_kadar = (
+        BloodCodition.objects.filter(user__user=request.user)
+        .annotate(date=TruncDate("check_time"))
+        .values("date")
+        .annotate(
+            avg_blood_sugar=Avg("blood_sugar"),
+            avg_uric_acid=Avg("uric_acid"),
+            avg_cholesterol=Avg("cholesterol"),
+            avg_blood_pressure=Avg("blood_pressure"),
+        )
+        .order_by("date")
+    )
+
     daily_nutrition_input_db = NutritionProgress.objects.filter(user__user=request.user)
     daily_nutrition_input = []
     for daily in daily_nutrition_input_db:
@@ -1306,12 +1330,25 @@ def dashboard(request):
             }
         )
 
+    #  blood condition history
+    daily_kadar = []
+    for daily in history_kadar:
+        daily_kadar.append(
+            {
+                "date": daily["date"],
+                "blood_sugar": daily["avg_blood_sugar"],
+                "uric_acid": daily["avg_uric_acid"],
+                "cholesterol": daily["avg_cholesterol"],
+                "blood_pressure": daily["avg_blood_pressure"],
+            }
+        )
+
     target_plan = TargetPlan.objects.filter(user__user=request.user)
     nutri_target = {
         "calories": 0.0,
-            "protein":  0.0,
-            "carbs": 0.0,
-            "fat":  0.0,
+        "protein": 0.0,
+        "carbs": 0.0,
+        "fat": 0.0,
     }
     if target_plan.exists():
         target_plan = target_plan.first()
@@ -1325,14 +1362,14 @@ def dashboard(request):
     context = {
         "today_foods": today_foods,
         "weekly_foods": weekly_foods,
-        "today_calory":  truncate(today_calory,2),
-        "today_protein":  truncate(today_protein,2),
-        "today_carbs":  truncate(today_carbs,2),
-        "today_fat":  truncate(today_fat,2),
-        "weekly_calory":  truncate(weekly_calory,2),
-        "weekly_protein":  truncate(weekly_protein,2),
-        "weekly_carbs":  truncate(weekly_carbs,2),
-        "weekly_fat":  truncate(weekly_fat,2),
+        "today_calory": truncate(today_calory, 2),
+        "today_protein": truncate(today_protein, 2),
+        "today_carbs": truncate(today_carbs, 2),
+        "today_fat": truncate(today_fat, 2),
+        "weekly_calory": truncate(weekly_calory, 2),
+        "weekly_protein": truncate(weekly_protein, 2),
+        "weekly_carbs": truncate(weekly_carbs, 2),
+        "weekly_fat": truncate(weekly_fat, 2),
         "calory_condition": nutrition_condition(
             "CALORIE", today_calory, user_body_info, riwayat_penyakit_user, custom_user
         ),
@@ -1361,12 +1398,11 @@ def dashboard(request):
         "body_last_month": body_last_month,
         "body_last_week": body_last_week,
         "user_body_info_dict": user_body_info_dict,
-         "curr_bmi": bmi # buat selector bmi jangan dihapus
+        "curr_bmi": bmi,  # buat selector bmi jangan dihapus,
+        "daily_kadar": daily_kadar,
     }
 
     return render(request, "dashboard_cantik.html", context=context)
-
-
 
 
 @login_required(login_url="my_app:normal_login")
@@ -1504,7 +1540,6 @@ def add_target(request):
     return render(request, "target-plan.html", {"curr_date": current_date})
 
 
-
 @login_required(login_url="my_app:normal_login")
 def add_blood_condition(request):
     if request.method == "POST":
@@ -1520,9 +1555,10 @@ def add_blood_condition(request):
             blood_pressure=blood_pressure,
         )
         blood_condition.save()
+        return redirect("my_app:dashboard")
     try:
         blood_data = BloodCodition.objects.filter(user__user=request.user).latest(
-            "checktime"
+            "check_time"
         )
     except:
         blood_data = {
