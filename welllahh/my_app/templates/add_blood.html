@@ -2,7 +2,7 @@
 <main>
   <header>
     <div>
-      <h2>Record Your Medical Conditions</h2>
+      <h2>Record Your Blood Condition</h2>
       <p class="current-date">{% now "d-m-Y" %}</p>
     </div>
   </header>
@@ -11,12 +11,20 @@
     <div class="add-bmi-container">
       <div class="input-container">
         <div class="input-box">
-          <label>Nama Penyakit</label>
-          <input type="text" name="nama_penyakit" placeholder="Asma">
+          <label>Blood Sugar</label>
+          <input type="number" name="blood_sugar" placeholder="10">
         </div>
         <div class="input-box">
-          <label>Deskripsi Penyakit</label>
-          <input type="text" name="deskripsi_penyakit" placeholder="uhuk uhuk">
+          <label>Uric Acid</label>
+          <input type="number" name="uric_acid" placeholder="10">
+        </div>
+        <div class="input-box">
+          <label>Cholesterol</label>
+          <input type="number" name="cholesterol" placeholder="10">
+        </div>
+        <div class="input-box">
+          <label>Blood Pressure</label>
+          <input type="number" name="blood_pressure" placeholder="10">
         </div>
         <button type="submit" class="calculate-btn">Submit</button>
       </div>

@@ -71,7 +71,10 @@
             <a href="{% url 'my_app:add_target' %}">Add Target</a>
           </div>
 
-
+          <div class="item">
+            <i class="bx bx-droplet "></i>
+            <a href="{% url 'my_app:add_blood' %}">Add Blood Condition</a>
+          </div>
           <div class="item">
             <i class="bx bx-log-out-circle"></i>
             <a href="{% url 'my_app:logout' %}">Logout</a>
@@ -149,7 +152,7 @@
               {{kadar.BLOOD_SUGAR}} <span class="metric-unit">mg/dL</span>
             </div>
             <span class="status-badge status-normal"
-              >{{kadar.BLOOD_SUGAR_DISEASE}}</span
+              >{{kadar.BLOOD_SUGAR_DISEASE.disease_prediction}}</span
             >
             <div class="graph-container">
               <div class="graph graph-blood-sugar">
@@ -235,7 +238,7 @@
               {{kadar.CHOLESTEROL}} <span class="metric-unit">mg/dl</span>
             </div>
             <span class="status-badge status-normal"
-              >{{kadar.CHOLESEROL_DISEASE}}</span
+              >{{kadar.CHOLESEROL_DISEASE.disease_prediction}}</span
             >
             <div class="graph-container">
               <div class="graph graph-heart-rate">
@@ -283,7 +286,7 @@
               {{kadar.BLOOD_PRESSURE}} <span class="metric-unit">/72 mmHg</span>
             </div>
             <span class="status-badge status-normal"
-              >{{kadar.BLOOD_PRESSURE_DISEASE}}</span
+              >{{kadar.BLOOD_PRESSURE_DISEASE.disease_prediction}}</span
             >
             <div class="graph-container">
               <div class="graph graph-blood-pressure">
@@ -326,7 +329,7 @@
               {{kadar.URIC_ACID}} <span class="metric-unit">mg/dl</span>
             </div>
             <span class="status-badge status-normal"
-              >{{kadar.URIC_ACID_DISEASE}}</span
+              >{{kadar.URIC_ACID_DISEASE.disease_prediction}}</span
             >
             <div class="graph-container">
               <div class="graph graph-blood-sugar">
