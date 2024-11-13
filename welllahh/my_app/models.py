@@ -31,12 +31,14 @@ class UserBodyInfo(models.Model):
 
     def __str__(self) -> str:
         return self.custom_user.user.username
-    
+
+
 class ChatSession(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     message_from = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     session_title = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+
 
 class Message(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
@@ -45,7 +47,6 @@ class Message(models.Model):
     context = models.TextField()
     chat_session = models.ForeignKey(ChatSession, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
-
 
 
 class Token(models.Model):
@@ -74,11 +75,11 @@ class BloodCodition(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
 
 
- # nutrition_type = models.CharField(
-    #    max_length=20, choices=NutritionType.choices, default=NutritionType.CALORY
-    # )
+# nutrition_type = models.CharField(
+#    max_length=20, choices=NutritionType.choices, default=NutritionType.CALORY
+# )
 
-    
+
 class NutritionProgress(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     check_time = models.DateTimeField(default=timezone.now)
@@ -106,4 +107,3 @@ class TargetPlan(models.Model):
     target_protein = models.IntegerField()
     target_fat = models.IntegerField()
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-

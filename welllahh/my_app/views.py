@@ -27,7 +27,7 @@ from PIL import Image
 from sklearn.metrics.pairwise import cosine_similarity
 from tensorflow.python.keras.backend import set_session
 
-from .medical_ai_chatbot import answer_pipeline
+# from .medical_ai_chatbot import answer_pipeline
 from .models import *
 
 
@@ -1173,9 +1173,12 @@ def truncate(f, n):
 def dashboard(request):
     current_date = date.today()
     person_data = NutritionProgress.objects.filter(user__user=request.user)
-    kadar_data = BloodCodition.objects.filter(user__user=request.user).order_by(
-        "-check_time"
-    )
+    try:
+        kadar_data = BloodCodition.objects.filter(user__user=request.user).latest(
+            "check_time"
+        )
+    except:
+        kadar_data = None
     curr_kadar = {
         "BLOOD_SUGAR": 0,
         "BLOOD_SUGAR_DISEASE": "Normal",
@@ -1187,23 +1190,23 @@ def dashboard(request):
         "BLOOD_PRESSURE_DISEASE": "Normal",
     }
     custom_user = CustomUser.objects.get(user=request.user)
-    if kadar_data.exists():
+    if kadar_data:
         curr_kadar = {
-            "BLOOD_SUGAR": kadar_data[0].blood_sugar,
+            "BLOOD_SUGAR": kadar_data.blood_sugar,
             "BLOOD_SUGAR_DISEASE": get_health_condition_based_on_nutrition_val(
-                "BLOOD_SUGAR", kadar_data[0].blood_sugar, custom_user
+                "BLOOD_SUGAR", kadar_data.blood_sugar, custom_user
             ),
-            "CHOLESTEROL": kadar_data[0].cholesterol,
+            "CHOLESTEROL": kadar_data.cholesterol,
             "CHOLESEROL_DISEASE": get_health_condition_based_on_nutrition_val(
-                "CHOLESTEROL", kadar_data[0].cholesterol, custom_user
+                "CHOLESTEROL", kadar_data.cholesterol, custom_user
             ),
-            "URIC_ACID": kadar_data[0].uric_acid,
+            "URIC_ACID": kadar_data.uric_acid,
             "URIC_ACID_DISEASE": get_health_condition_based_on_nutrition_val(
-                "URIC_ACID", kadar_data[0].uric_acid, custom_user
+                "URIC_ACID", kadar_data.uric_acid, custom_user
             ),
-            "BLOOD_PRESSURE": kadar_data[0].blood_pressure,
+            "BLOOD_PRESSURE": kadar_data.blood_pressure,
             "BLOOD_PRESSURE_DISEASE": get_health_condition_based_on_nutrition_val(
-                "BLOOD_PRESSURE", kadar_data[0].blood_pressure, custom_user
+                "BLOOD_PRESSURE", kadar_data.blood_pressure, custom_user
             ),
         }
 
@@ -1452,4 +1455,26 @@ def add_blood_condition(request):
             blood_pressure=blood_pressure,
         )
         blood_condition.save()
-    return render(request, "add_blood.html")
+    try:
+        blood_data = BloodCodition.objects.filter(user__user=request.user).latest(
+            "checktime"
+        )
+    except:
+        blood_data = {
+            "blood_sugar": 0,
+            "uric_acid": 0,
+            "cholesterol": 0,
+            "blood_pressure": 0,
+        }
+    context = {"blood_data": blood_data}
+    return render(request, "add_blood.html", context=context)
+
+
+"""
+def get_chatbot_response():
+    return
+
+
+def chatbot_page():
+    return
+"""
