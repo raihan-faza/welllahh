@@ -117,7 +117,7 @@ def GetFoodNutrition(foodName: str):
     myFoodNutrition = {}
     for idx, food in settings.INDOFOOD_NUTRITIONS_DF.iterrows():
         if foodName == food["food_name"]:
-            myFoodNutrition["calories"] = food["calories"]
+            myFoodNutrition["calories"] = food["calories"].split("kcal")[0]
             myFoodNutrition["fat"] = food["fat"]
             myFoodNutrition["carbohydrate"] = food["carbohydrate"]
             myFoodNutrition["proteins"] = food["proteins"]
@@ -915,8 +915,6 @@ def meal_plan(request):
 
 
 ## AI Chatbot
-
-
 @login_required(login_url="my_app:normal_login")
 def get_chatbot_response(request):
     if request.method == "POST":

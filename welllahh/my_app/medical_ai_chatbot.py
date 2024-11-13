@@ -30,7 +30,6 @@ import torch
 import numpy as np
 
 
-
 load_dotenv()
 
 
@@ -46,7 +45,6 @@ instructor_embeddings = HuggingFaceInstructEmbeddings(
 
 tokenizer = AutoTokenizer.from_pretrained("ncbi/MedCPT-Cross-Encoder")
 model = AutoModelForSequenceClassification.from_pretrained("ncbi/MedCPT-Cross-Encoder")
-
 
 
 translate_model = genai.GenerativeModel("gemini-1.0-pro")  # buat translate
@@ -243,6 +241,7 @@ class DuckDuckGoRetriever(BaseRetriever):
 
 websearch_retriever = DuckDuckGoRetriever(k=4)
 
+
 def rerank_docs_medcpt(query, docs):
     pairs = [[query, article] for article in docs]
     with torch.no_grad():
@@ -255,7 +254,7 @@ def rerank_docs_medcpt(query, docs):
         )
 
         logits = model(**encoded).logits.squeeze(dim=1)
-        values, indices =torch.sort(logits, descending=True)
+        values, indices = torch.sort(logits, descending=True)
         relevant = [docs[i] for i in indices[:6]]
     return relevant
 
@@ -263,7 +262,7 @@ def rerank_docs_medcpt(query, docs):
 retrieval_chain = generate_query | {
     "chroma": retriever,
     "websearch": websearch_retriever,
-     "query": StrOutputParser(),
+    "query": StrOutputParser(),
 }
 
 
@@ -274,7 +273,6 @@ def format_docs(docs):
     relevant_docs = rerank_docs_medcpt(query, docs)
     context = "\n\n".join(doc for doc in relevant_docs)
     return context
-
 
 
 template = """Answer the question based only on the following context:
@@ -316,10 +314,10 @@ def answer_pipeline(question, chat_history, riwayat_penyakit):
         )
 
     if user_context != "" and "insufficient data" not in user_context.lower():
-        question = ".my health condition: " + user_context  + "\n" + question
+        question = ".my health condition: " + user_context + "\n" + question
     if riwayat_penyakit != "":
         question = "my medical history: " + riwayat_penyakit + "\n" + question
-   
+
     question = translate_text(question, "English")
     question = question.replace("\n", "  ")
     print("retrieving relevant passages and answering user question....")
