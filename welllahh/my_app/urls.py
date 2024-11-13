@@ -55,6 +55,7 @@ urlpatterns = [
     path("add_riwayat", views.add_riwayat, name="add_riwayat"),
     path("delete_riwayat/<int:pk>", views.delete_riwayat, name="delete_riwayat"),
     path("add_target", views.add_target, name="add_target"),
+
 ]
 
 

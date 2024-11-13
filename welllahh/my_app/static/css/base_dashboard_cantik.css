@@ -258,6 +258,7 @@ input::-webkit-inner-spin-button{
 
   input[type="number"]#calorie-input, input[type="number"]#carbo-input ,
   input[type="number"]#fat-input, input[type="number"]#protein-input {
+
     -moz-appearance: textfield;
     text-align: center;
     font-size: 30px;
@@ -265,6 +266,7 @@ input::-webkit-inner-spin-button{
     background-color: #fdfdfd;
     color: var(--text-dark);
     width: 150px;
+
   }
 
   input::-webkit-outer-spin-button,
@@ -302,10 +304,7 @@ input::-webkit-inner-spin-button{
 
 
 
-
-
 /* meal plan... */
-
 .container-meal-plan {
   background-color: #fff;
   border-radius: 15px;
@@ -565,3 +564,41 @@ label[for="calorie-input"] {
 }
 
 
+
+.input-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .input-box {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .input-box label {
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+
+  .input-box input {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+
+  .input-container input[type="number"] {
+    -moz-appearance: textfield;
+    text-align: center;
+    font-size: 17px;
+    border: none;
+    background-color: #fbf6ee;
+    color: #e6a544;
+    width: 100%;
+  }
+
+
+
+
+/*Attendance List serction  */

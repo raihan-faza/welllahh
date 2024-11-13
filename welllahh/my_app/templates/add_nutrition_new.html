@@ -1,0 +1,43 @@
+{% extends "base_dashboard_cantik.html" %} {%load static%} {% block content %}
+<main>
+  <header>
+    <div>
+      <h2>Record Daily Nutrition</h2>
+      <p class="current-date">{% now "d-m-Y" %}</p>
+    </div>
+  </header>
+  <form method="POST">
+    {% csrf_token %}
+    <div class="add-bmi-container">
+      <div class="input-container">
+        <div class="input-box">
+          <label>Food Name</label>
+          <input type="text" name="nutrition_name" placeholder="Ayam Goyeng">
+        </div>
+        <div class="input-box">
+          <label>Calorie</label>
+          <input type="number" name="calorie" placeholder="1000" step="0.01">
+        </div>
+        <div class="input-box">
+          <label>Protein</label>
+          <input type="number" name="protein" placeholder="500" step="0.01">
+        </div>
+        <div class="input-box">
+          <label>Carbs</label>
+          <input type="number" name="carbs" placeholder="800" step="0.01">
+        </div>
+        <div class="input-box">
+          <label>Fat</label>
+          <input type="number" name="fat" placeholder="800" step="0.01">
+        </div>
+        <button type="submit" class="calculate-btn">Submit</button>
+      </div>
+    </div>
+  </form>
+</main>
+{% endblock content %} {% block script%}
+<!-- prettier-ignore -->
+
+{{ curr_date|json_script:"curr_date"}}
+<script src="{% static 'js/add_bmi.js' %}"></script>
+{% endblock script%}

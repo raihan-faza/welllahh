@@ -13,6 +13,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.files.storage import default_storage
 from django.db.models import Q, Sum
+
+# from .medical_ai_chatbot import answer_pipeline
+from django.db.models.functions import TruncDate
 from django.http.response import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.utils import timezone
@@ -22,12 +25,7 @@ from keras.preprocessing.image import img_to_array, load_img
 from PIL import Image
 from sklearn.metrics.pairwise import cosine_similarity
 from tensorflow.python.keras.backend import set_session
-import json
 from .models import *
-from django.views.decorators.csrf import csrf_exempt
-from django.utils import timezone
-from django.db.models import Sum
-from django.contrib.auth.decorators import login_required
 from .medical_ai_chatbot import answer_pipeline
 from django.db.models.functions import TruncDate
 from datetime import date
@@ -383,7 +381,8 @@ def filter_based_on_disease(
     mufa_pufa = fat - saturated_fat
 
     max_calorie = (
-        breakfast["Calories"] + lunch["Calories"] + dinner["Calories"] <= calorie_intake * 1.4
+        breakfast["Calories"] + lunch["Calories"] + dinner["Calories"]
+        <= calorie_intake * 1.4
     )
 
     makanan_bervariasi = breakfast != lunch and lunch != dinner and breakfast != dinner
@@ -433,7 +432,7 @@ def filter_based_on_disease(
                 and max_saturated_fat
                 and makanan_bervariasi
                 and match_category
-                and max_calorie 
+                and max_calorie
             )
         else:
             return (
@@ -444,7 +443,7 @@ def filter_based_on_disease(
                 and max_cholesterol
                 and max_saturated_fat
                 and makanan_bervariasi
-                and max_calorie 
+                and max_calorie
             )
 
     elif disease == "cardiovascular":
@@ -487,7 +486,7 @@ def filter_based_on_disease(
                 and max_saturated_fat
                 and makanan_bervariasi
                 and match_category
-                and max_calorie ,
+                and max_calorie,
             )
         else:
             return (
@@ -498,7 +497,7 @@ def filter_based_on_disease(
                 and max_cholesterol
                 and max_saturated_fat
                 and makanan_bervariasi
-                and max_calorie 
+                and max_calorie
             )
 
     elif disease == "hypertension":
@@ -534,7 +533,7 @@ def filter_based_on_disease(
                 and max_saturated_fat
                 and makanan_bervariasi
                 and match_category
-                and max_calorie 
+                and max_calorie
             )
         else:
             return (
@@ -544,7 +543,7 @@ def filter_based_on_disease(
                 and max_sodium
                 and max_saturated_fat
                 and makanan_bervariasi
-                and max_calorie 
+                and max_calorie
             )
 
     elif disease == "normal":
@@ -578,7 +577,7 @@ def filter_based_on_disease(
                 and max_sodium
                 and makanan_bervariasi
                 and match_category
-                and max_calorie 
+                and max_calorie
             )
         else:
             return (
@@ -587,12 +586,12 @@ def filter_based_on_disease(
                 and max_carbo
                 and max_sodium
                 and makanan_bervariasi
-                and max_calorie 
+                and max_calorie
             )
     elif disease == "target_plan":
         max_fat = (
             breakfast["FatContent"] + lunch["FatContent"] + dinner["FatContent"]
-             <= target_plan["fat"]
+            <= target_plan["fat"]
         )
         max_protein = (
             breakfast["ProteinContent"]
@@ -620,7 +619,7 @@ def filter_based_on_disease(
                 and max_sodium
                 and makanan_bervariasi
                 and match_category
-                and max_calorie 
+                and max_calorie
             )
         else:
             return (
@@ -629,7 +628,7 @@ def filter_based_on_disease(
                 and max_carbo
                 and max_sodium
                 and makanan_bervariasi
-                and max_calorie 
+                and max_calorie
             )
 
 
@@ -1209,23 +1208,15 @@ def dashboard(request):
     weekly_foods = person_data.filter(
         check_time__gte=timezone.now() - datetime.timedelta(days=7)
     )
-    today_calory = today_foods.aggregate(Sum("calorie"))["calorie__sum"]
-    today_carbs = today_foods.aggregate(Sum("carbs"))["carbs__sum"]
-    today_protein = today_foods.aggregate(Sum("protein"))["protein__sum"]
-    today_fat = today_foods.aggregate(Sum("fat"))["fat__sum"]
-    weekly_calory = weekly_foods.aggregate(Sum("calorie"))["calorie__sum"]
-    weekly_carbs = weekly_foods.aggregate(Sum("carbs"))["carbs__sum"]
-    weekly_protein = weekly_foods.aggregate(Sum("protein"))["protein__sum"]
-    weekly_fat = weekly_foods.aggregate(Sum("fat"))["fat__sum"]
-    if today_calory == None:
-        today_calory = 0
-    if today_carbs == None:
-        today_carbs = 0
-    if today_protein == None:
-        today_protein = 0
-    if today_fat == None:
-        today_fat = 0
-    
+
+    today_calory = today_foods.aggregate(Sum("calorie"))["calorie__sum"] or 0
+    today_carbs = today_foods.aggregate(Sum("carbs"))["carbs__sum"] or 0
+    today_protein = today_foods.aggregate(Sum("protein"))["protein__sum"] or 0
+    today_fat = today_foods.aggregate(Sum("fat"))["fat__sum"] or 0
+    weekly_calory = weekly_foods.aggregate(Sum("calorie"))["calorie__sum"] or 0
+    weekly_carbs = weekly_foods.aggregate(Sum("carbs"))["carbs__sum"] or 0
+    weekly_protein = weekly_foods.aggregate(Sum("protein"))["protein__sum"] or 0
+    weekly_fat = weekly_foods.aggregate(Sum("fat"))["fat__sum"] or 0
 
     user_body_info = UserBodyInfo.objects.filter(
         custom_user__user=request.user
@@ -1238,7 +1229,40 @@ def dashboard(request):
 
     bmi = truncate(user_body_info.weight / ((user_body_info.height / 100) ** 2), 2)
 
+    # bmi last week dan last year
+
+    today = timezone.now().date()
+
+    start_last_month = today.replace(month=today.month - 1)
+    end_last_month = today
+
+    one_week_ago = today - datetime.timedelta(days=7)
+    
+
+    last_month_entries = UserBodyInfo.objects.filter(check_time__range=(start_last_month, end_last_month))
+    
+    body_last_month = last_month_entries.order_by("-check_time")[len(last_month_entries)-1] 
+    bmi_last_month = truncate(body_last_month.weight / ((body_last_month.height / 100) ** 2), 2)       
+    body_last_month = {
+        "weight": body_last_month.weight,
+        "height": body_last_month.height,
+    }
+    one_week_ago_entries = UserBodyInfo.objects.filter(check_time__range=(one_week_ago,today))
+    body_last_week = one_week_ago_entries.order_by("-check_time")[len(one_week_ago_entries)-1]
+    bmi_last_week = truncate(body_last_week.weight / ((body_last_week.height / 100) ** 2), 2)
+    body_last_week = {
+        "weight": body_last_week.weight,
+        "height": body_last_week.height,
+    }
+
+    user_body_info_dict = {
+        "weight": user_body_info.weight,
+        "height": user_body_info.height,
+
+    }
+
     detailed_daily_nutrition = (
+
         NutritionProgress.objects.filter(user__user=request.user)
         .annotate(date=TruncDate("check_time"))
         .values("date")
@@ -1276,17 +1300,33 @@ def dashboard(request):
             }
         )
 
+    target_plan = TargetPlan.objects.filter(user__user=request.user)
+    nutri_target = {
+        "calories": 0.0,
+            "protein":  0.0,
+            "carbs": 0.0,
+            "fat":  0.0,
+    }
+    if target_plan.exists():
+        target_plan = target_plan.first()
+        nutri_target = {
+            "calories": truncate(target_plan.target_calorie, 2),
+            "protein": truncate(target_plan.target_protein, 2),
+            "carbs": truncate(target_plan.target_carbs, 2),
+            "fat": truncate(target_plan.target_fat, 2),
+        }
+
     context = {
         "today_foods": today_foods,
         "weekly_foods": weekly_foods,
-        "today_calory": today_calory,
-        "today_protein": today_protein,
-        "today_carbs": today_carbs,
-        "today_fat": today_fat,
-        "weekly_calory": weekly_calory,
-        "weekly_protein": weekly_protein,
-        "weekly_carbs": weekly_carbs,
-        "weekly_fat": weekly_fat,
+        "today_calory":  truncate(today_calory,2),
+        "today_protein":  truncate(today_protein,2),
+        "today_carbs":  truncate(today_carbs,2),
+        "today_fat":  truncate(today_fat,2),
+        "weekly_calory":  truncate(weekly_calory,2),
+        "weekly_protein":  truncate(weekly_protein,2),
+        "weekly_carbs":  truncate(weekly_carbs,2),
+        "weekly_fat":  truncate(weekly_fat,2),
         "calory_condition": nutrition_condition(
             "CALORIE", today_calory, user_body_info, riwayat_penyakit_user, custom_user
         ),
@@ -1309,15 +1349,18 @@ def dashboard(request):
         "daily_nutrition": daily_nutrition,
         "daily_nutrition_input": daily_nutrition_input,
         "curr_date": current_date,
+        "nutri_target": nutri_target,
+        "bmi_last_month": bmi_last_month,
+        "bmi_last_week": bmi_last_week,
+        "body_last_month": body_last_month,
+        "body_last_week": body_last_week,
+        "user_body_info_dict": user_body_info_dict,
+         "curr_bmi": bmi # buat selector bmi jangan dihapus
     }
 
     return render(request, "dashboard_cantik.html", context=context)
 
 
-# @login_required(login_url="my_app:normal_login")
-# def add_bmi(request):
-
-#     return render(request, "add_bmi.html",)
 
 
 @login_required(login_url="my_app:normal_login")
@@ -1366,9 +1409,19 @@ def logout_view(request):
 
 @login_required(login_url="my_app:normal_login")
 def riwayat_penyakit(request):
+    current_date = date.today()
     custom_user = CustomUser.objects.get(user=request.user)
     riwayat_user = RiwayatPenyakit.objects.filter(user=custom_user)
-    context = {"riwayat_user": riwayat_user}
+    riwayat_penyakit = []
+    for penyakit in riwayat_user:
+        riwayat_penyakit.append(
+            {
+                "nama_penyakit": penyakit.nama_penyakit,
+                "deskripsi_penyakit": penyakit.deskripsi_penyakit,
+                "check_time": penyakit.check_time,
+            }
+        )
+    context = {"riwayat_user": riwayat_penyakit, "curr_date": current_date}
     return render(request, "riwayat.html", context=context)
 
 
@@ -1385,7 +1438,7 @@ def add_riwayat(request):
         )
         riwayat.save()
         return redirect("my_app:riwayat")
-    return render(request, "add_riwayat.html")
+    return render(request, "add_riwayat_new.html")
 
 
 def delete_riwayat(request, pk):
@@ -1400,12 +1453,13 @@ def delete_riwayat(request, pk):
 
 @login_required(login_url="my_app:normal_login")
 def add_nutrition(request):
+    current_date = date.today()
     if request.method == "POST":
         nutrition_name = request.POST.get("nutrition_name")
-        calorie = request.POST.get("calorie")
-        carbs = request.POST.get("carbs")
-        protein = request.POST.get("protein")
-        fat = request.POST.get("fat")
+        calorie = float(request.POST.get("calorie"))
+        carbs = float(request.POST.get("carbs"))
+        protein = float(request.POST.get("protein"))
+        fat = float(request.POST.get("fat"))
         custom_user = CustomUser.objects.get(user=request.user)
         nutrisi = NutritionProgress(
             nutrition_name=nutrition_name,
@@ -1418,8 +1472,8 @@ def add_nutrition(request):
         nutrisi.save()
         if request.POST.get("redirect"):
             return redirect("my_app:dashboard")
-        return redirect("my_app:add_nutrition")
-    return render(request, "add_nutrition.html")
+        return redirect("my_app:dashboard")
+    return render(request, "add_nutrition_new.html", {"curr_date": current_date})
 
 
 @login_required(login_url="my_app:normal_login")

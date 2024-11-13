@@ -70,6 +70,11 @@
             <i class="bx bx-star"></i>
             <a href="{% url 'my_app:add_target' %}">Add Target</a>
           </div>
+
+          <div class="item">
+            <i class="bx bx-log-out-circle"></i>
+            <a href="{% url 'my_app:logout' %}">Logout</a>
+          </div>
         </div>
       </aside>
 
@@ -77,7 +82,7 @@
         <header>
           <div>
             <h2>Health Overview</h2>
-            <p class="current-date">10 November 2024</p>
+            <p class="current-date">{% now "d-m-Y" %}</p>
           </div>
           <div class="search-notif">
             <div class="search">
@@ -599,17 +604,18 @@
 
             <div class="nutri-date-selector-container">
               <select name="" id="graph-date" class="nutri-date-selector">
-                <option value="">Nov 2024</option>
-                <option value="">Oct 2024</option>
-                <option value="">Sep 2024</option>
-                <option value="">Aug 2024</option>
-                <option value="">Jul 2024</option>
-                <option value="">Jun 2024</option>
-                <option value="">May 2024</option>
-                <option value="">Apr 2024</option>
-                <option value="">Mar 2024</option>
-                <option value="">Feb 2024</option>
-                <option value="">Jan 2024</option>
+                <option value="11">Nov 2024</option>
+                <option value="12">Dec 2024</option>
+                <option value="10">Oct 2024</option>
+                <option value="09">Sep 2024</option>
+                <option value="08">Aug 2024</option>
+                <option value="07">Jul 2024</option>
+                <option value="06">Jun 2024</option>
+                <option value="05">May 2024</option>
+                <option value="04">Apr 2024</option>
+                <option value="03">Mar 2024</option>
+                <option value="02">Feb 2024</option>
+                <option value="01">Jan 2024</option>
               </select>
             </div>
           </div>
@@ -622,7 +628,35 @@
             <div id="wrapper"></div>
           </div>
         </div>
+
         <!-- end tabel dan graph section -->
+
+        <div class="graph-tabel-panel">
+          <div class="nutri-target-title">
+            <h2>Daily Nutrition Target</h2>
+          </div>
+
+          <div class="nutrition-target-pie-panel">
+            <div class="nutri-pie">
+              <canvas id="caloriePie"></canvas>
+              <p>Calories: {{today_calory}}/{{nutri_target.calories}}</p>
+            </div>
+
+            <div class="nutri-pie">
+              <canvas id="carbPie"></canvas>
+              <p>Carbohydrate: {{today_carbs}}/{{nutri_target.carbs}}</p>
+            </div>
+
+            <div class="nutri-pie">
+              <canvas id="proteinPie"></canvas>
+              <p>Protein: {{today_protein}}/{{nutri_target.protein}}</p>
+            </div>
+            <div class="nutri-pie">
+              <canvas id="fatPie"></canvas>
+              <p>Fat: {{today_fat}}/{{nutri_target.fat}}</p>
+            </div>
+          </div>
+        </div>
       </main>
       <!-- end main section -->
 
@@ -712,8 +746,20 @@
     {{ daily_nutrition|json_script:"daily_nutrition" }}
     {{ daily_nutrition_input|json_script:"daily_nutrition_input" }} 
     {{ bmi|json_script:"bmi" }}
-      <!-- prettier-ignore -->
-      {{ curr_date|json_script:"curr_date"}}
+    <!-- prettier-ignore -->
+    {{ curr_date|json_script:"curr_date"}}
+    {{nutri_target|json_script:"nutri_target"}}
+    {{ today_calory|json_script:"today_calory" }}
+    {{ today_protein|json_script:"today_protein" }}
+    {{ today_carbs|json_script:"today_carbs" }}
+    {{ today_fat|json_script:"today_fat" }}
+    {{ bmi_last_week|json_script:"bmi_last_week"  }}
+    {{ bmi_last_month|json_script:"bmi_last_month" }}
+    {{ body_last_month|json_script:"body_last_month" }}
+    {{ body_last_week|json_script:"body_last_week" }}
+    {{ user_body_info_dict|json_script:"user_body_info_dict" }}
+
+    {{ curr_bmi|json_script:"curr_bmi" }}
 
     <script src="{% static 'js/script_dashboard.js' %}"></script>
   </body>
