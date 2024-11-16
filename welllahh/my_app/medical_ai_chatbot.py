@@ -51,7 +51,9 @@ translate_model = genai.GenerativeModel("gemini-1.0-pro")  # buat translate
 
 
 def translate_text(text, language):
-    newText =  text.replace("\n", "  ")
+    newText = text
+    if language == "Indonesian":
+        newText =  text.replace("\n", " \n ")
     newText = (
         newText
         + f"; translate to {language}. please just translate the text and don't answer the questions!"
@@ -72,30 +74,15 @@ retriever_model = Chroma(
     embedding_function=instructor_embeddings,
 )
 
-retriever = retriever_model.as_retriever(search_kwargs={"k": 8})
+retriever = retriever_model.as_retriever(search_kwargs={"k": 10})
 
 
-# template = """You are an AI language model assistant. Your task is to generate search query of the given user question to retrieve relevant documents from a vector database.  Original question: {question}""" #gabisa malah gak bikin query
-template = """Write multiple very short search queries (each queries by a separated by "," & maximum 3 very short search queries) that will help answer complex user questions, make sure in your answer you only give multiple very short search queries (each queries by a separated by "," & maximum 3 very short search queries) and don't include any other text! . Original question: {question}"""
+template = """Write multiple different very short search queries (each queries by a separated by "," & maximum different 3 very short search queries) that will help answer complex user questions, make sure in your answer you only give multiple different very short search queries (each queries by a separated by "," & maximum different 3 very short search queries) and don't include any other text! . Original question: {question}"""
 search_query_prompt = ChatPromptTemplate.from_template(template)
 
 
 class GeminiLLM(LLM):
-    """A custom chat model that echoes the first `n` characters of the input.
-
-    When contributing an implementation to LangChain, carefully document
-    the model including the initialization parameters, include
-    an example of how to initialize the model and include any relevant
-    links to the underlying models documentation or API.
-
-    Example:
-
-        .. code-block:: python
-
-            model = CustomChatModel(n=2)
-            result = model.invoke([HumanMessage(content="hello")])
-            result = model.batch([[HumanMessage(content="hello")],
-                                 [HumanMessage(content="world")]])
+    """
     """
 
     def _call(
@@ -106,30 +93,16 @@ class GeminiLLM(LLM):
         **kwargs: Any,
     ) -> str:
         """Run the LLM on the given input.
-
-        Override this method to implement the LLM logic.
-
-        Args:
-            prompt: The prompt to generate from.
-            stop: Stop words to use when generating. Model output is cut off at the
-                first occurrence of any of the stop substrings.
-                If stop tokens are not supported consider raising NotImplementedError.
-            run_manager: Callback manager for the run.
-            **kwargs: Arbitrary additional keyword arguments. These are usually passed
-                to the model provider API call.
-
-        Returns:
-            The model output as a string. Actual completions SHOULD NOT include the prompt.
         """
         if stop is not None:
             raise ValueError("stop kwargs are not permitted.")
         # return prompt[: self.n]
         llm = genai.GenerativeModel(
-            model_name="tunedModels/gemini-welllahh-zerotemp-lrfv-3536"  # sebelumnya 0
+            model_name="tunedModels/gemini-welllahh-zerotemp-lrfv-3536"  
         )  # buat jawab pertanyaan medis
 
         ans = (
-            llm.generate_content(prompt, generation_config={"temperature": 0.05})
+            llm.generate_content(prompt, generation_config={"temperature": 0.2})
             .candidates[0]
             .content.parts[0]
             .text
@@ -223,15 +196,7 @@ def add_websearch_results(query):
 
 
 class DuckDuckGoRetriever(BaseRetriever):
-    """A toy retriever that contains the top k documents that contain the user query.
-
-    This retriever only implements the sync method _get_relevant_documents.
-
-    If the retriever were to involve file access or network access, it could benefit
-    from a native async implementation of `_aget_relevant_documents`.
-
-    As usual, with Runnables, there's a default async implementation that's provided
-    that delegates to the sync implementation running on another thread.
+    """
     """
 
     """List of documents to retrieve from."""
@@ -269,12 +234,13 @@ def rerank_docs_medcpt(query, docs):
 
         logits = model(**encoded).logits.squeeze(dim=1)
         values, indices = torch.sort(logits, descending=True)
-        relevant = [docs[i] for i in indices[:6]]
+        relevant = [docs[i] for i in indices[:7]]
     return relevant
 
 
+
+
 retrieval_chain = generate_query | {
-    "chroma": retriever,
     "websearch": websearch_retriever,
     "query": StrOutputParser(),
 }
@@ -304,32 +270,24 @@ Answer: Let's think step by step.
 prompt = ChatPromptTemplate.from_template(template)
 
 
-# answer_chain = (
-#     {"context": retrieval_chain | format_docs, "question": RunnablePassthrough()}
-#     | prompt
-#     | llm
-#     | {"llm_output": StrOutputParser(), "context": retrieval_chain | format_docs}
-# )
+
 answer_chain = (
-    # {"context": retrieval_chain | format_docs, "question": RunnablePassthrough()}
      prompt
     | llm
     | {"llm_output": StrOutputParser()}
 )
 
 
-# def answer(question):
-
-#     # answer = answer_chain.invoke(input=question, )
-#     docs = retrieval_chain
-#     context = format_docs(docs)
-#     answer = answer_chain.invoke({"context": context, "question": question})
-#     return answer
 
 def answer(question):
 
-    # answer = answer_chain.invoke(input=question, )
     docs = retrieval_chain.invoke(question)
+    docs["chroma"] = []
+    search_query = docs["query"].split(",")
+    for query in search_query:
+        new_knowledge_base_contexts = retriever.invoke(query)
+        for new_context in new_knowledge_base_contexts:
+            docs["chroma"].append(new_context)
     context = format_docs(docs)
     answer = answer_chain.invoke({"context": context, "question": question})
     return answer, context
@@ -347,10 +305,8 @@ def answer_pipeline(question, chat_history, riwayat_penyakit):
     if user_context != "" and "insufficient data" not in user_context.lower():
         new_question = ".my health condition: " + user_context + ". User Question: " + question
     if riwayat_penyakit != "":
-        new_question = "my medical history: " + riwayat_penyakit + ". User Question: " + new_question
+        new_question = "my medical f: " + riwayat_penyakit + ". User Question: " + new_question
 
-    new_question = new_question.split("\n")
-    new_question = " ".join(new_question)
     question = translate_text(new_question, "English")
     question = question.replace("\n", "  ")
     print("retrieving relevant passages and answering user question....")
