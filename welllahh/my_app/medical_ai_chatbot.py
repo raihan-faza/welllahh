@@ -102,7 +102,7 @@ class GeminiLLM(LLM):
         )  # buat jawab pertanyaan medis
 
         ans = (
-            llm.generate_content(prompt, generation_config={"temperature": 0.2})
+            llm.generate_content(prompt, generation_config={"temperature": 0.25})
             .candidates[0]
             .content.parts[0]
             .text
@@ -305,7 +305,7 @@ def answer_pipeline(question, chat_history, riwayat_penyakit):
     if user_context != "" and "insufficient data" not in user_context.lower():
         new_question = ".my health condition: " + user_context + ". User Question: " + question
     if riwayat_penyakit != "":
-        new_question = "my medical f: " + riwayat_penyakit + ". User Question: " + new_question
+        new_question = "my medical history: " + riwayat_penyakit + ". User Question: " + new_question
 
     question = translate_text(new_question, "English")
     question = question.replace("\n", "  ")
