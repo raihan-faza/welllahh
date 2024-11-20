@@ -12,13 +12,13 @@
     <form method="POST">
       {% csrf_token %}
 
-      <div class="favorite-foods">
+      <div id="favorite-foods-form" class="favorite-foods">
         <h2>Your Favorite Foods</h2>
         <div class="food-selectors">
           <div>
             <label class="selector-label">Favorite Food 1</label>
             <select
-            style=" border-radius: 5px;  padding: 1.0rem;"
+              style="border-radius: 5px; padding: 1rem"
               class="food-select searchable-select-food"
               name="my_favorite_food_1"
               id="my_favorite_food_1"
@@ -31,7 +31,7 @@
           <div>
             <label class="selector-label">Favorite Food 2</label>
             <select
-            style=" border-radius: 5px;  padding: 1.0rem;"
+              style="border-radius: 5px; padding: 1rem"
               class="food-select searchable-select-food"
               name="my_favorite_food_2"
               id="my_favorite_food_2"
@@ -44,7 +44,7 @@
           <div>
             <label class="selector-label">Favorite Food 3</label>
             <select
-            style=" border-radius: 5px;  padding: 1.0rem;"
+              style="border-radius: 5px; padding: 1rem"
               class="food-select searchable-select-food"
               name="my_favorite_food_3"
               id="my_favorite_food_3"
@@ -57,7 +57,7 @@
           <div>
             <label class="selector-label">Favorite Food 4</label>
             <select
-            style=" border-radius: 5px;  padding: 1.0rem;"
+              style="border-radius: 5px; padding: 1rem"
               class="food-select searchable-select-food"
               name="my_favorite_food_4"
               id="my_favorite_food_4"
@@ -70,7 +70,7 @@
           <div>
             <label class="selector-label">Favorite Food 5</label>
             <select
-            style=" border-radius: 5px;  padding: 1.0rem;"
+              style="border-radius: 5px; padding: 1rem"
               class="food-select searchable-select-food"
               name="my_favorite_food_5"
               id="my_favorite_food_5"
@@ -83,12 +83,12 @@
         </div>
       </div>
 
-      <div class="meal-categories">
+      <div id="meal-categories-form" class="meal-categories">
         <div class="meal-category">
           <h3>Breakfast</h3>
           <label class="selector-label">Select Breakfast</label>
           <select
-          style=" border-radius: 5px;  padding: 1.0rem;"
+            style="border-radius: 5px; padding: 1rem"
             class="food-select searchable-select"
             name="meal_plan_category_breakfast"
             id="meal_plan_category_breakfast"
@@ -104,7 +104,7 @@
           <h3>Lunch</h3>
           <label class="selector-label">Select Lunch</label>
           <select
-          style=" border-radius: 5px;  padding: 1.0rem;"
+            style="border-radius: 5px; padding: 1rem"
             class="food-select searchable-select"
             name="meal_plan_category_lunch"
             id="meal_plan_category_lunch"
@@ -120,7 +120,7 @@
           <h3>Dinner</h3>
           <label class="selector-label">Select Dinner</label>
           <select
-          style=" border-radius: 5px;  padding: 1.0rem;"
+            style="border-radius: 5px; padding: 1rem"
             class="food-select searchable-select"
             name="meal_plan_category_dinner"
             id="meal_plan_category_dinner"
@@ -132,7 +132,7 @@
           </select>
         </div>
 
-        <div class="meal-button-container">
+        <div id="meal-button-container" class="meal-button-container">
           <button class="meal-button" type="submit">Meal Plan!</button>
         </div>
       </div>
@@ -146,23 +146,33 @@
   <div class="container-food-gallery">
     <div class="food-gallery-container">
       <img class="food-img" src="{% static 'img/salad.png' %}" alt="" />
-      <p>Breakfast: Grilled Chicken Salad </p>
+      <p>Breakfast: Grilled Chicken Salad</p>
     </div>
     <div class="food-gallery-container">
-      <img class="food-img" src="{% static 'img/grilled-chicken.png' %}" alt="" />
-      <p>Lunch: Grilled Chicken </p>
+      <img
+        class="food-img"
+        src="{% static 'img/grilled-chicken.png' %}"
+        alt=""
+      />
+      <p>Lunch: Grilled Chicken</p>
     </div>
     <div class="food-gallery-container">
-      <img  class="food-img"src="{% static 'img/salmon.png' %}" alt="" />
-      <p>Dinner: Salmon </p>
+      <img class="food-img" src="{% static 'img/salmon.png' %}" alt="" />
+      <p>Dinner: Salmon</p>
     </div>
   </div>
 </aside>
 {% endblock content %} {% block script%}
 <!-- prettier-ignore -->
 {{ curr_date|json_script:"curr_date"}}
+{{ feature_tour|json_script:"feature_tour" }}
 
 <script>
+  const feature_tour = JSON.parse(
+    document.getElementById("feature_tour").textContent
+  );
+
+
   $(".searchable-select").select2({
     placeholder: "Select food category",
     allowClear: true,
@@ -173,24 +183,116 @@
     allowClear: true,
   });
 
+  let sidebarItems = document.querySelectorAll(".sidebar .item");
+  for (let item of sidebarItems) {
+    item.id = "";
+  }
+  sidebarItems[6].id = "active";
 
   const dateString = JSON.parse(
     document.getElementById("curr_date").textContent
   );
-  
+
   const date = new Date(dateString);
-  
+
   const options = {
-  weekday: "long",
-  year: "numeric",
-  month: "long",
-  day: "numeric"
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
   };
-  
+
   const formattedDate = date.toLocaleDateString("en-US", options);
   let curentDate = document.getElementsByClassName("current-date");
   curentDate[0].textContent = formattedDate;
+
+  const driver = window.driver.js.driver;
+
+  const driverObj = driver({
+    showProgress: true,
+    steps: [
+      {
+        element: ".page-header",
+        popover: {
+          title: "Choose Your Meal Plan",
+          description:
+            "Pada page ini anda dapat mendapatkan rekomendasi meal plan sesuai kondisi kesehatan dan makanan favorit anda dengan menggunakan algoritma AI yang kami buat.",
+        },
+      },
+      {
+        element: "#favorite-foods-form",
+        popover: {
+          title: "Your Favorite Foods Form",
+          description: "Pilih 5 makanan favorit anda.",
+        },
+      },
+      {
+        element: "#meal-categories-form",
+        popover: {
+          title: "Meal Categories Form",
+          description:
+            "Pilih kategori makanan pada rekomendasi meal plan anda.",
+        },
+      },
+      {
+        element: "#meal-button-container",
+        popover: {
+          title: "Meal Plan Button",
+          description:
+            "Jika sudah mengisi form, klik tombol ini untuk mendapatkan rekomendasi meal plan anda.",
+        },
+      },
+    ],
+    smoothScroll: true,
+  });
+
+  if (feature_tour == false) {
+    driverObj.drive();
+  }
+
+
+  // post feature tour
+
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== "") {
+      const cookies = document.cookie.split(";");
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === name + "=") {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+
+  const csrftoken = getCookie("csrftoken");
+
+  $(document).ready(function () {
+    $.ajaxSetup({
+      beforeSend: function (xhr, settings) {
+        if (!/^GET|HEAD|OPTIONS|TRACE$/i.test(settings.type)) {
+          xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+      },
+    });
+
+    $.ajax({
+      url: "http://localhost:8000/my_app/feature_tour",
+      type: "POST",
+      contentType: "application/json",
+      data: JSON.stringify({
+        item: "meal_plan_page",
+      }),
+      success: function (response) {
+        console.log("success");
+      },
+      error: function (xhr, status, error) {
+        console.log("error POST request: ", error);
+      },
+    });
+  });
 </script>
 {% endblock script%}
-
-

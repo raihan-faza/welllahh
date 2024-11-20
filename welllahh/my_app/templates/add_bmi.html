@@ -8,7 +8,7 @@
   </header>
   <form method="POST">
     {% csrf_token %}
-    <div class="add-bmi-container">
+    <div id="bmi-form" class="add-bmi-container">
       <div class="bmi-input-cards">
         <div class="bmi-input-card">
           <div class="height-value">
@@ -22,10 +22,20 @@
             />
           </div>
           <div class="bmi-buttons-container">
-            <button type="button" class="button" onclick="updateValue('weight', -1)">
+            <button
+              type="button"
+              class="button"
+              onclick="updateValue('weight', -1)"
+            >
               -
             </button>
-            <button type="button" class="button" onclick="updateValue('weight', 1)">+</button>
+            <button
+              type="button"
+              class="button"
+              onclick="updateValue('weight', 1)"
+            >
+              +
+            </button>
           </div>
         </div>
         <div class="bmi-input-card">
@@ -40,8 +50,20 @@
             />
           </div>
           <div class="bmi-buttons-container">
-            <button type="button" class="button" onclick="updateValue('age', -1)">-</button>
-            <button type="button" class="button" onclick="updateValue('age', 1)">+</button>
+            <button
+              type="button"
+              class="button"
+              onclick="updateValue('age', -1)"
+            >
+              -
+            </button>
+            <button
+              type="button"
+              class="button"
+              onclick="updateValue('age', 1)"
+            >
+              +
+            </button>
           </div>
         </div>
       </div>
@@ -119,12 +141,106 @@
           <input type="date" id="check_time" name="check_time" />
         </div>
       </div>
-      <button type="submit" class="calculate-btn">Submit</button>
+      <button id="bmi-btn" type="submit" class="calculate-btn">Submit</button>
     </div>
   </form>
 </main>
 {% endblock content %} {% block script%}
 <!-- prettier-ignore -->
 {{ curr_date|json_script:"curr_date"}}
+{{ feature_tour|json_script:"feature_tour" }}
+<script>
+  const feature_tour = JSON.parse(
+    document.getElementById("feature_tour").textContent
+  );
+
+  console.log("feature_tour: ", feature_tour);
+
+  let sidebarItems = document.querySelectorAll(".sidebar .item");
+  for (let item of sidebarItems) {
+    item.id = "";
+  }
+  sidebarItems[7].id = "active";
+
+  const driver = window.driver.js.driver;
+
+  const driverObj = driver({
+    showProgress: true,
+    steps: [
+      {
+        element: ".page-header",
+        popover: {
+          title: "Record You Body Weight and Height",
+          description:
+            "Pada page ini anda dapat mencatat berat badan dan tinggi badan anda.",
+        },
+      },
+      {
+        element: "#bmi-form",
+        popover: {
+          title: "Record You Body Weight and Height Form",
+          description:
+            "Isi form dengan data berat badan dan tinggi badan anda.",
+        },
+      },
+      {
+        element: "#bmi-btn",
+        popover: {
+          title: "Submit Your BMI Data",
+          description: "Klik tombol submit untuk menyimpan data bmi anda.",
+        },
+      },
+    ],
+    smoothScroll: true,
+  });
+
+  if (feature_tour == false) {
+    driverObj.drive();
+  }
+
+  // post feature tour
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== "") {
+      const cookies = document.cookie.split(";");
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === name + "=") {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+
+  const csrftoken = getCookie("csrftoken");
+
+  $(document).ready(function () {
+    $.ajaxSetup({
+      beforeSend: function (xhr, settings) {
+        if (!/^GET|HEAD|OPTIONS|TRACE$/i.test(settings.type)) {
+          xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+      },
+    });
+
+    $.ajax({
+      url: "http://localhost:8000/my_app/feature_tour",
+      type: "POST",
+      contentType: "application/json",
+      data: JSON.stringify({
+        item: "record_bmi_page",
+      }),
+      success: function (response) {
+        console.log("success");
+      },
+      error: function (xhr, status, error) {
+        console.log("error POST request: ", error);
+      },
+    });
+  });
+</script>
+
 <script src="{% static 'js/add_bmi.js' %}"></script>
 {% endblock script%}

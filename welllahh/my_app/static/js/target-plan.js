@@ -1,3 +1,11 @@
+
+let sidebarItems = document.querySelectorAll(".sidebar .item");
+for (let item of sidebarItems) {
+  item.id = "";
+}
+sidebarItems[8].id = "active";
+
+
 function stepper(btn, elId){
     const myInput = document.getElementById(elId);
 

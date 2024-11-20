@@ -272,6 +272,7 @@ nav {
     color: var(--text-color);
     overflow-y: auto;
     line-height: 2;
+    white-space: pre-wrap; 
 }
 
 .context_closer {

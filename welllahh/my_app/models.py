@@ -75,9 +75,18 @@ class BloodCodition(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
 
 
-# nutrition_type = models.CharField(
-#    max_length=20, choices=NutritionType.choices, default=NutritionType.CALORY
-# )
+class FeatureTour(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+    dashboard_page = models.BooleanField(default=False)
+    food_nutrition_page = models.BooleanField(default=False)
+    medical_history_page = models.BooleanField(default=False)
+    add_nutrition_page = models.BooleanField(default=False)
+    add_medical_history_page = models.BooleanField(default=False)
+    meal_plan_page = models.BooleanField(default=False)
+    record_bmi_page = models.BooleanField(default=False)
+    add_target_page = models.BooleanField(default=False)
+    add_blood_condition_page = models.BooleanField(default=False)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
 
 
 class NutritionProgress(models.Model):

@@ -15,9 +15,14 @@
       href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css"
       rel="stylesheet"
     />
+    <script src="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.js.iife.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.css"
+    />
   </head>
   <body>
-    <div class="container">
+    <div class="container" id="container">
       <aside class="left-section">
         <div class="logo">
           <img src="{% static 'img/logo_figma.png' %}" alt="" />
@@ -28,54 +33,54 @@
             <i class="bx bxs-dashboard"></i>
             <a href="{% url 'my_app:dashboard' %}">Dashboard</a>
           </div>
-          <div class="item">
+          <div id="nutri-detector-menu" class="item">
             <i class="bx bx-bowl-rice"></i>
             <a href="{% url 'my_app:food_nutrition'%}"
               >Food Nutrition Detector</a
             >
           </div>
-          <div class="item">
+          <div id="chatbot-menu" class="item">
             <i class="bx bx-message-square-dots"></i>
             <a href="{% url 'my_app:chatbotpage' %}">Chatbot</a>
           </div>
 
-          <div class="item">
+          <div id="medical-history-menu" class="item">
             <i class="bx bx-shield-plus"></i>
             <a href="{% url 'my_app:riwayat' %}">Medical History</a>
           </div>
 
-          <div class="item">
+          <div id="add-nutrition-menu" class="item">
             <i class="bx bx-capsule"></i>
             <a href="{% url 'my_app:add_nutrition' %}"
               >Add Nutrition Progress</a
             >
           </div>
 
-          <div class="item">
+          <div id="add-medical-history-menu" class="item">
             <i class="bx bx-add-to-queue"></i>
             <a href="{% url 'my_app:add_riwayat' %}">Add Medical History</a>
           </div>
 
-          <div class="item">
+          <div id="meal-plan-recommendation-menu" class="item">
             <i class="bx bx-bowl-hot"></i>
             <a href="{% url 'my_app:meal_plan' %}">Meal Plan</a>
           </div>
 
-          <div class="item">
+          <div id="record-bmi-menu" class="item">
             <i class="bx bx-user"></i>
             <a href="{% url 'my_app:catat_tinggi_berat' %}">Record BMI</a>
           </div>
 
-          <div class="item">
+          <div id="add-target-menu" class="item">
             <i class="bx bx-star"></i>
             <a href="{% url 'my_app:add_target' %}">Add Target</a>
           </div>
 
-          <div class="item">
-            <i class="bx bx-droplet "></i>
+          <div id="add-blood-condition-menu" class="item">
+            <i class="bx bx-droplet"></i>
             <a href="{% url 'my_app:add_blood' %}">Add Blood Condition</a>
           </div>
-          <div class="item">
+          <div id="logout-menu" class="item">
             <i class="bx bx-log-out-circle"></i>
             <a href="{% url 'my_app:logout' %}">Logout</a>
           </div>
@@ -99,7 +104,7 @@
           </div>
         </header>
 
-        <div class="health-stats">
+        <div class="health-stats" id="health-stats">
           <div class="metric-card">
             <div class="metric-header">
               <div class="icon-container blood-sugar-icon">
@@ -151,7 +156,7 @@
             <div class="metric-value">
               {{kadar.BLOOD_SUGAR}} <span class="metric-unit">mg/dL</span>
             </div>
-            <span class="status-badge status-normal"
+            <span id="status-badge-diabet" class="status-badge status-normal"
               >{{kadar.BLOOD_SUGAR_DISEASE.disease_prediction}}</span
             >
             <div class="graph-container">
@@ -624,7 +629,7 @@
             </div>
           </div>
 
-          <div class="graph">
+          <div id="graph-tabel-panel-nutri" class="graph">
             <canvas id="nutriChart"></canvas>
           </div>
 
@@ -640,7 +645,7 @@
             <h2>Daily Nutrition Target</h2>
           </div>
 
-          <div class="nutrition-target-pie-panel">
+          <div id="graph-tabel-panel-daily" class="nutrition-target-pie-panel">
             <div class="nutri-pie">
               <canvas id="caloriePie"></canvas>
               <p>Calories: {{today_calory}}/{{nutri_target.calories}}</p>
@@ -678,7 +683,7 @@
             </div>
           </div>
 
-          <div class="bmi-weight">
+          <div id="bmi-weight" class="bmi-weight">
             <div class="bmi-scale">
               <div class="measurement-input height-input">
                 <span class="measurement-label">Height</span>
@@ -763,8 +768,207 @@
     {{ body_last_week|json_script:"body_last_week" }}
     {{ user_body_info_dict|json_script:"user_body_info_dict" }}
     {{ daily_kadar|json_script:"daily_kadar" }}
-
     {{ curr_bmi|json_script:"curr_bmi" }}
+    {{ feature_tour|json_script:"feature_tour" }}
+
+    <script>
+      const driver = window.driver.js.driver;
+
+      const feature_tour = JSON.parse(document.getElementById('feature_tour').textContent);
+      console.log("feature_tour: ",feature_tour)
+      const driverObj = driver({
+        showProgress: true,
+        steps: [
+          {
+            element: ".page-header",
+            popover: {
+              title: "Main Dashboard",
+              description:
+                "Pada page ini anda bisa melihat overview kondisi kesehatan anda saat ini.",
+            },
+          },
+          {
+            element: "#health-stats",
+            popover: {
+              title: "Health Overview",
+              description:
+                "Pada bagian ini anda bisa melihat kadar gula darah, kolesterol, tekanan darah, uric acid, dan lain lain di dalam tubuh anda.",
+            },
+          },
+          {
+            element: "#status-badge-diabet",
+            popover: {
+              title: "Prediksi Penyakit",
+              description:
+                "Pada bagian ini anda bisa melihat prediksi penyakit dari kadar gula darah anda.",
+            },
+          },
+
+          {
+            element: "#graph-tabel-panel-nutri",
+            popover: {
+              title: "Nutrition Progress",
+              description:
+                "Pada bagian ini anda bisa melihat progress nutrisi anda dalam bentuk grafik dan tabel. Anda juga bisa memilih jenis nutrisi yang ingin anda lihat progressnya pada grafik.",
+            },
+          },
+          {
+            element: "#graph-tabel-panel-daily",
+            popover: {
+              title: "Daily Nutrition Target",
+              description:
+                "Pada bagian ini anda bisa melihat target nutrisi harian anda.",
+            },
+          },
+          {
+            element: "#bmi-weight",
+            popover: {
+              title: "BMI Calculator",
+              description:
+                "Pada bagian ini anda bisa melihat Body Mass index anda.",
+            },
+          },
+          {
+            element: ".sidebar",
+            popover: {
+              title: "Sidebar Menu",
+              description:
+                "Pada bagian ini anda bisa melihat daftarmenu pada aplikasi kami",
+            },
+          },
+          {
+            element: "#nutri-detector-menu",
+            popover: {
+              title: "Nutri Detector",
+              description:
+                "Pada menu ini anda bisa mendeteksi nutrisi dari foto makanan",
+            },
+          },
+          {
+            element: "#chatbot-menu",
+            popover: {
+              title: "Chatbot",
+              description:
+                "Pada menu ini anda bisa berinteraksi dengan chatbot kesehatan kami",
+            },
+          },
+          {
+            element: "#medical-history-menu",
+            popover: {
+              title: "Medical History",
+              description: "Pada menu ini anda bisa melihat riwayat medis anda",
+            },
+          },
+          {
+            element: "#add-nutrition-menu",
+            popover: {
+              title: "Add Nutrition",
+              description:
+                "Pa da menu ini anda bisa menambahkan jumlah konsumsi nutrisi harian anda",
+            },
+          },
+          {
+            element: "#add-medical-history-menu",
+            popover: {
+              title: "Add Medical History",
+              description:
+                "Pada menu ini anda bisa menambahkan riwayat medis anda",
+            },
+          },
+          {
+            element: "#meal-plan-recommendation-menu",
+            popover: {
+              title: "Meal Plan Recommendation",
+              description:
+                "Pada menu ini anda bisa mendapatkan rekomendasi daily meal plan",
+            },
+          },
+          {
+            element: "#record-bmi-menu",
+            popover: {
+              title: "Record BMI",
+              description: "Pada menu ini anda bisa mencatat BMI anda",
+            },
+          },
+          {
+            element: "#add-target-menu",
+            popover: {
+              title: "Add Target",
+              description:
+                "Pada menu ini anda bisa menambahkan target nutrisi harian anda",
+            },
+          },
+          {
+            element: "#add-blood-condition-menu",
+            popover: {
+              title: "Add Blood Condition",
+              description:
+                "Pada menu ini anda bisa menambahkan kondisi gula darah, tekanan darah, uric acid, dan kolesterol anda",
+            },
+          },
+          {
+            element: "#logout-menu",
+            popover: {
+              title: "Logout",
+              description: "Pada menu ini anda bisa logout dari aplikasi kami",
+            },
+          },
+        ],
+        smoothScroll: true,
+      });
+
+      if (feature_tour == false) {
+        driverObj.drive();
+      } 
+
+
+      // post feature tour
+     
+
+      function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== "") {
+          const cookies = document.cookie.split(";");
+          for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === name + "=") {
+              cookieValue = decodeURIComponent(
+                cookie.substring(name.length + 1)
+              );
+              break;
+            }
+          }
+        }
+        return cookieValue;
+      }
+
+      const csrftoken = getCookie("csrftoken");
+
+      $(document).ready(function () {
+        $.ajaxSetup({
+          beforeSend: function (xhr, settings) {
+            if (!/^GET|HEAD|OPTIONS|TRACE$/i.test(settings.type)) {
+              xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+          },
+        });
+
+        $.ajax({
+          url: "http://localhost:8000/my_app/feature_tour",
+          type: "POST",
+          contentType: "application/json",
+          data: JSON.stringify({
+            item: "dashboard_page",
+          }),
+          success: function (response) {
+            console.log("success");
+          },
+          error: function (xhr, status, error) {
+            console.log("error POST request: ", error);
+          },
+        });
+      });
+    </script>
 
     <script src="{% static 'js/script_dashboard.js' %}"></script>
   </body>

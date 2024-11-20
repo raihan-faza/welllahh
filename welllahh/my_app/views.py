@@ -166,6 +166,9 @@ def inference_indofood_image(request):
         else:
             return
     else:
+        feature_tour = get_feature_tour(request)
+        feature_tour_item = feature_tour["food_nutrition_page"]
+
         return render(
             request,
             "food_nutrition.html",
@@ -177,6 +180,7 @@ def inference_indofood_image(request):
                     "carbohydrate": 0,
                     "proteins": 0,
                 },
+                "feature_tour": feature_tour_item,
             },
         )
 
@@ -315,7 +319,14 @@ def catat_tinggi_berat(request):
         )
         body_info.save()
         return redirect("my_app:dashboard")
-    return render(request, "add_bmi.html", {"curr_date": date.today()})
+
+    feature_tour = get_feature_tour(request)
+    feature_tour_item = feature_tour["record_bmi_page"]
+    return render(
+        request,
+        "add_bmi.html",
+        {"curr_date": date.today(), "feature_tour": feature_tour_item},
+    )
 
 
 # food recommendations
@@ -901,8 +912,11 @@ def meal_plan(request):
         }
 
         # return JsonResponse(data=res)
+
         return render(request, "meal-plan-recommendation.html", res)
     else:
+        feature_tour = get_feature_tour(request)
+        feature_tour_item = feature_tour["meal_plan_page"]
         return render(
             request,
             "meal-plan.html",
@@ -910,6 +924,7 @@ def meal_plan(request):
                 "food_categories": settings.FOOD_CATEGORIES,
                 "food_names": settings.FOOD_NAME,
                 "curr_date": date.today(),
+                "feature_tour": feature_tour_item,
             },
         )
 
@@ -931,7 +946,7 @@ def get_chatbot_response(request):
         for penyakit in riwayat_penyakit_db:
             riwayat_penyakit += penyakit.nama_penyakit + ", "
         answer, context = answer_pipeline(question, chat_history, riwayat_penyakit)
-        # answer = set(answer.split("\n"))  # hapus duplicate answer 
+        # answer = set(answer.split("\n"))  # hapus duplicate answer
         # answer = "\n".join(answer) # kalau pakai ini jawaban chatbotnya gak urut
 
         if chat_uuid != 0:
@@ -975,16 +990,16 @@ def get_chatbot_response(request):
                     "new_session_title": session_title,
                 }
             )
-       
+
         return JsonResponse(
-                {
-                    "chatbot_message": answer,
-                    "context": context,
-                    "new_session_id": 0,
-                    "new_session_created_at": 0,
-                    "new_session_title": session_title,
-                }
-            )
+            {
+                "chatbot_message": answer,
+                "context": context,
+                "new_session_id": 0,
+                "new_session_created_at": 0,
+                "new_session_title": session_title,
+            }
+        )
 
 
 @login_required(login_url="my_app:normal_login")
@@ -1367,6 +1382,9 @@ def dashboard(request):
             "fat": truncate(target_plan.target_fat, 2),
         }
 
+    feature_tour = get_feature_tour(request)
+    feature_tour_dashboard = feature_tour["dashboard_page"]
+
     context = {
         "today_foods": today_foods,
         "weekly_foods": weekly_foods,
@@ -1408,6 +1426,7 @@ def dashboard(request):
         "user_body_info_dict": user_body_info_dict,
         "curr_bmi": bmi,  # buat selector bmi jangan dihapus,
         "daily_kadar": daily_kadar,
+        "feature_tour": feature_tour_dashboard,
     }
 
     return render(request, "dashboard_cantik.html", context=context)
@@ -1471,7 +1490,14 @@ def riwayat_penyakit(request):
                 "check_time": penyakit.check_time,
             }
         )
-    context = {"riwayat_user": riwayat_penyakit, "curr_date": current_date}
+
+    feature_tour = get_feature_tour(request)
+    feature_tour_item = feature_tour["medical_history_page"]
+    context = {
+        "riwayat_user": riwayat_penyakit,
+        "curr_date": current_date,
+        "feature_tour": feature_tour_item,
+    }
     return render(request, "riwayat.html", context=context)
 
 
@@ -1488,7 +1514,14 @@ def add_riwayat(request):
         )
         riwayat.save()
         return redirect("my_app:riwayat")
-    return render(request, "add_riwayat_new.html")
+
+    feature_tour = get_feature_tour(request)
+    feature_tour_item = feature_tour["add_medical_history_page"]
+    return render(
+        request,
+        "add_riwayat_new.html",
+        {"feature_tour": feature_tour_item, "curr_date": date.today()},
+    )
 
 
 def delete_riwayat(request, pk):
@@ -1523,7 +1556,14 @@ def add_nutrition(request):
         if request.POST.get("redirect"):
             return redirect("my_app:dashboard")
         return redirect("my_app:dashboard")
-    return render(request, "add_nutrition_new.html", {"curr_date": current_date})
+
+    feature_tour = get_feature_tour(request)
+    feature_tour_item = feature_tour["add_nutrition_page"]
+    return render(
+        request,
+        "add_nutrition_new.html",
+        {"curr_date": current_date, "feature_tour": feature_tour_item},
+    )
 
 
 @login_required(login_url="my_app:normal_login")
@@ -1545,7 +1585,14 @@ def add_target(request):
         )
         target.save()
         return redirect("my_app:dashboard")
-    return render(request, "target-plan.html", {"curr_date": current_date})
+
+    feature_tour = get_feature_tour(request)
+    feature_tour_item = feature_tour["add_target_page"]
+    return render(
+        request,
+        "target-plan.html",
+        {"curr_date": current_date, "feature_tour": feature_tour_item},
+    )
 
 
 @login_required(login_url="my_app:normal_login")
@@ -1575,8 +1622,67 @@ def add_blood_condition(request):
             "cholesterol": 0,
             "blood_pressure": 0,
         }
-    context = {"blood_data": blood_data}
+    feature_tour = get_feature_tour(request)
+    feature_tour_item = feature_tour["add_blood_condition_page"]
+    context = {"blood_data": blood_data, "feature_tour": feature_tour_item}
+    
+
     return render(request, "add_blood.html", context=context)
+
+
+@login_required(login_url="my_app:normal_login")
+def feature_tour(request):
+    if request.method == "POST":
+        user = CustomUser.objects.get(user=request.user)
+        user_feature_tour = FeatureTour.objects.filter(user=user)
+        if user_feature_tour.exists() == False:
+            new_feature_tour = FeatureTour(user=user)
+            new_feature_tour.save()
+            return JsonResponse({"message": "Success save new feature tour user"})
+        else:
+            user_feature_tour = user_feature_tour.get()
+            body_unicode = request.body.decode("utf-8")
+            body_data = json.loads(body_unicode)
+            item = body_data.get("item")
+
+            match item:
+                case "dashboard_page":
+                    user_feature_tour.dashboard_page = True
+                case "food_nutrition_page":
+                    user_feature_tour.food_nutrition_page = True
+                case "medical_history_page":
+                    user_feature_tour.medical_history_page = True
+                case "add_nutrition_page":
+                    user_feature_tour.add_nutrition_page = True
+                case "add_medical_history_page":
+                    user_feature_tour.add_medical_history_page = True
+                case "meal_plan_page":
+                    user_feature_tour.meal_plan_page = True
+                case "record_bmi_page":
+                    user_feature_tour.record_bmi_page = True
+                case "add_target_page":
+                    user_feature_tour.add_target_page = True
+                case "add_blood_condition_page":
+                    user_feature_tour.add_blood_condition_page = True
+            user_feature_tour.save()
+
+            return JsonResponse({"message": "Success update feature tour user"})
+
+
+def get_feature_tour(request):
+    feature_tour_user = FeatureTour.objects.filter(user__user=request.user).get()
+    feature_tour_data = {
+        "dashboard_page": feature_tour_user.dashboard_page,
+        "food_nutrition_page": feature_tour_user.food_nutrition_page,
+        "medical_history_page": feature_tour_user.medical_history_page,
+        "add_nutrition_page": feature_tour_user.add_nutrition_page,
+        "add_medical_history_page": feature_tour_user.add_medical_history_page,
+        "meal_plan_page": feature_tour_user.meal_plan_page,
+        "record_bmi_page": feature_tour_user.record_bmi_page,
+        "add_target_page": feature_tour_user.add_target_page,
+        "add_blood_condition_page": feature_tour_user.add_blood_condition_page,
+    }
+    return feature_tour_data
 
 
 """

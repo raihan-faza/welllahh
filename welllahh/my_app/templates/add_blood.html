@@ -8,7 +8,7 @@
   </header>
   <form method="POST">
     {% csrf_token %}
-    <div class="add-bmi-container">
+    <div id="blood-condition-form" class="add-bmi-container">
       <div class="input-container">
         <div class="input-box">
           <label>Blood Sugar</label>
@@ -46,11 +46,109 @@
             value="{{blood_data.blood_pressure}}"
           />
         </div>
-        <button type="submit" class="calculate-btn">Submit</button>
+        <button id="blood-condition-btn" type="submit" class="calculate-btn">
+          Submit
+        </button>
       </div>
     </div>
   </form>
 </main>
 {% endblock content %} {% block script%}
+
 <script src="{% static 'js/add_bmi.js' %}"></script>
+
+<!-- prettier-ignore -->
+{{ feature_tour|json_script:"feature_tour" }}
+<script>
+  const feature_tour = JSON.parse(
+    document.getElementById("feature_tour").textContent
+  );
+
+  let sidebarItems = document.querySelectorAll(".sidebar .item");
+  for (let item of sidebarItems) {
+    item.id = "";
+  }
+  sidebarItems[9].id = "active";
+
+  const driver = window.driver.js.driver;
+
+  const driverObj = driver({
+    showProgress: true,
+    steps: [
+      {
+        element: ".page-header",
+        popover: {
+          title: "Record Your Blood Condition",
+          description:
+            "Pada page ini, anda dapat mencatat kadar gula darah, uric acid, kolesterol, dan tekanan darah anda.",
+        },
+      },
+      {
+        element: "#blood-condition-form",
+        popover: {
+          title: "Record Your Blood Condition Form",
+          description:
+            "Isi form dengan data kadar gula darah, uric acid, kolesterol, dan tekanan darah anda.",
+        },
+      },
+
+      {
+        element: "#blood-condition-btn",
+        popover: {
+          title: "Blood Condition Button",
+          description:
+            "Jika sudah mengisi form, klik tombol ini untuk menyimpan data kadar gula darah, uric acid, kolesterol, dan tekanan darah anda.",
+        },
+      },
+    ],
+    smoothScroll: true,
+  });
+
+  if (feature_tour == false) {
+    driverObj.drive();
+  }
+
+  // post feature tour
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== "") {
+      const cookies = document.cookie.split(";");
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === name + "=") {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+
+  const csrftoken = getCookie("csrftoken");
+
+  $(document).ready(function () {
+    $.ajaxSetup({
+      beforeSend: function (xhr, settings) {
+        if (!/^GET|HEAD|OPTIONS|TRACE$/i.test(settings.type)) {
+          xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+      },
+    });
+
+    $.ajax({
+      url: "http://localhost:8000/my_app/feature_tour",
+      type: "POST",
+      contentType: "application/json",
+      data: JSON.stringify({
+        item: "add_blood_condition_page",
+      }),
+      success: function (response) {
+        console.log("success");
+      },
+      error: function (xhr, status, error) {
+        console.log("error POST request: ", error);
+      },
+    });
+  });
+</script>
 {% endblock script%}

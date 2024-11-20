@@ -12,19 +12,19 @@
       <div class="input-container">
         <div class="input-box">
           <label>Total Calorie</label>
-          <input type="text" name="target_calorie" placeholder="1500">
+          <input type="text" name="target_calorie" placeholder="1500" />
         </div>
         <div class="input-box">
           <label>Total Carbohydrate</label>
-          <input type="text" name="target_carbs" placeholder="300">
+          <input type="text" name="target_carbs" placeholder="300" />
         </div>
         <div class="input-box">
           <label>Total Protein</label>
-          <input type="text" name="target_protein" placeholder="128">
+          <input type="text" name="target_protein" placeholder="128" />
         </div>
         <div class="input-box">
           <label>Total Fat</label>
-          <input type="text" name="target_fat" placeholder="100">
+          <input type="text" name="target_fat" placeholder="100" />
         </div>
         <button type="submit" class="calculate-btn">Submit</button>
       </div>
@@ -32,5 +32,6 @@
   </form>
 </main>
 {% endblock content %} {% block script%}
+
 <script src="{% static 'js/add_bmi.js' %}"></script>
 {% endblock script%}

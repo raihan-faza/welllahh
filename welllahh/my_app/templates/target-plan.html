@@ -6,7 +6,7 @@
       <p class="current-date">{{curr_date}}</p>
     </div>
   </header>
-  <div class="container-meal-plan">
+  <div id="container-nutri-target" class="container-meal-plan">
     <form class="form" method="post">
       {% csrf_token %}
       <div class="form-target-plan">
@@ -126,7 +126,9 @@
           </div>
         </div>
         <div class="target-plan-btn">
-          <button type="submit" class="calculate-btn">Submit</button>
+          <button id="nutri-target-btn" type="submit" class="calculate-btn">
+            Submit
+          </button>
         </div>
       </div>
     </form>
@@ -135,5 +137,93 @@
 {% endblock content %} {% block script%}
 <!-- prettier-ignore -->
 {{ curr_date|json_script:"curr_date"}}
+{{ feature_tour|json_script:"feature_tour" }}
+
+<script>
+  const feature_tour = JSON.parse(
+    document.getElementById("feature_tour").textContent
+  );
+  console.log("feature_tour: ", feature_tour);
+
+  const driver = window.driver.js.driver;
+
+  const driverObj = driver({
+    showProgress: true,
+    steps: [
+      {
+        element: ".page-header",
+        popover: {
+          title: "Plan Your Daily Nutritional Targets",
+          description:
+            "Pada page ini anda bisa merencanakan target nutrisi harian anda.",
+        },
+      },
+      {
+        element: "#container-nutri-target",
+        popover: {
+          title: "Plan Your Daily Nutritional Targets Form",
+          description: "Isi form ini dengan target nutrisi harian anda.",
+        },
+      },
+      {
+        element: "#nutri-target-btn",
+        popover: {
+          title: "Submit Your Daily Nutritional Targets",
+          description:
+            "Klik tombol ini untuk menyimpan target nutrisi harian anda.",
+        },
+      },
+    ],
+    smoothScroll: true,
+  });
+
+  if (feature_tour == false) {
+    driverObj.drive();
+  }
+
+  // post feature tour
+
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== "") {
+      const cookies = document.cookie.split(";");
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === name + "=") {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+
+  const csrftoken = getCookie("csrftoken");
+
+  $(document).ready(function () {
+    $.ajaxSetup({
+      beforeSend: function (xhr, settings) {
+        if (!/^GET|HEAD|OPTIONS|TRACE$/i.test(settings.type)) {
+          xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+      },
+    });
+
+    $.ajax({
+      url: "http://localhost:8000/my_app/feature_tour",
+      type: "POST",
+      contentType: "application/json",
+      data: JSON.stringify({
+        item: "add_target_page",
+      }),
+      success: function (response) {
+        console.log("success");
+      },
+      error: function (xhr, status, error) {
+        console.log("error POST request: ", error);
+      },
+    });
+  });
+</script>
 <script src="{% static 'js/target-plan.js' %}"></script>
 {% endblock script%}
