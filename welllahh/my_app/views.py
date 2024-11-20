@@ -1641,6 +1641,7 @@ def feature_tour(request):
             return JsonResponse({"message": "Success save new feature tour user"})
         else:
             user_feature_tour = user_feature_tour.get()
+
             body_unicode = request.body.decode("utf-8")
             body_data = json.loads(body_unicode)
             item = body_data.get("item")
@@ -1670,7 +1671,15 @@ def feature_tour(request):
 
 
 def get_feature_tour(request):
-    feature_tour_user = FeatureTour.objects.filter(user__user=request.user).get()
+    feature_tour_user = FeatureTour.objects.filter(user__user=request.user)
+    if feature_tour_user.exists() == False:
+        user= CustomUser.objects.get(user=request.user)
+        feature_tour_user = FeatureTour(user=user)
+        feature_tour_user.save()
+    else:
+        feature_tour_user = feature_tour_user.get()
+        
+        
     feature_tour_data = {
         "dashboard_page": feature_tour_user.dashboard_page,
         "food_nutrition_page": feature_tour_user.food_nutrition_page,

@@ -13,7 +13,7 @@
   </div>
 </main>
 {% endblock content %}{% block script%}
-<script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gridjs/dist/gridjs.umd.js"></script>
 <!-- prettier-ignore -->
 {{ riwayat_user|json_script:"riwayat_user"}}
 {{ curr_date|json_script:"curr_date"}}
@@ -97,14 +97,13 @@
     smoothScroll: true,
   });
 
-
   if (feature_tour == false) {
     driverObj.drive();
   }
 
-   // post feature tour
+  // post feature tour
 
-   function getCookie(name) {
+  function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== "") {
       const cookies = document.cookie.split(";");
@@ -145,7 +144,6 @@
       },
     });
   });
-
 </script>
 
 {% endblock script%}
