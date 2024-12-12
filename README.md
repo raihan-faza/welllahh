@@ -1,10 +1,24 @@
 # welllahh
 
-
-
-### AI model
+### AI Dataset
 ```
-- indonesian food image to its name:
+- food image classification
+https://drive.google.com/file/d/1Akn1EG6TivL6epZ1R_bcYMh1Cv6USxCB/view?usp=sharing
+
+- food recommender system
+https://drive.google.com/uc?export=download&id=1zPr5XKMSAeaeY6IKQWnABYmwzlYUBNhU
+
+- rag chatbot
+https://huggingface.co/datasets/MedRAG/textbooks
+https://huggingface.co/datasets/MedRAG/pubmed
+https://huggingface.co/datasets/MedRAG/statpearls
+https://huggingface.co/datasets/HPAI-BSC/medqa-cot
+backup chromadb: https://drive.google.com/file/d/1S0nxpfC4ifrktLpoetCrNmTyTVSydsqM/view?usp=sharing
+```
+
+### AI 
+```
+- indonesian food image classification model:
 https://drive.google.com/file/d/1N3rkjM9C_hbyiLzKmwdTzxYYHwYS-RDW/view?usp=sharing
 - Food Recommendation System:
 https://drive.google.com/uc?export=download&id=1US8wd4AsafsVGDl-HWcD0AzqTm-l-FTK
